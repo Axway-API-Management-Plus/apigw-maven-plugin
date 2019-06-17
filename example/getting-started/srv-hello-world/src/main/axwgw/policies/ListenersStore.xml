@@ -1,0 +1,1215 @@
+<entityStoreData xmlns="http://www.vordel.com/2005/06/24/entityStore">
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="RootChild"/>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="RootChild" name="ESConfiguration">
+        <constant name="_version" type="integer" value="27"/>
+        <!--
+            Give this singleton a key.
+        -->
+        <field isKey="true" name="name" type="string"/>
+        <!-- 
+            We use this field to verify that the passphrase for the 
+            encryped data is synchronized between the server and client, and
+            between multiple invocations of the client
+        -->
+        <field name="passphraseTest" type="encrypted"/>
+        <field name="version" type="string"/>
+        <!-- The product key should never change for the lifetime of the product -->
+        <field name="productKey" type="string"/>
+        <field cardinality="?" name="gitrev" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="RootChild" name="LoadableModule">
+        <constant name="_version" type="integer" value="2"/>
+        <constant name="loadorder" type="integer" value="1000000"/>
+        <field cardinality="?" name="classloader" type="^ClassLoader"/>
+
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="LoadableModule" name="TransportModule">
+    <constant name="_version" type="integer" value="4"/>
+    <constant name="descriptorClass" type="string" value="com.vordel.client.circuit.model.UndefinedTransportDescriptor"/>
+    <field cardinality="1" default="SYSTEM" name="opsSettingsUsage" type="string"/>
+    <field cardinality="1" default="true" name="recordInboundTxns" type="boolean"/>
+    <field cardinality="1" default="true" name="recordOutboundTxns" type="boolean"/>
+    <field cardinality="1" default="true" name="recordCircuitPath" type="boolean"/>
+    <field cardinality="1" default="true" name="recordTrace" type="boolean"/>
+    <field cardinality="1" default="true" name="recordSent" type="boolean"/>
+    <field cardinality="1" default="true" name="recordReceived" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="DirectoryScanner">
+        <constant name="_version" type="integer" value="7"/>
+        <constant name="class" type="string" value="com.vordel.dwe.dirscan.DirectoryScanner"/>
+        <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.dirscan.DirScannerTransportDescriptor"/>
+        
+        <field isKey="true" name="name" type="string"/>
+        <field default="60000" isKey="false" name="pollRateMs" type="integer"/>
+
+        <field name="inDir" type="string"/>
+        <field default="EXTENSION" name="inMatchType" type="string"/> <!-- NAME, EXTENSION, REGEX --> 
+        <field name="inPattern" type="string"/>
+        <field name="inPatternName" type="string"/>
+        <field name="inPatternExtension" type="string"/>
+        
+        <field default="false" name="sortFiles" type="boolean"/>
+        <field default="NAME" name="sortType" type="string"/> <!-- NAME, NAMECASEINSENSITIVE, EXTENSION, EXTENSIONCASEINSENSITIVE, SIZE, LASTMODIFIED -->
+        <field default="ASCENDING" name="sortDirection" type="string"/> <!-- ASCENDING, DESCENDING -->
+
+        <field default="PARALLEL" name="processFiles" type="string"/> <!-- PARALLEL, SEQUENTIAL -->
+        <field default="10" name="inMaxSimultaneousFileProcessings" type="integer"/>
+        <field default="false" name="inRestrictMaxFilesToProcess" type="boolean"/>
+        <field default="1000" name="inMaxFilesToProcess" type="integer"/>
+        
+        <field name="workDir" type="string"/>
+        <field name="outDir" type="string"/>
+        <field default="RAWFILE" name="inFileType" type="string"/> <!-- RAWFILE, HTTP, EXTENSION, CONTENTTYPE -->
+        <field name="inFileContentType" type="string"/>
+        <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+
+        <field default="NOTHING" name="completionType" type="string"/> <!-- NOTHING, DELETE, MOVE -->
+        <field name="completeDir" type="string"/>
+        <field name="outPrefix" type="string"/>
+        <field name="outSuffix" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="PopClient">
+        <constant name="_version" type="integer" value="4"/>
+	<constant name="class" type="string" value="com.vordel.dwe.pop.PopClient"/>
+	 <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.pop.PopTransportDescriptor"/>
+            <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+            <field isKey="true" name="name" type="string"/>            
+            <field name="popServer" type="string"/>
+            <field default="110" name="popPort" type="integer"/>
+            <field name="username" type="string"/>
+            <field name="password" type="encrypted"/>
+            <field default="30000" name="pollRateMs" type="integer"/>
+	    <field default="1" name="deleteMessage" type="boolean"/>
+            <field cardinality="1" default="NONE" name="connectionType" type="string"/>
+	    <field cardinality="1" default="0" name="mailDebugOn" type="boolean"/>
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="CircuitScheduler">
+    <constant name="_version" type="integer" value="2"/>
+    <constant name="class" type="string" value="com.vordel.dwe.scheduler.CircuitScheduler"/>
+    <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.scheduler.SchedulerTransportDescriptor"/>  
+    <constant name="loadorder" type="integer" value="2000000"/>
+    <field cardinality="1" isKey="true" name="name" type="string"/>
+    <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    <field cardinality="1" name="cronExpression" type="^CronExpression"/>
+    <field cardinality="1" default="1" name="enabled" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="JMSSession">
+    <constant name="_version" type="integer" value="5"/>
+    <constant name="class" type="string" value="com.vordel.dwe.jms.JMSSession"/>
+    <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.jms.JMSTransportDescriptor"/>
+    <constant name="loadorder" type="integer" value="1000100"/>
+    <componentType name="JMSConsumer"/>
+    <field cardinality="1" name="servicePK" type="^JMSService"/>
+    <!-- "name" exists only to provide the ES implementation with a key -->
+    <field cardinality="1" isKey="true" name="name" type="string"/>
+    <field cardinality="1" default="1" name="cloneCount" type="integer"/>
+    <field cardinality="?" name="duplicatesOK" type="boolean"/>
+    <!-- messageRemovalPolicy
+         Used to specify the message removal method
+		 IMMEDIATE: 
+		     Message is removed when picked up
+		 LAZY:  (old "duplicateOk"=true)
+		     Message removal is performed by JMS provider. May cause duplicates
+		 UNLESS_EXCEPTION: (old "duplicateOk"=false)
+		     Message is removed when policy filter returns either SUCESS or FAILURE and response has been sent (if requestes). Message is not removed if an exception is thrown.
+		 FROM_PROPERTY: 
+		     Message is removed if processing set property given by messageRemovalPrpoerty field to "false"
+    -->
+    <field cardinality="1" default="UNLESS_EXCEPTION" name="messageRemovalPolicy" type="string"/>
+    <field cardinality="?" default="jms.message.remove" name="messageRemovalProperty" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="RendezvousListener">
+      <constant name="_version" type="integer" value="3"/>
+      <constant name="class" type="string" value="com.vordel.circuit.tibco.RendezvousListener"/>
+      <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.tibco.RendezvousTransportDescriptor"/>
+      <field cardinality="1" isKey="true" name="name" type="string"/>
+      <field cardinality="1" name="rendezvousDaemon" type="^RendezvousDaemon"/>
+      <field default="subject" name="subject" type="string"/>     
+      <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="TransportModule" name="FileTransfer">
+        <constant name="_version" type="integer" value="12"/>
+        <constant name="class" type="string" value="com.vordel.fileservice.integration.VordelFileService"/>
+        <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filetransfer.FileTransferServiceTransportDescriptor"/>
+
+        <!-- List of ip adddess to allow -->
+        <componentType cardinality="*" name="AccessControlList1"/>
+
+        <!-- List of ip adddess to block -->
+        <componentType cardinality="*" name="AccessControlList2"/>
+
+        <!-- List of configurable commands -->
+        <componentType cardinality="*" name="FileTransferCommand"/>
+
+        <!-- Circuit to invoke when file is uploaded -->
+        <componentType cardinality="*" name="PatternPolicyPair"/>
+
+        <field cardinality="1" isKey="true" name="name" type="string"/>
+
+        <!-- ftp, ftps, sftp -->
+        <field cardinality="1" default="ftp" name="serviceType" type="string"/>
+
+        <field cardinality="1" default="21" name="port" type="integer"/>
+
+        <!-- * means any interface, otherwise an ip address -->
+        <field cardinality="1" default="*" name="bindingAddress" type="string"/> 
+
+        <!-- 
+        
+            For client authentication:
+                ftp(s) must use password based auth
+                sftp must use password based auth OR pub key based auth
+                
+            For server authentication:
+                ftps must use ssl cert based auth
+                sftp must use ssl cert based auth OR pub/private key pair aith
+                                            
+         -->
+
+        <!-- Circuit to invoke to perform authentication based on username, password -->
+        <field cardinality="1" default="-1" name="passwordAuthCircuit" type="^FilterCircuit"/>
+
+        <!-- Circuit to invoke to perform authentication based on public key, password (sftp only) -->
+        <field cardinality="1" default="-1" name="pubKeyAuthCircuit" type="^FilterCircuit"/>
+
+        <!-- Gateway/server SSL certificate for ftp/s and sftp -->
+		<field cardinality="1" default="-1" name="sslCertificate" type="^Certificate"/>
+
+        <!--  Ftps option -->
+        <field cardinality="1" default="false" name="useImplicitFtps" type="boolean"/>
+
+        <!-- Gateway/server key pair (sftp only) -->
+        <field cardinality="1" default="-1" name="keyPair" type="^KeyPair"/>
+
+        <!-- Timeout the user after this number of seconds. O means never -->
+        <field cardinality="1" default="0" name="idleTimeout" type="long"/>
+
+        <!-- File system can be persistent or transient -->
+        <field cardinality="1" default="true" name="persistent" type="boolean"/>
+
+        <!-- Uploaded files are placed here -->
+        <field cardinality="1" default="${environment.VINSTDIR}/file-transfer/in/" name="inDir" type="string"/>
+
+        <!-- Processed files are placed here -->
+        <field cardinality="1" default="out" name="outDir" type="string"/>
+
+        <!-- Unsuccessfully processed files are placed here -->
+        <field cardinality="1" default="quarantine" name="quarantineDir" type="string"/>
+
+        <!-- Suffix to append to processed file name -->
+        <field cardinality="1" default=".resp.${id}" name="responseSuffix" type="string"/> 
+
+        <!-- Delete uploaded file after successful file processing -->
+        <field cardinality="1" default="false" name="deleteFileOnSuccessfulResponse" type="boolean"/>
+    
+        <!-- Persistent file system. File age in seconds, Delete files in 
+        in and out dir that that older than this. 0 means never. -->
+        <field cardinality="1" default="0" name="fileExpiry" type="long"/>
+
+        <!-- Persistent file system. Wakup after the specified number of seconds to check and delete old files. 
+        0 means never check -->
+        <field cardinality="1" default="0" name="filePurgerSleepTime" type="long"/> 
+
+        <field cardinality="1" default="" name="welcomeMessage" type="string"/>
+
+        <field cardinality="1" default="" name="goodbyeMessage" type="string"/>
+
+        <field cardinality="1" default="2" name="logMask" type="integer"/>
+        <field cardinality="1" default="0" name="payloadMask" type="integer"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="TransportModule" name="Poller">
+    <constant name="_version" type="integer" value="2"/>
+    <field default="10000" name="pollRateMs" type="integer"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Poller" name="SQSQueueListener">
+    <constant name="_version" type="integer" value="5"/>
+    <constant name="class" type="string" value="com.vordel.dwe.aws.sqs.SQSQueueListener"/>
+    <constant name="descriptorClass" type="string" value="com.vordel.client.manager.filter.aws.sqs.SQSTransportDescriptor"/>
+    <field cardinality="1" name="clientConfiguration" type="^AWSClientConfiguration">
+      <defaultRef>
+        <key type="AWSSettings">
+          <id field="name" value="Amazon Web Services Settings"/>
+          <key type="AWSClientConfiguration">
+            <id field="name" value="Default AWS Client Configuration"/>
+          </key>
+        </key>
+      </defaultRef>
+    </field>
+    <field cardinality="1" isKey="true" name="name" type="string"/>
+    <field cardinality="?" name="awsCredential" type="^ApiKeyProfile"/>
+    <field default="us-west-1" name="region" type="string"/>
+
+    <!-- queue details -->
+    <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    <field default="requestQueue" isKey="true" name="queueName" type="string"/>
+    <field default="1000" name="visibilityTimeout" type="integer"/>
+    <field default="10" name="numMessages" type="integer"/>
+    <field default="10000" name="pollRateMs" type="integer"/>
+
+    <!-- extract to body payload or store in an attribute -->
+    <field default="Body" name="processSQSMessageAs" type="string"/>
+    <field default="text/xml" name="contentType" type="string"/>
+    <field default="sqs.body" name="storeInAttribute" type="string"/>
+    <!-- delete message on completion -->
+    <field default="true" name="deleteMessage" type="boolean"/>
+    
+    <!-- response processing-->
+    <field default="false" name="sendResponse" type="boolean"/>
+    <field default="responseQueue" name="responseQueue" type="string"/>
+    <field default="Body" name="takeResponseFrom" type="string"/>
+    <field default="${sqs.body}" name="responseAttributeName" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="LoadableModule" name="NativeModule">
+        <constant name="_version" type="integer" value="0"/>
+                <constant name="class" type="string" value="com.vordel.dwe.NativeModule"/>
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NativeModule" name="WAFProfile">
+        <constant name="_version" type="integer" value="2"/>
+        <constant name="class" type="string" value="com.vordel.dwe.mod_security.ModSecurity"/>
+        <field cardinality="1" default="" isKey="true" name="name" type="string"/> <!--  ES needs name -->
+        <field cardinality="1" default="modsecurity.conf" name="configFile" type="string"/>
+        <field cardinality="1" default="${environment.VDISTDIR}/system/conf/threat-protection/default" name="configDirectory" type="string"/>
+        <field cardinality="1" default="activated_rules" name="activatedRulesDirectory" type="string"/>
+        <field name="filterCircuit" type="^FilterCircuit"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NativeModule" name="WAFProfileGroup">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="loadorder" type="integer" value="900000"/>
+        <constant name="class" type="string" value="com.vordel.dwe.mod_security.WAFProfileGroup"/>
+        <componentType cardinality="*" name="WAFProfile"/>
+        <field cardinality="1" default="" isKey="true" name="name" type="string"/> <!--  ES needs name -->
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="NativeModule" name="SocketProtocol">
+        <constant name="_version" type="integer" value="1"/>
+        <componentType name="Interface"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SocketProtocol" name="HTTP">
+        <constant name="_version" type="integer" value="5"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.HTTP"/>
+        <componentType name="URIHandler"/>
+        <componentType name="VirtualHost"/>
+        <field cardinality="1" default="" isKey="true" name="name" type="string"/> <!--  ES needs name -->
+        <field cardinality="?" default="-1" name="corsProfile" type="^CORS"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SocketProtocol" name="SMTP">
+    
+	    <constant name="_version" type="integer" value="6"/>
+		<constant name="class" type="string" value="com.vordel.dwe.smtp.SMTPSocketProtocol"/>
+        <componentType name="SMTPHandler"/>
+
+	    <!--  ES needs name -->
+	    <field cardinality="1" default="SMTP" isKey="true" name="name" type="string"/>
+
+		<!-- Specifies the security used for the connection to the remote Mail Server.
+			 Default value is 'None'. Other possibilities are 'SSL' and 'STARTTLS' -->
+	    <field cardinality="1" default="None" name="destinationConnSecurity" type="string"/>
+
+	    <!-- The Host and Port of the remote SMTP server -->
+	    <field cardinality="1" default="" name="destinationHost" type="string"/>
+	    <field cardinality="1" default="25" name="destinationPort" type="integer"/>
+
+		<!-- Trusted CA and client certificates used in SSL/TLS/STARTTLS handshake
+			 if a secure connection to the remote mail server is required --> 
+		<field cardinality="*" name="caCerts" type="^Certificate"/>
+		<field cardinality="*" name="clientCerts" type="^Certificate"/>
+
+		<!-- List of ciphers to use during SSL/TLS/STARTTLS handshake. See OpenSSL 
+			 "ciphers" manpage -->
+		<field default="DEFAULT" name="ciphers" type="string"/>
+
+	    <!-- Specifies the username and password to be used to for authenticating
+	         the Gateway (using the SMTP AUTH command) with a remote SMTP server.
+	         It should be noted that authentication will only occur if ehloOnConnect
+	         is set to "true", the remote SMTP server advertises authentication, 
+	         and a username and password is specified. -->
+		<field cardinality="1" default="" name="authUsername" type="string"/>
+		<field cardinality="1" default="" name="authPassword" type="encrypted"/>
+
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="NativeModule" name="Interface">
+        <constant name="_version" type="integer" value="2"/>
+        <constant name="class" type="string" value="com.vordel.dwe.Interface"/>
+        <componentType cardinality="*" name="InterfaceInvariant"/>    
+        <field default="INHERIT" name="tracelevel" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Interface" name="InetInterface">
+        <constant name="_version" type="integer" value="14"/>
+        <!-- Load these late, so we don't listen until we've started most 
+             things -->
+        <constant name="loadorder" type="integer" value="1500000"/>
+
+        <field isKey="true" name="name" type="string"/>
+        
+        <!-- Note: port is a "string", not "integer from 0 to 65535" -->
+        <field name="port" type="string"/>
+
+        <!-- Address: specific interface to listen on, or "*" for wildcard -->
+        <field default="*" name="address" type="string"/>
+
+        <!-- Enable / disable listening port -->
+        <field default="true" name="enabled" type="boolean"/>
+        
+        <!-- Enable / disable domain audit for a connection -->
+        <field cardinality="1" default="false" name="auditConn" type="boolean"/>
+
+        <!-- Socket backlog, see socket(2) (or (3)) -->
+        <field default="64" name="backlog" type="integer"/>
+
+        <!-- Timeout for an idle connection -->
+        <field default="60000" name="idletimeout" type="integer"/>
+
+        <!-- Timeout for a connection that is involved in a transaction -->
+        <field default="60000" name="activetimeout" type="integer"/>
+
+        <!-- ipv6, ipv4, or any -->
+        <field default="ipv4" name="protocol" type="string"/>
+
+        <!-- Max memory per-request on this interface -->
+        <field default="27262976" name="maxRequestMemory" type="string"/>
+
+        <!-- Allow listening on non-local address for transparent proxy support. -->
+        <field default="false" isKey="false" name="transparentProxy" type="boolean"/>
+        <field default="false" isKey="false" name="reuseAddress" type="boolean"/>
+
+        <field cardinality="1" default="SYSTEM" name="opsSettingsUsage" type="string"/>
+        <field cardinality="1" default="true" name="recordInboundTxns" type="boolean"/>
+        <field cardinality="1" default="true" name="recordOutboundTxns" type="boolean"/>
+        <field cardinality="1" default="true" name="recordCircuitPath" type="boolean"/>
+        <field cardinality="1" default="true" name="recordTrace" type="boolean"/>
+        <field cardinality="1" default="true" name="recordSent" type="boolean"/>
+        <field cardinality="1" default="true" name="recordReceived" type="boolean"/>
+
+        <field cardinality="1" default="true" name="exportCorrelationId" type="boolean"/>
+
+        <!--
+            The list of content-encodings that we will receive or send
+            We cannot distinguish between an empty list, and an absent property,
+            so we use the magic single value ".inherit" to mean "derive settings
+            from parent context
+        -->
+        <field cardinality="*" default=".inherit" name="inputEncodings" type="string"/>
+        <field cardinality="*" default=".inherit" name="outputEncodings" type="string"/>
+
+        <field cardinality="?" name="wafProfile" type="^WAFProfile"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="InetInterface" name="NegotiableSSLInterface">
+        <constant name="_version" type="integer" value="6"/>
+        <constant name="class" type="string" value="com.vordel.dwe.NegotiableSSLInterface"/>
+        <componentType name="SSLIdentity"/>
+            <!-- provide an alternative certificate for different hostnames presented by the client -->
+
+        <field cardinality="1" name="serverCert" type="^Certificate"/>
+            <!-- cert and key to use to identify the server (when the server name indication from the client isn't matched by an SSLId -->
+
+        <field cardinality="*" name="caCert" type="^Certificate"/>
+            <!-- certificates that can be used by client for mutual authN -->
+
+        <field default="none" name="clientAuth" type="string"/>
+            <!-- Flag to indicate if mutual SSL authN is to be enforced, options are: "optional", "required", "none" -->
+
+        <field default="FIPS:!SSLv3:!aNULL" name="ciphers" type="string"/>
+            <!-- See OpenSSL "ciphers" manpage -->
+
+        <field default="1" name="depth" type="integer"/>
+            <!-- Maximum allowable depth of client certificate chain for client authentication -->
+
+        <field default="32" name="sessionCacheSize" type="integer"/>
+            <!-- Number of sessions to cache for this interface. -->
+ 
+        <!-- size of dynamically generated params, or base-64 encoded -->
+        <field default="" name="dhParams" type="string"/>
+
+        <!-- set of tokens for advanced SSL options: nosslv2, nosslv3, etc. -->
+        <field cardinality="*" name="ssloptions" type="string">
+            <defaultValue>nosslv2</defaultValue>
+            <defaultValue>nosslv3</defaultValue>
+            <defaultValue>notlsv1</defaultValue>
+            <defaultValue>notlsv1_1</defaultValue>
+        </field>
+
+        <!-- Should certificate's subject CN be resolved to network address -->
+        <field default="true" name="resolveSubjectCNtoNetAddr" type="boolean"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NegotiableSSLInterface" name="SSLInterface">
+        <constant name="_version" type="integer" value="3"/>
+        <constant name="class" type="string" value="com.vordel.dwe.SSLInterface"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NegotiableSSLInterface" name="STARTTLSInterface">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="class" type="string" value="com.vordel.dwe.STARTTLSInterface"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Interface" name="PacketSniffer">
+        <constant name="_version" type="integer" value="1"/>
+        <field isKey="true" name="name" type="string"/>
+        <!-- Network interface device to monitor. -->        
+        <!-- The default 'any' is only valid on Linux. -->
+        <field default="any" name="device" type="string"/>
+
+        <!-- PCap program to compile and filter network traffic. -->
+        <field default="tcp and not port 8090" name="program" type="string"/>
+
+        <!-- Promiscuous mode enables detection of all network traffic. -->
+        <field default="false" name="promiscuous" type="boolean"/>
+
+        <!-- Timeout to wait for each packet in dispatch. -->
+        <!-- In milliseconds. Zero means wait indefinitely. -->
+        <field default="5000" name="timeout" type="integer"/> 
+
+        <!-- Maximum count of packets for each dispatch call. -->
+        <field default="100" name="packetCount" type="integer"/>
+
+        <!-- Maximum time to wait for activity on an IP fragmented
+             packet before it's considered defunct. -->
+        <!-- In milliseconds. Zero means wait indefinitely. -->
+        <field default="10000" name="fragmentTimeout" type="integer"/>
+
+        <!-- Maximum time to wait for activity on a TCP session 
+             before it's considered defunct. -->
+        <!-- In milliseconds. Zero means wait indefinitely. -->
+        <field default="3600000" name="sessionTimeout" type="integer"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NativeModule" name="CORSGroup">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="loadorder" type="integer" value="900000"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.CORSGroup"/>
+        <componentType cardinality="*" name="CORS"/>
+        <field isKey="true" name="name" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="NativeModule" name="InterfaceInvariant">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="InterfaceInvariant" name="NeedsEndpoint">
+        <constant name="_version" type="integer" value="1"/>
+        <field cardinality="1" isKey="true" name="endpoint" type="^RemoteHost"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="InterfaceInvariant" name="NeedsLink">
+        <constant name="_version" type="integer" value="0"/>
+        <field cardinality="1" isKey="true" name="interface" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="LoadableModule" name="NamedLoadableModule">
+        <constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="name" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="LoadableModule" name="FTPScanner">
+        <constant name="_version" type="integer" value="10"/>
+        <constant name="class" type="string" value="com.vordel.dwe.ftp.FTPScanner"/>
+        <field cardinality="1" isKey="true" name="name" type="string"/>
+        <field cardinality="1" default="1" name="enabled" type="boolean"/>
+        <field cardinality="1" default="1" name="multiSession" type="boolean"/>
+    
+    <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    <field cardinality="1" default="([^\s]+(\.(?i)(xml|xhtml|soap|wsdl|asmx))$)" name="inPattern" type="string"/>
+    <field cardinality="1" default="FTP_DO_NOTHING" name="onPolicySuccess" type="string"/>
+    <field cardinality="?" name="policySuccessMoveDir" type="string"/>
+    <field cardinality="1" default="FTP_DO_NOTHING" name="onPolicyFailure" type="string"/>
+    <field cardinality="?" name="policyFailureMoveDir" type="string"/>
+    <field default="60000" isKey="false" name="pollRateMs" type="integer"/>
+    <field cardinality="1" default="false" name="limitFiles" type="boolean"/>
+    <field default="100" isKey="false" name="maxFiles" type="integer"/>
+    
+     <!-- connection details -->
+    <field cardinality="1" default="FTP" name="connectionType" type="string"/>
+    <field cardinality="1" name="host" type="string"/>
+    <field cardinality="1" default="21" name="port" type="integer"/>
+    <field cardinality="1" name="username" type="string"/>
+    <field cardinality="1" name="password" type="encrypted"/>
+
+    <field cardinality="1" name="filename" type="string"/>
+    <field cardinality="?" name="directory" type="string"/>
+
+    <field cardinality="1" default="true" name="passive" type="boolean"/>
+    <field cardinality="1" default="ASCII" name="fileType" type="string"/>
+
+    <!-- FTPS settings -->
+    <field cardinality="1" default="true" name="ftpsPassive" type="boolean"/>
+    <field cardinality="1" default="ASCII" name="ftpsFileType" type="string"/>
+    
+    <!-- FTPS settings -->
+    <field cardinality="1" default="SSL" name="sslProtocol" type="string"/>
+    <field cardinality="1" default="false" name="isImplicit" type="boolean"/>
+    <field cardinality="?" default="0" name="execPbsz" type="string"/>
+    <field cardinality="?" default="C" name="execProt" type="string"/>
+    <field cardinality="*" name="trustedCerts" type="^Certificate"/>
+    <field cardinality="*" name="clientCert" type="^Certificate"/>
+
+    <!-- SFTP settings -->
+    <field cardinality="*" name="sftpClientKeyPair" type="^KeyPair"/>
+    <field cardinality="?" name="hostFingerPrint" type="string"/>
+
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="LoadableModule" name="MimeType">
+        <constant name="_version" type="integer" value="4"/>
+        <constant name="class" type="string" value="com.vordel.system.MimeType"/>
+        <field isKey="true" name="mimeType" type="string"/>
+        <field cardinality="*" name="extension" type="string"/>
+        <field cardinality="?" name="bodyFactory" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="RootChild" name="Process">
+        <constant name="_version" type="integer" value="0"/> <!-- Common features to all processes created by Vordel software. -->
+		<field isKey="true" name="name" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Process" name="JavaProcess">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="JavaProcess" name="NetService">
+    <constant name="_version" type="integer" value="5"/>
+    <!-- Static type-field. -->
+    <constant name="executableImage" type="string" value="vshell"/>
+    <componentType name="LoadableModule"/>
+    <componentType name="ClassLoader"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="RootChild" name="NamedTopLevelGroup">
+        <constant name="_version" type="integer" value="0"/>
+		<field isKey="true" name="name" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="NamedTopLevelGroup" name="APISecurityProfileGroup">
+    <constant name="_version" type="integer" value="1"/>
+    <componentType cardinality="*" name="APISecurityProfile"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="false" extends="Entity" name="Property">
+        <constant name="_version" type="integer" value="0"/>
+		<field isKey="true" name="name" type="string"/>
+		<field name="value" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="false" extends="Property" name="MVProperty">
+    <constant name="_version" type="integer" value="1"/>
+    <componentType cardinality="*" name="Property"/>
+    <field cardinality="*" name="value" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="JSONSchema">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="URL" type="string"/>
+    <field cardinality="1" name="contents" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="SSLIdentity">
+        <constant name="_version" type="integer" value="1"/>
+
+        <field cardinality="1" isKey="true" name="servername" type="string"/>
+            <!-- If name presented by client matches this string... -->
+
+        <field cardinality="1" name="certificate" type="^Certificate"/>
+            <!-- ... identify ourselves with this certificate + key -->
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CORS">
+        <constant name="_version" type="integer" value="0"/>
+        <field cardinality="1" default="Cross Origin Resource Sharing" isKey="true" name="name" type="string"/> <!--  ES needs name -->
+        <field cardinality="1" default="true" name="enabled" type="boolean"/>
+        <field cardinality="*" name="origins" type="string"/>
+        <field cardinality="*" name="allowedHeaders" type="string"/>
+        <field cardinality="*" name="exposedHeaders" type="string"/>
+        <field cardinality="1" default="false" name="supportCredentials" type="boolean"/>
+        <field cardinality="1" default="" name="maxAge" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="URIHandler">
+        <constant name="_version" type="integer" value="5"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.URIHandler"/>
+		<field cardinality="1" default="" isKey="true" name="uriprefix" type="string"/>
+        <field cardinality="1" default="*" isKey="true" name="httpMethod" type="string"/>
+    	<field cardinality="1" default="LONGEST" name="pathMatching" type="string"/> <!-- EXACT, LONGEST -->
+        <field cardinality="?" default="-1" name="corsProfile" type="^CORS"/>
+    	<field cardinality="1" default="HTTP" name="corsUsage" type="string"/> <!-- HTTP, URIHANDLER -->
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="ReflectService">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="ServletApplication">
+        <constant name="_version" type="integer" value="1"/>
+        <componentType name="Servlet"/>
+		<field default="300" name="sessiontimeoutSeconds" type="integer"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="StaticContent">
+        <constant name="_version" type="integer" value="2"/>
+		<componentType cardinality="*" name="Property"/>
+		<field cardinality="1" name="fileSystemPath" type="string"/>
+		<field cardinality="1" default="1" name="generateIndex" type="boolean"/>
+		<field cardinality="1" default="index.html" name="indexfile" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="StaticFile">
+    <constant name="_version" type="integer" value="1"/>
+    <componentType cardinality="*" name="Property"/>
+    <field cardinality="1" name="file" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="XMLFirewall">
+    <constant name="_version" type="integer" value="9"/>
+    <constant name="class" type="string" value="com.vordel.dwe.http.HTTPPlugin"/>
+    <constant name="loadorder" type="integer" value="2000000"/>
+    <componentType cardinality="*" name="CircuitReference"/>
+    <componentType cardinality="*" name="URIHandler"/>
+    <field default="1" name="evaluate" type="boolean"/>
+    <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    <field cardinality="1" default="2" name="logMask" type="integer"/>
+    <field cardinality="1" default="0" name="payloadMask" type="integer"/>
+    <field cardinality="1" default="1" name="enabled" type="boolean"/>
+    <field cardinality="1" default="0" name="enableAccessLogging" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="Websocket">
+        <constant name="_version" type="integer" value="2"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.WebsocketPlugin"/>
+
+    <field cardinality="1" default="application/json" name="contentType" type="string"/>
+
+    <!--
+    <field name="httpMethod" type="string" cardinality="1" default="GET" isKey="true"/>
+    -->
+	<field cardinality="1" default="0" name="expirationTime" type="integer"/>
+	<field cardinality="?" default="" name="incomingPolicy" type="^FilterCircuit"/>
+	<field default="false" name="evaluate_incoming" type="boolean"/>
+	<field cardinality="?" default="" name="outgoingPolicy" type="^FilterCircuit"/>
+	<field default="false" name="evaluate_outgoing" type="boolean"/>
+	<field cardinality="1" default="" isKey="true" name="on_upgrade_policy" type="^FilterCircuit"/>
+	<field default="false" name="evaluate_on_upgrade" type="boolean"/>
+	<field cardinality="?" default="" name="on_close_policy" type="^FilterCircuit"/>
+	<field default="false" name="evaluate_on_close" type="boolean"/>
+
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="PortalAPIBroker">
+    <constant name="_version" type="integer" value="0"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.PortalBroker"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="APIBroker">
+    <constant name="_version" type="integer" value="9"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.Broker"/>
+    <componentType cardinality="*" name="APIMethod"/>
+    <componentType cardinality="*" name="MVProperty"/>
+    
+    <field name="name" type="string"/>
+    <field name="id" type="string"/>
+    <field name="description" type="string"/>
+    <field cardinality="1" default="" name="markdownFile" type="string"/>
+    <field cardinality="1" default="INTERNAL" name="descriptionLocation" type="string"/> <!-- INTERNAL, MARKDOWN_FILE -->
+    <field cardinality="1" default="" name="summary" type="string"/>
+    <field cardinality="1" default="1.0" name="apiVersion" type="string"/>
+    <field name="destination" type="string"/>
+    <field cardinality="?" name="securityProfile" type="^APISecurityProfile"/>
+    <field cardinality="1" default="HTTP" name="routingType" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="APIMethod">
+
+    <constant name="_version" type="integer" value="16"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.Method"/>
+
+    <componentType cardinality="*" name="APIMethodQueryStringParameter"/>
+    <componentType cardinality="*" name="APIMethodErrorResponse"/>
+    <componentType cardinality="*" name="APIMethodDestinationParameter"/>
+    <componentType cardinality="?" name="MimeTypeFilter"/>
+    <componentType cardinality="*" name="MVProperty"/>
+
+    <field name="name" type="string"/>
+    <field name="id" type="string"/>
+    <field name="description" type="string"/>
+    <field cardinality="1" default="" name="markdownFile" type="string"/>
+    <field cardinality="1" default="INTERNAL" name="descriptionLocation" type="string"/> <!-- INTERNAL, MARKDOWN_FILE -->
+    <field name="notes" type="string"/>
+    <field name="destinationHttpVerb" type="string"/>
+    <field cardinality="1" name="destinationPath" type="string"/>
+    <field name="copyQueryParams" type="boolean"/>
+    <field cardinality="1" default="1" name="blockUnspecifiedParams" type="boolean"/>
+    <field cardinality="1" default="0" name="checkSourceContentType" type="boolean"/>
+    <field cardinality="1" default="INBOUND" name="copyContentType" type="string"/> <!-- INBOUND, CUSTOM -->
+    <field cardinality="1" default="application/x-www-form-urlencoded" name="destinationContentType" type="string"/>
+    <field cardinality="1" name="responseSchema" type="^JSONSchema"/>
+    <field cardinality="1" name="securityProfile" type="^APISecurityProfile"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="CoreAPIBroker">
+    <constant name="_version" type="integer" value="0"/>
+    <constant name="class" type="string" value="com.vordel.coreapireg.runtime.CoreApiBroker"/>
+    <componentType cardinality="*" name="CoreAPIMethod"/>
+    <componentType cardinality="*" name="MVProperty"/>
+    
+    <field name="name" type="string"/>
+    <field name="id" type="string"/>
+    <field name="description" type="string"/>
+    <field cardinality="1" default="" name="markdownFile" type="string"/>
+    <field cardinality="1" default="INTERNAL" name="descriptionLocation" type="string"/> <!-- INTERNAL, MARKDOWN_FILE -->
+    <field cardinality="1" default="" name="summary" type="string"/>
+    <field cardinality="1" default="1.0" name="apiVersion" type="string"/>
+    <field name="destination" type="string"/>
+    <field cardinality="1" default="HTTP" name="routingType" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="XMLFirewall" name="CoreAPIMethod">
+
+    <constant name="_version" type="integer" value="0"/>
+    <constant name="class" type="string" value="com.vordel.coreapireg.runtime.Method"/>
+
+    <componentType cardinality="*" name="CoreAPIMethodQueryStringParameter"/>
+    <componentType cardinality="*" name="CoreAPIMethodErrorResponse"/>
+    <componentType cardinality="*" name="CoreAPIMethodDestinationParameter"/>
+    <componentType cardinality="?" name="MimeTypeFilter"/>
+    <componentType cardinality="*" name="MVProperty"/>
+
+    <field name="name" type="string"/>
+    <field name="id" type="string"/>
+    <field name="description" type="string"/>
+    <field cardinality="1" default="" name="markdownFile" type="string"/>
+    <field cardinality="1" default="INTERNAL" name="descriptionLocation" type="string"/> <!-- INTERNAL, MARKDOWN_FILE -->
+    <field name="notes" type="string"/>
+    <field name="destinationHttpVerb" type="string"/>
+    <field cardinality="1" name="destinationPath" type="string"/>
+    <field name="copyQueryParams" type="boolean"/>
+    <field cardinality="1" default="1" name="blockUnspecifiedParams" type="boolean"/>
+    <field cardinality="1" default="0" name="checkSourceContentType" type="boolean"/>
+    <field cardinality="1" default="INBOUND" name="copyContentType" type="string"/> <!-- INBOUND, CUSTOM -->
+    <field cardinality="1" default="application/x-www-form-urlencoded" name="destinationContentType" type="string"/>
+    <field cardinality="1" name="responseSchema" type="^JSONSchema"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="GarbageCollector">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="Raw">
+        <constant name="_version" type="integer" value="0"/>
+		<field name="fileSystemPath" type="string"/>
+		<field name="defaultFile" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="OPDbViewer">
+    <constant name="_version" type="integer" value="0"/>
+    <constant name="class" type="string" value="com.vordel.dwe.http.OPDbViewer"/>
+    <constant name="loadorder" type="integer" value="2000000"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="MetricsFeedServer">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="VirtualHost">
+        <constant name="_version" type="integer" value="1"/>
+		<constant name="class" type="string" value="com.vordel.dwe.http.VirtualHost"/>
+        <componentType name="URIHandler"/>
+		<field cardinality="1" default="" isKey="true" name="name" type="string"/>
+		<field cardinality="*" default="" name="host" type="string"/>
+    	<field cardinality="1" default="1" name="enabled" type="boolean"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="Servlet">
+        <constant name="_version" type="integer" value="0"/>
+    <componentType name="Property"/>
+    <field isKey="true" name="uri" type="string"/>
+    <field name="class" type="string"/>
+    <field default="Anonymous" name="name" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CircuitReference">
+    <constant name="_version" type="integer" value="2"/>
+    <componentType cardinality="*" name="Property"/>
+    <field isKey="true" name="name" type="string"/>
+    <field cardinality="1" name="priority" type="integer"/>
+    <field cardinality="?" name="circuitPK" type="^FilterCircuit"/>
+    <!-- The evaluation of the referenced circuit is conditional. By default evaluation is enabled. -->
+    <field cardinality="1" default="true" name="evaluate" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="CircuitReference" name="PortableCircuitReference">
+    <constant name="_version" type="integer" value="0"/>
+    <field cardinality="?" name="circuitPK" type="^FilterCircuit"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="CircuitReference" name="SoftCircuitReference">
+    <constant name="_version" type="integer" value="0"/>
+    <!-- 
+      Override the circuitPK reference, making it a string value which can be interpreted as a reference 
+      at run time.
+    -->
+    <field cardinality="?" name="circuitPK" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="Filter">
+        <constant name="_version" type="integer" value="5"/>
+        <field cardinality="?" name="successNode" type="@Filter"/>
+        <field cardinality="?" name="failureNode" type="@Filter"/>
+        <field isKey="true" name="name" type="string"/>
+        <field cardinality="1" default="2" name="logMask" type="integer"/>
+        <field cardinality="1" default="Filter aborted due to exception" name="logFatal" type="string"/>
+        <field cardinality="1" default="Filter failed" name="logFailure" type="string"/>
+        <field cardinality="1" default="Filter passed" name="logSuccess" type="string"/>
+        <field cardinality="1" name="category" type="@Category">
+            <defaultRef>
+                <key type="CategoryGroup">
+                  <id field="name" value="Filter Categories"/>
+                  <key type="Category">
+                      <id field="name" value="miscellaneous"/>
+                  </key>
+                </key>
+            </defaultRef>
+        </field>
+      <field cardinality="1" default="0" name="abortProcessingOnLogError" type="boolean"/>
+      <field cardinality="1" default="SERVICE" name="logMaskType" type="string"/>
+      <field cardinality="*" name="classloader" type="^ClassLoader"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="MimeTypeFilter">
+        <constant name="_version" type="integer" value="1"/>	    
+        <constant name="class" type="string" value="com.vordel.circuit.contentfiltering.MimeTypeFilter"/>
+	    <componentType cardinality="*" name="MimeType"/>
+	    <field cardinality="1" default="1" name="allowAttachments" type="boolean"/>
+        <!-- Override the category to give it a different default -->
+        <field cardinality="1" name="category" type="@Category">
+          <defaultRef>
+            <key type="CategoryGroup">
+              <id field="name" value="Filter Categories"/>
+              <key type="Category">
+                <id field="name" value="content-filtering"/>
+              </key>
+            </key>
+          </defaultRef>
+        </field>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="ServiceContextFilter">
+      <constant name="_version" type="integer" value="5"/>
+      <constant name="class" type="string" value="com.vordel.circuit.ws.ServiceContextFilter"/>
+      <field cardinality="1" default="" name="serviceName" type="string"/>
+      <field cardinality="1" default="3" name="metricsMask" type="integer"/>
+      <field cardinality="1" default="authentication.subject.id" name="clientAttributeName" type="string"/>
+      <field cardinality="1" default="0" name="compositeContext" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="ServiceContextFilter" name="OAuth2AccessTokenFilter">
+    <constant name="_version" type="integer" value="1"/>
+    <field cardinality="1" name="tokenStore" type="^AccessTokenPersist"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="OAuth2AccessTokenFilter" name="ValidateOAuth2AccessTokenFilter">
+    <constant name="_version" type="integer" value="8"/>
+    <constant name="class" type="string" value="com.vordel.circuit.oauth.provider.ValidateOAuthAccessTokenFilter"/>
+    <componentType cardinality="+" name="WithScopes"/>
+    <field cardinality="1" default="HEADER" name="accessTokenLocation" type="string"/>
+    <field cardinality="?" name="accessTokenLocationSelector" type="string"/>
+    <field cardinality="?" default="Bearer" name="authorizationHeaderPrefix" type="string"/>
+    <field cardinality="?" name="accessTokenLocationQueryString" type="string"/>
+    <field cardinality="1" default="Any" name="scopesMustMatch" type="string"/>
+    <field cardinality="1" default="true" name="removeCredentials" type="boolean"/>
+    <field cardinality="1" default="true" name="recordOutboundTxns" type="boolean"/>
+    <!-- Can validate OAuth scopes with the internal list or by calling a circuit -->
+    <field cardinality="1" default="List" name="validateScopesWith" type="string"/>
+    <!-- Callout to a circuit and validate the OAuth scopes -->
+    <field cardinality="?" name="circuitPK" type="^FilterCircuit"/>
+    <!-- Message attribute set to define what scopes are required to access resource -->
+    <field cardinality="?" default="${scopes.required}" name="scopesRequired" type="string"/>
+</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="SslFilter">
+        <constant name="_version" type="integer" value="0"/>
+		<constant name="class" type="string" value="com.vordel.circuit.authn.SslFilter"/>
+        <field cardinality="1" name="category" type="@Category">
+          <defaultRef>
+            <key type="CategoryGroup">
+              <id field="name" value="Filter Categories"/>
+              <key type="Category">
+                <id field="name" value="authentication"/>
+              </key>
+            </key>
+          </defaultRef>
+        </field>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="false" extends="Entity" name="WithScopes">
+        <constant name="_version" type="integer" value="0"/>
+        <field isKey="true" name="name" type="string"/>
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="SMTPHandler">
+        <constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="filterCircuit" type="^FilterCircuit"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SMTPHandler" name="HELOHandler">
+	    <constant name="_version" type="integer" value="3"/>
+	    <constant name="class" type="string" value="com.vordel.dwe.smtp.HELOPlugin"/>
+		<constant name="loadorder" type="integer" value="2000000"/>
+
+		<!-- The name of the connecting client. -->
+		<field cardinality="1" default="Hello ${smtp.helo.domain}" name="greeting" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SMTPHandler" name="MAILHandler">
+        <constant name="_version" type="integer" value="1"/>
+	    <constant name="class" type="string" value="com.vordel.dwe.smtp.MAILPlugin"/>
+		<constant name="loadorder" type="integer" value="2000000"/>
+
+	<!-- Wildcardable mail address, matched against the <MAIL FROM> SMTP command. -->
+	<field cardinality="1" default="" name="fromAddress" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SMTPHandler" name="RCPTHandler">
+        <constant name="_version" type="integer" value="1"/>
+	    <constant name="class" type="string" value="com.vordel.dwe.smtp.RCPTPlugin"/>
+		<constant name="loadorder" type="integer" value="2000000"/>
+
+	<!-- Wildcardable mail address, matched against the <RCPT TO> SMTP command. -->
+	<field cardinality="1" default="" name="toAddress" type="string"/>
+
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SMTPHandler" name="DATAHandler">
+        <constant name="_version" type="integer" value="0"/>
+	    <constant name="class" type="string" value="com.vordel.dwe.smtp.DATAPlugin"/>
+		<constant name="loadorder" type="integer" value="2000000"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SMTPHandler" name="AUTHHandler">
+        <constant name="_version" type="integer" value="0"/>
+	    <constant name="class" type="string" value="com.vordel.dwe.smtp.AUTHPlugin"/>
+		<constant name="loadorder" type="integer" value="2000000"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="JMSConsumer">
+        <constant name="_version" type="integer" value="7"/>
+
+            <!--
+                used to specify how to interpret the contents of the received
+                JMS message in the circuit. Values are:
+                1 (AUTOMIME) :
+                        Create a content.body attribute based on the SOAP Over JMS draft specification
+                2 (INFER) :
+                        Create an attribute "attributeName", guessing the Java
+                        base type to create from the underlying JMS message
+                        type. JMS TextMessage, BytesMessage, MapMessage, will be
+                        converted into a java.lang.String, a byte[], and a
+                        java.lang.Map, respectively. A JMS ObjectMessage will be
+                        deserialised into attributeName.
+
+                3 (RAW):
+                        Insert the JMS message directly into the attribute attributeName
+            -->
+
+            <field cardinality="1" default="1" name="extractMethod" type="integer"/>
+            <field cardinality="1" default="jms.message" name="attributeName" type="string"/>            
+            <!-- destinationType: QUEUE, TOPIC, JNDI_LOOKUP -->
+            <field cardinality="1" default="QUEUE" name="destinationType" type="string"/>
+            <field cardinality="1" isKey="true" name="destination" type="string"/>
+            <field cardinality="?" name="selector" type="string"/>
+            <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+            <field cardinality="1" default="true" name="sendReply" type="boolean"/>
+            <field cardinality="1" default="2" name="logMask" type="integer"/>
+            <field cardinality="1" default="0" name="payloadMask" type="integer"/>
+            <field cardinality="1" default="false" name="isDurableSubscriber" type="boolean"/>
+            <field cardinality="?" name="subscriberName" type="string"/>
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="PatternPolicyPair">
+		<constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="pattern" type="string"/>
+		<field cardinality="1" name="policy" type="^FilterCircuit"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="FileTransferCommand"> <!--  Command is already used -->
+		<constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="name" type="string"/>
+        <field cardinality="1" name="type" type="string"/>
+		<field cardinality="1" name="description" type="string"/>
+        <field cardinality="1" name="enabled" type="boolean"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="AccessControlList1">
+		<constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="ipAddress" type="string"/>
+		<field cardinality="1" default="255.255.255.255" isKey="true" name="mask" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="AccessControlList2">
+		<constant name="_version" type="integer" value="0"/>
+		<field cardinality="1" isKey="true" name="ipAddress" type="string"/>
+		<field cardinality="1" default="255.255.255.255" isKey="true" name="mask" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="APIMethodQueryStringParameter">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="name" type="string"/>
+    <field name="description" type="string"/>
+    <field name="paramType" type="string"/>
+    <field name="dataType" type="string"/>
+    <field default="0" name="required" type="boolean"/>
+    <field default="0" name="allowMultiple" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="APIMethodDestinationParameter">
+    <constant name="_version" type="integer" value="1"/>
+    <field isKey="true" name="name" type="string"/>
+    <field name="value" type="string"/>
+    <field cardinality="1" default="query" name="type" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="APIMethodErrorResponse">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="responsecode" type="integer"/>
+    <field name="reason" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="APISecurityDevice">
+    <constant name="_version" type="integer" value="3"/>
+    <field cardinality="1" isKey="true" name="id" type="string"/>
+    <field cardinality="1" isKey="true" name="order" type="integer"/>
+    <field cardinality="1" default="true" name="removeCredentialsOnSuccess" type="boolean"/>
+    <field cardinality="1" default="Any" name="scopesMustMatch" type="string"/> <!-- Any, All -->
+    <field cardinality="1" default="" name="scopes" type="string"/> <!-- comma-separated list of scopes -->
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="StdAPISecurityDevice">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.StdAPISecurityDevice"/>
+    <field cardinality="1" name="credentialLocation" type="string"/>
+    <field cardinality="1" name="credentialType" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="HTTPBasicSecurityDevice">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.HTTPBasicSecurityDevice"/>
+    <field cardinality="1" name="realm" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="AWSQueryStringRequestSecurityDevice">
+    <constant name="_version" type="integer" value="2"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.AWSQueryStringSecurityDevice"/>
+    <field cardinality="1" default="AWSAccessKeyId" name="apiKeyFieldName" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="AWSRESTRequestSecurityDevice">
+    <constant name="_version" type="integer" value="2"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.AWSRESTSecurityDevice"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="APIKeyOnlySecurityDevice">
+    <constant name="_version" type="integer" value="3"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.APIKeyOnlySecurityDevice"/>
+    <field cardinality="1" default="KeyId" name="apiKeyFieldName" type="string"/>
+    <field cardinality="1" default="HEADER" name="takeFrom" type="string"/> <!-- QUERY, HEADER -->
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APIKeyOnlySecurityDevice" name="APIKeyAndSecretSecurityDevice">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.APIKeyAndSecretSecurityDevice"/>
+    <field cardinality="1" default="SecretKey" name="apiSecretFieldName" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="AnonymousAccessSecurityDevice">
+    <constant name="_version" type="integer" value="2"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.AnonymousAccessSecurityDevice"/>
+    <field cardinality="1" default="Pass Through" name="subjectIdFieldName" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="OAuthSecurityDevice">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.OAuthSecurityDevice"/>
+    <componentType cardinality="1" name="ValidateOAuth2AccessTokenFilter"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="TwoWaySSLSecurityDevice">
+    <constant name="_version" type="integer" value="2"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.TwoWaySSLSecurityDevice"/>
+    <componentType cardinality="1" name="SslFilter"/>
+    <field cardinality="1" default="${certificate.subject.CN}" name="apiKeyFieldName" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="APISecurityDevice" name="AuthenticationPolicySecurityDevice">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.vordel.apiportal.runtime.AuthenticationPolicySecurityDevice"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="APISecurityProfile">
+    <constant name="_version" type="integer" value="1"/>
+    
+    <componentType cardinality="*" name="APISecurityDevice"/>    
+    
+    <field cardinality="1" isKey="true" name="name" type="string"/>
+    <field cardinality="?" name="description" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CoreAPIMethodQueryStringParameter">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="name" type="string"/>
+    <field name="description" type="string"/>
+    <field name="paramType" type="string"/>
+    <field name="dataType" type="string"/>
+    <field default="0" name="required" type="boolean"/>
+    <field default="0" name="allowMultiple" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CoreAPIMethodDestinationParameter">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="name" type="string"/>
+    <field name="value" type="string"/>
+    <field cardinality="1" default="query" name="type" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CoreAPIMethodErrorResponse">
+    <constant name="_version" type="integer" value="0"/>
+    <field isKey="true" name="responsecode" type="integer"/>
+    <field name="reason" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="Root">
+  <componentType cardinality="*" name="RootChild"/>
+  <field isKey="true" name="name" type="string"/>
+
+  <!-- Used by the FileStore implementation, records the last time the store was written -->
+  <field name="lastModificationTime" type="utctime"/>
+
+  <!-- Used by the in-memory ad filestore implementations, records the next integer to use as a PK -->
+  <field name="pkInc" type="integer"/>
+
+  <!-- 
+          Provide a user-extensible means to tag an individual store, that won't interfere with federated store 
+      composition. If it's done in the root node, then there are no synchronization issues across stores in the
+      federated context, as each store naturally has full control of its root node, with only the Primary Store's
+      root being visible via the federated view.
+
+          Provide a pair of multivalued string fields. It is up to the user to ensure that the contents are
+      synchronized. One string list acts as the key, with the entry in the corresponding list at the same index giving
+      the value for that key, e.g.
+      
+          tagName[0] = 'gitrev'
+          tagName[0] = 'e39a0a77b92c5b82e5a662a7de0b33daeadfb170'
+          
+      equates to the mapping 'gitrev' -> 'e39a0a77b92c5b82e5a662a7de0b33daeadfb170'
+  -->
+  <field cardinality="*" name="tagName" type="string"/>
+  <field cardinality="*" name="tagValue" type="string"/>
+</entityType>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Root" entityPK="0">
+	<fval name="name"><value>System Components</value></fval>
+	<fval name="tagName"><value>gitrev</value></fval>
+	<fval name="tagValue"><value>cc876d01142ef18df824b7466657f1620491e1bf</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="NetService" entityPK="7306409650848375506" parentPK="0">
+	<fval name="name"><value>Service</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="HTTP" entityPK="6532085923221497306" parentPK="7306409650848375506">
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="name"><value>Service</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="XMLFirewall" entityPK="-2275965914745794893" parentPK="6532085923221497306">
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="corsUsage"><value>HTTP</value></fval>
+	<fval name="enableAccessLogging"><value>0</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="filterCircuit"><value contentType="reference">
+<key type='FilterCircuit'><id field='name' value='Hello World Service'/></key>	</value></fval>
+	<fval name="httpMethod"><value>GET</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="pathMatching"><value>LONGEST</value></fval>
+	<fval name="payloadMask"><value>0</value></fval>
+	<fval name="uriprefix"><value>/hello-world</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference" entityPK="-9129587519145092098" parentPK="-2275965914745794893">
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_REQ</value></fval>
+	<fval name="priority"><value>1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference" entityPK="-827258106503588255" parentPK="-2275965914745794893">
+	<fval name="circuitPK"><value>system.policy.response</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_RSP</value></fval>
+	<fval name="priority"><value>4</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference" entityPK="7567747427715217549" parentPK="-2275965914745794893">
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_RSP</value></fval>
+	<fval name="priority"><value>3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference" entityPK="8172171825695806573" parentPK="-2275965914745794893">
+	<fval name="circuitPK"><value>system.policy.request</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_REQ</value></fval>
+	<fval name="priority"><value>0</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="InetInterface" entityPK="5233890617432964336" parentPK="6532085923221497306">
+	<fval name="activetimeout"><value>60000</value></fval>
+	<fval name="address"><value>*</value></fval>
+	<fval name="auditConn"><value>false</value></fval>
+	<fval name="backlog"><value>64</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="exportCorrelationId"><value>1</value></fval>
+	<fval name="idletimeout"><value>60000</value></fval>
+	<fval name="inputEncodings"><value>.inherit</value></fval>
+	<fval name="maxRequestMemory"><value>27262976</value></fval>
+	<fval name="name"><value>HTTP</value></fval>
+	<fval name="opsSettingsUsage"><value>SYSTEM</value></fval>
+	<fval name="outputEncodings"><value>.inherit</value></fval>
+	<fval name="port"><value>8080</value></fval>
+	<fval name="protocol"><value>ipv4</value></fval>
+	<fval name="recordCircuitPath"><value>1</value></fval>
+	<fval name="recordInboundTxns"><value>1</value></fval>
+	<fval name="recordOutboundTxns"><value>1</value></fval>
+	<fval name="recordReceived"><value>1</value></fval>
+	<fval name="recordSent"><value>1</value></fval>
+	<fval name="recordTrace"><value>1</value></fval>
+	<fval name="reuseAddress"><value>false</value></fval>
+	<fval name="tracelevel"><value>INHERIT</value></fval>
+	<fval name="transparentProxy"><value>0</value></fval>
+	<fval name="wafProfile"><value contentType="reference">-1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="WAFProfileGroup" entityPK="7335944798864196231" parentPK="0">
+	<fval name="name"><value>Threat Protection Profiles</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CORSGroup" entityPK="7900823672881829768" parentPK="0">
+	<fval name="name"><value>CORS Profiles</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ESConfiguration" entityPK="8074630302321866118" parentPK="0">
+	<fval name="name"><value>Entity Store Configuration</value></fval>
+	<fval name="passphraseTest"><value>aHR0cDsvL3d3dy52b3JkZWwuY29t</value></fval>
+	<fval name="productKey"><value>VordelGateway</value></fval>
+	<fval name="version"><value>7.6.2</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="APISecurityProfileGroup" entityPK="8961687761643234539" parentPK="0">
+	<fval name="name"><value>REST API Security Profiles</value></fval>
+</entity>
+</entityStoreData>

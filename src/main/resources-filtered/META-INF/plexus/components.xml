@@ -1,0 +1,84 @@
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>axway-policy-archive</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
+					<package>com.axway.maven.plugins:apigw-maven-plugin:axpar</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>axway-server-archive</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
+					<package>com.axway.maven.plugins:apigw-maven-plugin:axsar</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+			<role-hint>axway-deployment-archive</role-hint>
+			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
+			<configuration>
+				<phases>
+					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
+					<package>com.axway.maven.plugins:apigw-maven-plugin:axdar</package>
+					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
+					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
+				</phases>
+			</configuration>
+		</component>
+
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>axway-policy-archive</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<!--the extension used by Maven in the repository -->
+				<extension>axpar</extension>
+				<!--the type used when specifying dependencies etc. -->
+				<type>axway-policy-archive</type>
+				<!--the packaging used when declaring an implementation of the packaging -->
+				<packaging>axway-policy-archive</packaging>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>axway-server-archive</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<!--the extension used by Maven in the repository -->
+				<extension>axsar</extension>
+				<!--the type used when specifying dependencies etc. -->
+				<type>axway-server-archive</type>
+				<!--the packaging used when declaring an implementation of the packaging -->
+				<packaging>axway-server-archive</packaging>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>axway-deployment-archive</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<!--the extension used by Maven in the repository -->
+				<extension>axdar</extension>
+				<!--the type used when specifying dependencies etc. -->
+				<type>axway-deployment-archive</type>
+				<!--the packaging used when declaring an implementation of the packaging -->
+				<packaging>axway-deployment-archive</packaging>
+			</configuration>
+		</component>
+
+	</components>
+</component-set>

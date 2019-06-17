@@ -1,0 +1,14 @@
+{
+  "entities": {
+    "/[CircuitContainer]name=Hello World/[FilterCircuit]name=Hello World Message/[SetAttributeFilter]name=Set name": {
+      "description": "", 
+      "fields": {
+        "attributeValue#0": {
+          "type": "string", 
+          "used": true, 
+          "value": "Fred"
+        }
+      }
+    }
+  }
+}

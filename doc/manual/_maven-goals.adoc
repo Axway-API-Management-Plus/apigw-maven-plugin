@@ -1,0 +1,25 @@
+= Maven Goals
+:Author: Martin Look
+:Email: mlook@axway.com
+
+== Initialize Project
+
+=== apigw:init
+
+
+== Edit Project
+
+=== apigw:policystudio
+
+=== apigw:configstudio
+
+== Build
+
+=== clean
+
+=== package
+
+=== install
+
+=== deploy
+

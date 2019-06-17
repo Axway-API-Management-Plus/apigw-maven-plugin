@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>hello-world-dev</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>axway-deployment-archive</packaging>
+
+  <name>Hello World (DEV)</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>hello-world-gw</artifactId>
+      <version>0.1.0-SNAPSHOT</version>
+      <type>axway-server-archive</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.axway.maven.plugins</groupId>
+        <artifactId>apigw-maven-plugin</artifactId>
+        <version>0.1.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <!--
+          <certsFile>${basedir}/src/main/axwgw/gateway-cert.json</certsFile>
+          <propertyFile>${basedir}/src/main/axwgw/gateway-prop.json</propertyFile>
+          -->
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+ </project>

@@ -1,0 +1,207 @@
+<configuration activeAssembly='DEFAULT'>
+ <storeType name='CertStore'>
+  <branch>
+   <node>/[Certificates]name=Certificate Store</node>
+  </branch>
+  <branch>
+   <node>/[KeyPairs]name=Key Pairs</node>
+  </branch>
+  <branch>
+   <node>/[PGPKeyPairs]name=PGP Key Pairs</node>
+  </branch>
+ </storeType>
+ <storeType name='EnvSettingsStore'>
+  <branch>
+   <node>/[EnvironmentalizedEntities]name=Environmentalized Entities Metadata</node>
+  </branch>
+ </storeType>
+ <storeType name='ExtConnsStore'>
+  <branch>
+   <node>/</node>
+   <componentType name='CassandraSettings'/>
+   <componentType name='OESSecurityRuntimeLoadableModule'/>
+   <componentType name='SunAccessManagerSettings'/>
+  </branch>
+  <branch>
+   <node>/[AWSSettings]name=Amazon Web Services Settings</node>
+  </branch>
+  <branch>
+   <node>/[AlertManager]name=Default Alert Configuration</node>
+  </branch>
+  <branch>
+   <node>/[AuthProfilesGroup]name=Auth Profiles</node>
+  </branch>
+  <branch>
+   <node>/[AuthnRepositoryGroup]name=Authentication Repositories</node>
+  </branch>
+  <branch>
+   <node>/[CacheManager]name=Cache Manager</node>
+  </branch>
+  <branch>
+   <node>/[ConnectionSetGroup]name=Connection Sets</node>
+  </branch>
+  <branch>
+   <node>/[DbConnectionGroup]name=Database Connections</node>
+  </branch>
+  <branch>
+   <node>/[GSSAcceptors]name=GSS Acceptors</node>
+  </branch>
+  <branch>
+   <node>/[GSSInitiators]name=GSS Initiators</node>
+  </branch>
+  <branch>
+   <node>/[GSSMechanismOidGroup]name=GSS Mechanism OIDs</node>
+  </branch>
+  <branch>
+   <node>/[GSSPrincipalNameOidGroup]name=GSS Principal Name OIDs</node>
+  </branch>
+  <branch>
+   <node>/[GSSPrincipals]name=GSS Principals</node>
+  </branch>
+  <branch>
+   <node>/[ICAPServerGroup]name=ICAP Servers</node>
+  </branch>
+  <branch>
+   <node>/[JMSServiceGroup]name=JMS Services</node>
+  </branch>
+  <branch>
+   <node>/[LdapDirectoryGroup]name=LDAP Directories</node>
+  </branch>
+  <branch>
+   <node>/[NetService]</node>
+   <componentType name='KerberosConfiguration'/>
+   <componentType name='RemoteHost'/>
+   <componentType name='TivoliSettingsReference'/>
+  </branch>
+  <branch>
+   <node>/[OAuth2StoresGroup]name=OAuth2 Stores</node>
+  </branch>
+  <branch>
+   <node>/[ProxyServerGroup]name=Proxy Servers</node>
+  </branch>
+  <branch>
+   <node>/[RadiusClients]name=RADIUS Client Settings</node>
+  </branch>
+  <branch>
+   <node>/[RendezvousDaemonGroup]name=Rendezvous Daemon Connections</node>
+  </branch>
+  <branch>
+   <node>/[SMTPServerGroup]name=SMTP Servers</node>
+  </branch>
+  <branch>
+   <node>/[SentinelServerGroup]name=Sentinel Servers</node>
+  </branch>
+  <branch>
+   <node>/[SiteMinderConnectionSet]name=SiteMinder Connections</node>
+  </branch>
+  <branch>
+   <node>/[SyslogServerGroup]name=Syslog Servers</node>
+  </branch>
+  <branch>
+   <node>/[TivoliSettingsGroup]name=Tivoli Settings</node>
+  </branch>
+  <branch>
+   <node>/[UrlSetGroup]name=URL Sets</node>
+  </branch>
+  <branch>
+   <node>/[XkmsConfigGroup]name=XKMS Servers</node>
+  </branch>
+ </storeType>
+ <storeType name='ListenersStore'>
+  <branch>
+   <node>/[CORSGroup]name=CORS Profiles</node>
+  </branch>
+  <branch>
+   <node>/[NetService]</node>
+   <componentType name='CircuitScheduler'/>
+   <componentType name='DirectoryScanner'/>
+   <componentType name='FTPScanner'/>
+   <componentType name='FileTransfer'/>
+   <componentType name='Interface'/>
+   <componentType name='InterfaceInvariant'/>
+   <componentType name='JMSSession'/>
+   <componentType name='PopClient'/>
+   <componentType name='RendezvousListener'/>
+   <componentType name='SQSQueueListener'/>
+   <componentType name='SocketProtocol'/>
+  </branch>
+  <branch>
+   <node>/[WAFProfileGroup]name=Threat Protection Profiles</node>
+  </branch>
+ </storeType>
+ <storeType name='PrimaryStore'>
+  <branch>
+   <node>/</node>
+  </branch>
+ </storeType>
+ <storeType name='ResourceRepository'>
+  <branch>
+   <node>/[ResourceRepository]name=Resource Repository</node>
+  </branch>
+ </storeType>
+ <storeType name='UserStore'>
+  <branch>
+   <node>/[UserStore]name=Default User Store</node>
+  </branch>
+ </storeType>
+ <store id='DEFAULT_CERTSTORE_VordelGateway_7.6.2' type='CertStore'>
+  <name>Default Certificate Store</name>
+  <description>Certificate Store provided with standard installation.</description>
+  <connectionCredentials>
+   <credential name='url'>CertStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_ENVSETTINGS_VordelGateway_7.6.2' type='EnvSettingsStore'>
+  <name>Default Group-Level Environment Settings</name>
+  <description>Environmentalized settings</description>
+  <connectionCredentials>
+   <credential name='url'>EnvSettingsStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_EXTCONNS_VordelGateway_7.6.2' type='ExtConnsStore'>
+  <name>Default External Connections</name>
+  <description>External connections configuration provided with standard install image</description>
+  <connectionCredentials>
+   <credential name='url'>ExtConnsStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_LISTENERS_VordelGateway_7.6.2' type='ListenersStore'>
+  <name>Default Listeners Store</name>
+  <description>Listening interfaces provided with standard install image</description>
+  <connectionCredentials>
+   <credential name='url'>ListenersStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_PRIMARY_VordelGateway_7.6.2' type='PrimaryStore'>
+  <name>Default Core Configuration</name>
+  <description>Core configuration provided with standard install</description>
+  <connectionCredentials>
+   <credential name='url'>PrimaryStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_RR_VordelGateway_7.6.2' type='ResourceRepository'>
+  <name>Default Resource Repository</name>
+  <description>Tracked Resources</description>
+  <connectionCredentials>
+   <credential name='url'>ResourceRepository.xml</credential>
+  </connectionCredentials>
+ </store>
+ <store id='DEFAULT_USER_VordelGateway_7.6.2' type='UserStore'>
+  <name>Default User Store</name>
+  <description>User configuration provided with standard install image</description>
+  <connectionCredentials>
+   <credential name='url'>UserStore.xml</credential>
+  </connectionCredentials>
+ </store>
+ <assembly id='DEFAULT'>
+  <name>Default Environmental Profile</name>
+  <description>The standard installation Environmental Profile.</description>
+  <component id='DEFAULT_CERTSTORE_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_ENVSETTINGS_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_EXTCONNS_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_LISTENERS_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_PRIMARY_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_RR_VordelGateway_7.6.2'/>
+  <component id='DEFAULT_USER_VordelGateway_7.6.2'/>
+ </assembly>
+</configuration>
