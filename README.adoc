@@ -5,10 +5,7 @@
 
 [WARNING]
 ====
-This is a spare time project and currently in alpha status. So don't use it in production now.
-
-The licence of the project is not yet defined.
-The goal is to provide it as an open source project under the Apache 2.0 licence, but some minor licence issues have to be solved first.
+This is a spare time project and currently in beta status. So don't use it in production now.
 ====
 
 == Start with Why
