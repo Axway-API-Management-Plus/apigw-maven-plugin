@@ -55,7 +55,7 @@ class EnvConfig:
         else:
             self.__config_json = {}
 
-        if (property_file_path != None):
+        if (property_file_path is not None):
             self.__properties = PropConfig(property_file_path)
 
     def __get_entities(self):
@@ -133,7 +133,7 @@ class EnvConfig:
         f = self.__get_field(fk)
 
         value = None
-        if "property" in f and f["property"] != None:
+        if "property" in f and f["property"] is not None:
             p = f["property"]
             value = self.__properties.get_property(p)
             if not value:
@@ -143,7 +143,7 @@ class EnvConfig:
         else:
             value = f["value"]
 
-        if value == None:
+        if value is None:
             self.__unconfigured_fields.append(fk)
 
         return FieldValue(fk, value)
@@ -210,7 +210,7 @@ class CertConfig:
         else:
             self.__config_json = {"certificates": {}}
 
-        if (property_file_path != None):
+        if (property_file_path is not None):
             self.__properties = PropConfig(property_file_path)
 
         return
@@ -254,7 +254,7 @@ class CertConfig:
                 if "update" not in cert_cfg:
                     raise ValueError("Certificate update not configured for alias '%s'!" % (alias))
                 
-                if cert_cfg["update"] == None:
+                if cert_cfg["update"] is None:
                     continue
 
                 cert = cert_cfg["update"]

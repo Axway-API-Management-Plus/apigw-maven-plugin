@@ -15,8 +15,7 @@ public class JythonExecutor {
 
 	public static final String SCRIPT_RESOURCE_PACKAGE = "scripts";
 
-	public static final String[] SCRIPTS = { "addCert.py", "buildfed.py", "buildtemplate.py", "envconfig.py",
-			"fedconfig.py" };
+	public static final String[] SCRIPTS = { "buildfed.py", "buildtemplate.py", "envconfig.py", "fedconfig.py" };
 
 	private final String python;
 	private final File scriptDir;
