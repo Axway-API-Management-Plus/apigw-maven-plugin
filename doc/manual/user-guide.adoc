@@ -3,6 +3,8 @@
 :Email: mlook@axway.com
 :toc:
 :sectnums:
+:source-highlighter: prettify
+:mvn-plugin-ver: 0.1.1
 
 WARNING: The _User Guide_ is under construction.
 
@@ -60,9 +62,8 @@ a|Deployment Archive
 |Configures the environment independent server projects for a specific environment or group. A deployment project depends on exactly one server project.
 |===
 
+include::_usage.adoc[leveloffset=+1]
 
 include::_maven-goals.adoc[leveloffset=+1]
 
 include::_config-tool.adoc[leveloffset=+1]
-
-include::_reference.adoc[leveloffset=+1]

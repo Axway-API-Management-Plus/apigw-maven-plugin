@@ -3,6 +3,9 @@
 :Email: mlook@axway.com
 :toc:
 :sectnums:
+:source-highlighter: prettify
+
+:mvn-plugin-ver: 0.1.1
 
 Here you get a simple introduction on how to use the _Maven Plugin for Axway API Gateway_.
 It assumes that you are familiar with https://maven.apache.org[Apache Maven] and that you are familiar with PolicyStudio and the API Gateway.
@@ -60,7 +63,7 @@ No server setting are included in a policy project.
 To create a policy project create new folder (e.g. `pol-hello-world`) and create a `pom.xml` file (see template below).
 
 .pom.xml
-[source,xml]
+[source,xml,subs="verbatim,attributes"]
 ----
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
@@ -82,7 +85,7 @@ To create a policy project create new folder (e.g. `pol-hello-world`) and create
       <plugin> <!--5-->
         <groupId>com.axway.maven.plugins</groupId>
         <artifactId>apigw-maven-plugin</artifactId>
-        <version>0.1.1</version>
+        <version>{mvn-plugin-ver}</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -147,7 +150,7 @@ This will create a `hello-world-0.1.0-SNAPSHOT.axpar` artifact and will install 
 For building an environment independent API Gateway instance create a separate folder (e.g. `srv-hello-world`) and create a server project `pom.xml` file (see template below).
 
 .pom.xml
-[source,xml]
+[source,xml,subs="verbatim,attributes"]
 ----
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
@@ -178,7 +181,7 @@ For building an environment independent API Gateway instance create a separate f
       <plugin> <!--3-->
         <groupId>com.axway.maven.plugins</groupId>
         <artifactId>apigw-maven-plugin</artifactId>
-        <version>0.1.1</version>
+        <version>{mvn-plugin-ver}</version>
         <extensions>true</extensions>
       </plugin>
     </plugins>
@@ -241,7 +244,7 @@ This will create a `hello-world-gw-0.1.0-SNAPSHOT.axsar` artifact and will insta
 For building an environment specific API Gateway instance create a separate folder (e.g. `dpl-hello-world`) and create a deployment project `pom.xml` file (see template below).
 
 .pom.xml
-[source,xml]
+[source,xml,subs="verbatim,attributes"]
 ----
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
@@ -271,7 +274,7 @@ For building an environment specific API Gateway instance create a separate fold
       <plugin> <!--4-->
         <groupId>com.axway.maven.plugins</groupId>
         <artifactId>apigw-maven-plugin</artifactId>
-        <version>0.1.1</version>
+        <version>{mvn-plugin-ver}</version>
         <extensions>true</extensions>
         <configuration>
           <!--5-->

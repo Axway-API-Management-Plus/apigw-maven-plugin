@@ -96,6 +96,12 @@ a|Deployment Archive
  * Check for unconfigured environmentalize fields (build fails in case of unconfigured fields)
  * Add or replace certificates by alias.
 
+== More to Read
+
+ * link:doc/getting-started/getting-started.adoc[Getting Started]
+ * link:doc/manual/user-guide.adoc[User Guide]
+
+
 == Known Limitations
 
  * Because of it is a spare time project, the focus was on working code. So there is a lack off documentation.

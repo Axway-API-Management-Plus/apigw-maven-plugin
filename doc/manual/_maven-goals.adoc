@@ -11,8 +11,6 @@
 
 === apigw:policystudio
 
-=== apigw:configstudio
-
 == Build
 
 === clean

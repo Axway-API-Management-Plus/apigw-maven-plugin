@@ -1,0 +1,39 @@
+= Usage
+:Author: Martin Look
+:Email: mlook@axway.com
+:source-highlighter: prettify
+
+== Include Plugin
+To use the plugin add it to the plugin section of your `pom.xml` file and set the packaging type to mark it as an Axway artifact.
+
+Following packaging types are supported:
+
+ * axway-policy-archive
+ * axway-server-archive
+ * axway-deployment-archive
+
+.pom.xml
+[source,xml,subs="verbatim,attributes"]
+----
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+  <!-- ... -->
+  <packaging>axway-policy-archive</packaging> <!--1-->
+
+  <build>
+    <plugins>
+      <plugin> <!--2-->
+        <groupId>com.axway.maven.plugins</groupId>
+        <artifactId>apigw-maven-plugin</artifactId>
+        <version>{mvn-plugin-ver}</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+ </project>
+----
+<1> The packing type `axway-policy-archive` marks it as a policy project.
+<2> Use _Maven Plugin for API Gateway_ for this project.
