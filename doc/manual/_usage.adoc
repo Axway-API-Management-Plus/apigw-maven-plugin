@@ -3,8 +3,54 @@
 :Email: mlook@axway.com
 :source-highlighter: prettify
 
-== Include Plugin
-To use the plugin add it to the plugin section of your `pom.xml` file and set the packaging type to mark it as an Axway artifact.
+== Setup Environment
+
+=== Install Axway Tools
+The _Maven Plugin for API Gateway_ requires the installation of the _Package & Deployment Tools_ of the Axway API Gateway.
+If you want to edit the projects _PolicyStudio_ has to be installed also.
+Please checkout the Axway documentation on how to install the software.
+
+It is recommended to install the tools under the same directory.
+This directory is used by the plugin as the _Axway Home_ directory.
+
+   axway-home
+   |- apigateway
+   `- policystudio
+
+=== Configure Plugin
+It is required to configure the _Axway Home_ directory by specifying the property `axway.home`.
+Due to the location is individual for each developer, configure the property in your personal `~/.m2/settings.xml` file.
+
+.~/.m2/settings.xml
+[source,xml]
+----
+<settings
+  xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd"
+>
+	<profiles>
+		<profile>
+			<id>axway</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<axway.home>C:/Axway-7.6.2</axway.home> <!--1-->
+			</properties>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>axway</activeProfile>
+	</activeProfiles>
+</settings>
+----
+<1> Specify the location of your Axway installation here.
+
+
+== Create Project
+To setup a new API Gateway project, create an empty folder and create a Maven `pom.xml` file.
+Set the desired packaging type and add the _API Gateway_ plugin (see below).
 
 Following packaging types are supported:
 
@@ -36,4 +82,53 @@ Following packaging types are supported:
  </project>
 ----
 <1> The packing type `axway-policy-archive` marks it as a policy project.
+Other packaging types available.
 <2> Use _Maven Plugin for API Gateway_ for this project.
+
+To initialize the project invoke the following command in your project directory:
+
+  $ mvn apigw:init
+
+According to your packaging type the project is initialized with a default directory structure and a default project template.
+
+If your project requires policies from other project, add the according dependencies to your `pom.xml` file.
+
+.pom.xml
+[source,xml,subs="verbatim,attributes"]
+----
+<dependencies>
+  <dependency> <!--1-->
+    <groupId>com.example</groupId>
+    <artifactId>common</artifactId>
+    <version>1.0.0</version>
+    <type>axway-policy-archive</type> <!--2-->
+  </dependency>
+</dependencies>
+----
+<1> Add the dependency.
+<2> Set the packaging type of the dependent artifact.
+
+== Edit Project
+To edit the project just invoke the goal `apigw:policystudio`.
+
+  $ mvn apigw:policystudio
+
+[NOTE]
+====
+If PolicyStudio is started the first time in the project directory it has to be initialized first.
+
+In this case you will be prompted to close PolicyStudio right after startup.
+So, just close PolicyStudio and invoke the Maven goal `apigw:policystudio` again.
+You have to do this only once.
+====
+
+This will download all dependent projects, configure the dependencies and will start _PolicyStudio_.
+For convenience the recently used projects are preset to your project.
+So just click on the links.
+
+[NOTE]
+====
+As _Deployment Projects_ don't have policies to be edited, the goal is not supported for projects of packaging type `axway-deployment-archive`.
+====
+
+== Build & Package Project
