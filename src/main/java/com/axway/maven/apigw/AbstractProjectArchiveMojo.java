@@ -31,9 +31,6 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 	@Parameter(defaultValue = "${session}", readonly = true, required = true)
 	private MavenSession session;
 
-	@Parameter
-	private String classifier = null;
-
 	protected abstract String getArchiveExtension();
 
 	protected abstract String getType();
@@ -42,24 +39,16 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 	public void execute() throws MojoExecutionException {
 		File archiveFile = createZipArchive(prepareDirs());
 
-		if (hasClassifier()) {
-			projectHelper.attachArtifact(this.project, getType(), this.classifier, archiveFile);
-		} else {
-			if (projectHasAlreadySetAnArtifact()) {
-				throw new MojoExecutionException("You have to use a classifier "
-						+ "to attach supplemental artifacts to the project instead of replacing them.");
-			}
-			this.project.getArtifact().setFile(archiveFile);
+		this.project.getArtifact().setFile(archiveFile);
 
-			Model pom = generateResultPom();
-			if (pom != null) {
-				String name = StringUtils.substringBeforeLast(archiveFile.getName(), ".") + ".pom";
+		Model pom = generateResultPom();
+		if (pom != null) {
+			String name = StringUtils.substringBeforeLast(archiveFile.getName(), ".") + ".pom";
 
-				File pomFile = new File(archiveFile.getParentFile(), name);
-				writePom(pom, pomFile);
+			File pomFile = new File(archiveFile.getParentFile(), name);
+			writePom(pom, pomFile);
 
-				this.project.setPomFile(pomFile);
-			}
+			this.project.setPomFile(pomFile);
 		}
 	}
 
@@ -92,7 +81,7 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 	protected abstract List<ArchiveDir> prepareDirs() throws MojoExecutionException;
 
 	protected File createZipArchive(List<ArchiveDir> dirs) throws MojoExecutionException {
-		File archiveFile = getArchiveFile(getTargetDir(), this.finalName, this.classifier);
+		File archiveFile = getArchiveFile(getTargetDir(), this.finalName);
 		ZipArchiver zip = new ZipArchiver();
 		zip.setFilesonly(true);
 		zip.setForced(true);
@@ -111,32 +100,15 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 		}
 	}
 
-	protected File getArchiveFile(File basedir, String resultFinalName, String classifier) {
+	protected File getArchiveFile(File basedir, String resultFinalName) {
 		if (basedir == null)
 			throw new IllegalArgumentException("basedir must not be null");
 		if (resultFinalName == null)
 			throw new IllegalArgumentException("resultFinalName must not be null");
 
 		StringBuilder fileName = new StringBuilder(resultFinalName);
-		if (hasClassifier()) {
-			fileName.append("-").append(classifier);
-		}
 		fileName.append(getArchiveExtension());
 
 		return new File(basedir, fileName.toString());
-	}
-
-	protected void setClassifier(String classifier) {
-		this.classifier = classifier;
-	}
-
-	protected boolean hasClassifier() {
-		boolean result = false;
-
-		if (this.classifier != null && this.classifier.trim().length() > 0) {
-			result = true;
-		}
-
-		return result;
 	}
 }
