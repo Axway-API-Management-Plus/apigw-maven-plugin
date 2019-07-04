@@ -4,24 +4,30 @@
 
 	<groupId>com.axway.maven.plugins</groupId>
 	<artifactId>apigw-maven-plugin</artifactId>
-	<version>0.1.1</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Axway API Gateway Maven Plugin</name>
 	<description>Maven Plugin for Axway API Gateway and API Manager</description>
+	<url>https://www.axway.com</url>
+
+	<organization>
+		<name>Axway GmbH</name>
+		<url>https://www.axway.com</url>
+	</organization>
 	<contributors>
 		<contributor>
 			<name>Martin Look</name>
 			<email>mlook@axway.com</email>
 		</contributor>
 	</contributors>
+
 	<licenses>
 		<license>
-			<name>(c) by Axway GmbH 2019</name>
+			<name>Apache License, Version 2.0</name>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-	<url>https://www.axway.com</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

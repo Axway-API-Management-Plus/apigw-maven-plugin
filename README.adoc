@@ -21,9 +21,9 @@ The configuration is done with _ConfigurationStudio_ as a separate step.
 But, as it is a GUI based application, detecting unconfigured fields is a manual and error prone process.
 Configuration issues are detected at runtime and not at build time.
 
-The goal of this project is to make the life of a policy developer and gateway administrator easier by extending the power of https://maven.apache.org[Apache Maven] with a plugin for Axway API Gateway.
+The goal of this project is to make the life of a policy developer and gateway administrator easier by extending the power of https://maven.apache.org[Apache Maven] with a plugin for https://www.axway.com[Axway] API Gateway.
 
-The vision of the project is also to have a "marketplace" (Maven repository) of shared policies.
+The vision of the project is also to support a "marketplace" (Maven repository) of shared policies.
 Shared policies can be used by other projects just by adding the dependency to the project description.
 Everything else is handled by the plugin.
 
@@ -105,9 +105,20 @@ a|Deployment Archive
 == Known Limitations
 
  * Because of it is a spare time project, the focus was on working code. So there is a lack off documentation.
- * Deployment of API Gateway is currently not supported (on the road map).
+ * Deployment to API Gateway is currently not supported (on the road map).
  * Automatic adding of dependent JARs to PolicyStudio is currently not supported (on the road map).
  * Passphrases are unsupported (on the road map).
  * Environmentalized fields containing references are not supported.
  * Unconfigured envSettings are not detected.
  * Currently only Windows hosts are supported (on the road map).
+
+
+== Contributing
+Please read https://github.com/Axway-API-Management-Plus/Common/blob/master/Contributing.md[Contributing] for details on our code of conduct, and the process for submitting pull requests to us.
+
+== Team
+image:https://github.com/Axway-API-Management/Common/blob/master/img/AxwayLogoSmall.png[Axway Logo] Axway Team
+
+== License
+link:./LICENSE[Apache License 2.0]
+
