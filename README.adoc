@@ -5,7 +5,7 @@
 
 [WARNING]
 ====
-This is a spare time project and currently in beta status. So don't use it in production now.
+This is a spare time project and currently in beta status. So use it at your own risk.
 ====
 
 == Start with Why
@@ -104,7 +104,7 @@ a|Deployment Archive
 
 == Known Limitations
 
- * Because of it is a spare time project, the focus was on working code. So there is a lack off documentation.
+ * Because of it is a spare time project, the focus was on working code. So documentation is not complete.
  * Deployment to API Gateway is currently not supported (on the road map).
  * Automatic adding of dependent JARs to PolicyStudio is currently not supported (on the road map).
  * Passphrases are unsupported (on the road map).
@@ -117,8 +117,7 @@ a|Deployment Archive
 Please read https://github.com/Axway-API-Management-Plus/Common/blob/master/Contributing.md[Contributing] for details on our code of conduct, and the process for submitting pull requests to us.
 
 == Team
-image:https://github.com/Axway-API-Management/Common/blob/master/img/AxwayLogoSmall.png[Axway Logo] Axway Team
+image:https://raw.githubusercontent.com/Axway-API-Management-Plus/Common/master/img/AxwayLogoSmall.png[Axway Logo] Axway Team
 
 == License
 link:./LICENSE[Apache License 2.0]
-

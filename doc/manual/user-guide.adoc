@@ -4,7 +4,7 @@
 :toc:
 :sectnums:
 :source-highlighter: prettify
-:mvn-plugin-ver: 0.1.1
+:mvn-plugin-ver: 0.2.0
 
 WARNING: The _User Guide_ is under construction.
 
