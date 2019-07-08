@@ -14,10 +14,9 @@ It assumes that you are familiar with https://maven.apache.org[Apache Maven] and
 == Install Maven Plugin
 
 First you have to install the Maven plugin for Axway API Gateway.
-Clone the repository on your machine, switch to _develop_ branch and install the plugin:
+Clone the repository on your machine and install the plugin:
 
   $ cd apigw-maven-plugin
-  $ git checkout develop
   $ mvn clean install
 
 The Axway API Gateway Maven plugin is now installed on your machine.
