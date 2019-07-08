@@ -13,9 +13,12 @@ Please checkout the Axway documentation on how to install the software.
 It is recommended to install the tools under the same directory.
 This directory is used by the plugin as the _Axway Home_ directory.
 
-   axway-home
-   |- apigateway
-   `- policystudio
+[tree]
+----
+axway-home
+|-- apigateway
+`-- policystudio
+----
 
 === Configure Plugin
 It is required to configure the _Axway Home_ directory by specifying the property `axway.home`.
