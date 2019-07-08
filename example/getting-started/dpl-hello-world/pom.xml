@@ -22,7 +22,7 @@
       <plugin>
         <groupId>com.axway.maven.plugins</groupId>
         <artifactId>apigw-maven-plugin</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.1</version>
         <extensions>true</extensions>
         <configuration>
           <!--
