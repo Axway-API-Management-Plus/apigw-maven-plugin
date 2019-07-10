@@ -2,6 +2,15 @@
 :Author: Martin Look
 :Email: mlook@axway.com
 :source-highlighter: prettify
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 
 For the configuration of the `.fed` and `.env` files the Maven plugin uses Python scripts.
 The scripts can also be used as an independent tool.
