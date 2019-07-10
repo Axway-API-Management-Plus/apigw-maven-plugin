@@ -1,0 +1,95 @@
+= Reference
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+== Project Types
+
+This section describes the various projects types.
+The described directory layout is the default structure as assumed by the plugin.
+
+=== Policy Project
+Policy project contain shared and reusable policies.
+No sever settings are included in the project.
+Policy projects may depend on other policy projects or external libraries (JARs).
+
+==== Directory Layout
+
+
+[listing, subs="verbatim,macros"]
+----
+icon:folder-o[] project-home
+  icon:file-text-o[] pom.xml <1>
+  icon:folder-o[] src
+    icon:folder-o[] main <2>
+      icon:folder-o[] axwgw
+        icon:folder-o[] policies <3>
+          icon:file-text-o[] config.xml
+          icon:file-text-o[] ...
+        icon:folder-o[] resources
+          icon:folder-o[] staticFiles <4>
+    icon:folder-o[] test <5> 
+      icon:folder-o[] policies <6>
+        icon:file-text-o[] config.xml
+        icon:file-text-o[] ...
+----
+<1> Maven Project Object Model, which describes your project and the dependencies
+<2> Main sources of your project
+<3> Policies as to be opened by PolicyStudio
+<4> Folder for static files (e.g. HTML, text, JavaScript, ...)
+<5> Test sources for your project
+<6> Server project for testing your project
+
+==== Archive Content
+
+=== Server Project
+Server projects represent gateway instances.
+They contain policies and server settings.
+Server projects may depend on other policy projects or external libraries (JARs).
+Server projects are environment independent.
+
+==== Directory Layout
+
+[listing, subs="verbatim,macros"]
+----
+icon:folder-o[] project-home
+  icon:file-text-o[] pom.xml <1>
+  icon:folder-o[] src
+    icon:folder-o[] main <2>
+      icon:folder-o[] axwgw
+        icon:folder-o[] policies <3>
+          icon:file-text-o[] config.xml
+          icon:file-text-o[] ...
+        icon:folder-o[] resources
+          icon:folder-o[] staticFiles <4>
+----
+<1> Maven Project Object Model, which describes your project and the dependencies
+<2> Main sources of your project
+<3> Policies, including server setting, as to be opened by PolicyStudio
+<4> Folder for static files (e.g. HTML, text, JavaScript, ...)
+
+=== Deployment Project
+Deployment projects are used to configure API gateways for specific environments or groups based on an environment independent server project.
+A deployment project depends on exactly one server project.
+
+==== Directory Layout
+[listing, subs="verbatim,macros"]
+----
+icon:folder-o[] project-home
+  icon:file-text-o[] pom.xml <1>
+  icon:folder-o[] src
+    icon:folder-o[] main <2>
+      icon:folder-o[] axwgw
+        icon:file-text-o[] gateway.config.json <3>
+----
+<1> Maven Project Object Model, which describes your project and the dependencies
+<2> Main sources of your project
+<3> Configuration file as to be used by the configuration tool.
+
+==== Archive Content

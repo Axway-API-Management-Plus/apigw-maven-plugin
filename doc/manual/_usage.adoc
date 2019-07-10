@@ -2,6 +2,15 @@
 :Author: Martin Look
 :Email: mlook@axway.com
 :source-highlighter: prettify
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
 
 == Setup Environment
 
@@ -13,12 +22,13 @@ Please checkout the Axway documentation on how to install the software.
 It is recommended to install the tools under the same directory.
 This directory is used by the plugin as the _Axway Home_ directory.
 
-[tree]
+[listing, subs="verbatim,macros"]
 ----
-axway-home
-|-- apigateway
-`-- policystudio
+icon:folder-o[] axway-home
+  icon:folder-o[] apigateway
+  icon:folder-o[] policystudio
 ----
+
 
 === Configure Plugin
 It is required to configure the _Axway Home_ directory by specifying the property `axway.home`.

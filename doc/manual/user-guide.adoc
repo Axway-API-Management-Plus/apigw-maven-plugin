@@ -4,6 +4,17 @@
 :toc:
 :sectnums:
 :source-highlighter: prettify
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
 :mvn-plugin-ver: 0.2.1
 
 WARNING: The _User Guide_ is under construction.
@@ -67,3 +78,5 @@ include::_usage.adoc[leveloffset=+1]
 include::_maven-goals.adoc[leveloffset=+1]
 
 include::_config-tool.adoc[leveloffset=+1]
+
+include::_reference.adoc[leveloffset=+1]
