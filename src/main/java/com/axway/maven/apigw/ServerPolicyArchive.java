@@ -112,7 +112,7 @@ public class ServerPolicyArchive extends AbstractFlattendProjectArchiveMojo {
 			outDir.mkdirs();
 
 			List<String> inputParam = new ArrayList<String>();
-			inputParam.add(this.projpackPath.getAbsolutePath());
+			inputParam.add(getProjectPack().getAbsolutePath());
 			inputParam.add("--create");
 
 			inputParam.add("--name");

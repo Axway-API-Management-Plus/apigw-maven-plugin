@@ -131,8 +131,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		File outEnvFile = new File(targetDir, getGatewayFileName(".env"));
 
 		try {
-			JythonExecutor jython = new JythonExecutor(getLog(), this.jythonCmd,
-					new File(getTargetDir(), "temp-scripts"));
+			JythonExecutor jython = new JythonExecutor(getLog(), getJython(), new File(getTargetDir(), "temp-scripts"));
 
 			ArrayList<String> args = new ArrayList<>();
 			args.add("--pol");

@@ -62,7 +62,7 @@ public class PolicyStudioMojo extends AbstractGatewayMojo {
 		this.policyStudioDir.mkdirs();
 
 		List<String> cmd = new ArrayList<String>();
-		cmd.add(this.policyStudioCmd.getPath());
+		cmd.add(getPolicyStudio().getPath());
 
 		cmd.add("-data");
 		cmd.add(this.policyStudioDataDir.getPath());
