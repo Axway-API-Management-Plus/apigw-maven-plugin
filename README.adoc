@@ -120,7 +120,6 @@ a|Deployment Archive
  * Passphrases are unsupported (on the road map).
  * Environmentalized fields containing references are not supported.
  * Unconfigured envSettings are not detected.
- * Currently only Windows hosts are supported (on the road map).
 
 
 == Contributing
