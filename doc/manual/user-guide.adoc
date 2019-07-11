@@ -15,7 +15,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-:mvn-plugin-ver: 0.3.0
+:mvn-plugin-ver: 0.4.0
 
 WARNING: The _User Guide_ is under construction.
 

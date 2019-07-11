@@ -38,6 +38,7 @@ class EnvConfig:
     __config_file_path = None
     __config_json = None
     __properties = None
+    __sys_properties = None
 
     __missing_vars = False
     __file_updated = False
@@ -57,6 +58,9 @@ class EnvConfig:
 
         if (property_file_path is not None):
             self.__properties = PropConfig(property_file_path)
+
+    def set_system_properties(self, sys_props):
+        self.__sys_properties = sys_props
 
     def __get_entities(self):
         json_entities = None
@@ -94,10 +98,13 @@ class EnvConfig:
         return json_field
 
     def __get_property(self, p):
+        v = None
+        if self.__sys_properties and p in self.__sys_properties:
+            v = self.__sys_properties[p]
         if "properties" not in self.__config_json:
-            return None
+            return v
         if p not in self.__config_json["properties"]:
-            return None
+            return v
         return self.__config_json["properties"][p]
 
     def reset_usage(self):

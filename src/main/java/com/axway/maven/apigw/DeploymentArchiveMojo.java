@@ -134,6 +134,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			JythonExecutor jython = new JythonExecutor(getLog(), getJython(), new File(getTargetDir(), "temp-scripts"));
 
 			ArrayList<String> args = new ArrayList<>();
+
 			args.add("--pol");
 			args.add(srcPolFile.getPath());
 			args.add("--env");
@@ -152,6 +153,15 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			args.add(outFedFile.getPath());
 			args.add("--output-env");
 			args.add(outEnvFile.getPath());
+			
+			args.add("-D");
+			args.add("_system.artifact.group:" + this.project.getArtifact().getGroupId());
+			args.add("-D");
+			args.add("_system.artifact.name:" + this.project.getArtifact().getArtifactId());
+			args.add("-D");
+			args.add("_system.artifact.ver:" + this.project.getArtifact().getVersion());
+			args.add("-D");
+			args.add("_system.artifact.id:" + this.project.getArtifact().getId());
 
 			int exitCode = jython.execute("buildfed.py", args.toArray(new String[0]));
 

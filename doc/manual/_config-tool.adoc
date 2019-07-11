@@ -41,6 +41,8 @@ Options:
                         Path of output deployment archive file (.fed) [optional]
   --output-env=FILEPATH
                         Path of output environment archive file (.env) [optional]
+  -D NAME:VALUE, --define=NAME:VALUE
+                        Define a system property [multiple]
 ....
 
 If environmentalized fields or certificates are not configured, the build fails.
@@ -77,9 +79,42 @@ If missing, no `.fed` file is generated.
 |--output-env
 |The path of the configured `.env` file.
 If missing, no `.env` file is generated. 
+
+|--define
+|Define a system property `name:value`.
+System properties can be used instead of custom defined properties.
 |===
 
 TIP: If no output file is specified the tool can be used to check the configuration and to update the configuration files.
+
+Additionally to the properties within the property or configuration file, the plugin provides a set of predefined system properties.
+[cols="1,5,2", options="header"]
+.Predefined System Properties
+|===
+|System Property
+|Description
+|Provided by
+
+|_system.artifact.group
+|Group of the project artifact.
+|Plugin
+
+|_system.artifact.name
+|Name of the project artifact.
+|Plugin
+
+|_system.artifact.ver
+|Version of the project artifact.
+|Plugin
+
+|_system.artifact.id
+|Complete ID of the project artifact.
+|Plugin
+
+|_system.build.datetime
+|Build date and time in ISO format (YYYY-MM-DD'T'HH:MM:SS.S)
+|Config Tool
+|===
 
 == Build Template
 
@@ -135,6 +170,17 @@ The name of the property is the _short hand key_ of the entity.
                     "value": null <7>
                 }
             }
+        },
+        "/[CircuitContainer]name=Hello World/[FilterCircuit]name=Hello World Message/[SetAttributeFilter]name=Build time": {
+            "description": "Build time in ISO format.", 
+            "fields": {
+                "attributeValue#0": {
+                    "property": "_system.build.datetime", <8>
+                    "type": "string",
+                    "used": true,
+                    "value": null
+                }
+            }
         }
     }
 }
@@ -151,7 +197,7 @@ The property is automatically maintained by the plugin.
 <7> Value of the field.
 _null_ indicates an unconfigured field.
 If `value` and `property` are configured the `property` value has precedence.
-
+<8> Use value of the predefined system property `_system.build.datetime`.
 
 === Certificates
 
