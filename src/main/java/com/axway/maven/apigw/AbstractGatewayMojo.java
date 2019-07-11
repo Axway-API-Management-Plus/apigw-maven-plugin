@@ -44,14 +44,8 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	@Parameter(property = "axway.home.apigw", defaultValue = "${axway.home}/apigateway", required = true)
 	protected File homeAxwayGW;
 
-	@Parameter(property = "axway.cmd.projpack", defaultValue = "${axway.home}/apigateway/Win32/bin/projpack.bat", required = true)
-	protected File projpackPath;
-
-	@Parameter(property = "axway.cmd.jython", defaultValue = "${axway.home}/apigateway/Win32/bin/jython.bat", required = true)
-	protected File jythonCmd;
-
-	@Parameter(property = "axway.cmd.policystudio", defaultValue = "${axway.home}/policystudio/policystudio.exe")
-	protected File policyStudioCmd;
+	@Parameter(property = "axway.home.policystudio", defaultValue = "${axway.home}/policystudio", required = true)
+	protected File homePolicyStudio;
 
 	@Parameter(property = "axway.policystudio.data", defaultValue = "${basedir}/.data")
 	protected File policyStudioDataDir;
@@ -70,7 +64,49 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 			throw new MojoExecutionException("Unsupported package type: " + type);
 		}
 	}
-	
+
+	protected File getJython() throws MojoExecutionException {
+		File jythonWin = new File(this.homeAxwayGW, "Win32/bin/jython.bat");
+		File jythonUnix = new File(this.homeAxwayGW, "posix/bin/jython");
+
+		if (jythonWin.exists()) {
+			return jythonWin;
+		} else if (jythonUnix.exists()) {
+			return jythonUnix;
+		} else {
+			throw new MojoExecutionException(
+					"Jython not found! Checked: " + jythonWin.getPath() + " and " + jythonUnix.getPath());
+		}
+	}
+
+	protected File getProjectPack() throws MojoExecutionException {
+		File projpackWin = new File(this.homeAxwayGW, "Win32/bin/projpack.bat");
+		File projpackUnix = new File(this.homeAxwayGW, "posix/bin/projpack");
+
+		if (projpackWin.exists()) {
+			return projpackWin;
+		} else if (projpackUnix.exists()) {
+			return projpackUnix;
+		} else {
+			throw new MojoExecutionException(
+					"projpack not found! Checked: " + projpackWin.getPath() + " and " + projpackUnix.getPath());
+		}
+	}
+
+	protected File getPolicyStudio() throws MojoExecutionException {
+		File studioWin = new File(this.homePolicyStudio, "policystudio.exe");
+		File studioUnix = new File(this.homePolicyStudio, "policystudio");
+
+		if (studioWin.exists()) {
+			return studioWin;
+		} else if (studioUnix.exists()) {
+			return studioUnix;
+		} else {
+			throw new MojoExecutionException(
+					"PolicyStudio not found! Checked: " + studioWin.getPath() + " and " + studioUnix.getPath());
+		}
+	}
+
 	protected File getTargetDir() {
 		return new File(this.project.getBuild().getDirectory());
 	}
