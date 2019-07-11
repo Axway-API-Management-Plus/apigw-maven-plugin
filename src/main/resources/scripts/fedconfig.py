@@ -35,6 +35,9 @@ class FedConfigurator:
         print "INFO : Deployment archive configuration initialized"
         return
 
+    def set_system_properties(self, sys_properties):
+        self.__config.set_system_properties(sys_properties)
+
     def update_templates(self):
         fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase)
         env_settings = fed_api.envSettings.getEnvSettings()
