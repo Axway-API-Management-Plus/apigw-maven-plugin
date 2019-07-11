@@ -88,12 +88,10 @@ System properties can be used instead of custom defined properties.
 TIP: If no output file is specified the tool can be used to check the configuration and to update the configuration files.
 
 Additionally to the properties within the property or configuration file, the plugin provides a set of predefined system properties.
-[cols="1,5,2", options="header"]
+
 .Predefined System Properties
 |===
-|System Property
-|Description
-|Provided by
+|System Property|Description|Provided by
 
 |_system.artifact.group
 |Group of the project artifact.
