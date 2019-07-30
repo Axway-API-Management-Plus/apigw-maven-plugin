@@ -119,14 +119,4 @@ public class InitMojo extends AbstractGatewayMojo {
 			throw new MojoExecutionException("Error on creating project file", e);
 		}
 	}
-	
-	protected String buildProjectName() {
-		StringBuilder name = new StringBuilder();
-		name.append(this.project.getGroupId());
-		if (name.length() > 0)
-			name.append(".");
-		name.append(this.project.getArtifactId());
-
-		return name.toString();
-	}
 }

@@ -92,7 +92,7 @@ public class PolicyStudioMojo extends AbstractGatewayMojo {
 			xml.append("<files>");
 			xml.append("<file location=\"")
 					.append(StringEscapeUtils.escapeXml(getPoliciesDirectory().getAbsolutePath())).append("\" url=\"")
-					.append(StringEscapeUtils.escapeXml(this.project.getArtifactId())).append("\"/>");
+					.append(StringEscapeUtils.escapeXml(buildProjectName())).append("\"/>");
 			if (getPackageType() == PackageType.POLICY && this.testServerDirectory.exists()) {
 				xml.append("<file location=\"")
 						.append(StringEscapeUtils.escapeXml(this.testServerDirectory.getAbsolutePath()))

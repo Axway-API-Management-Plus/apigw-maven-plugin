@@ -187,4 +187,14 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	protected File getSharedArtifactDir(Artifact a) {
 		return new File(this.sharedProjectsDir, a.getArtifactId());
 	}
+	
+	protected String buildProjectName() {
+		StringBuilder name = new StringBuilder();
+		name.append(this.project.getGroupId());
+		if (name.length() > 0)
+			name.append(".");
+		name.append(this.project.getArtifactId());
+
+		return name.toString();
+	}
 }
