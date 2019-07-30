@@ -60,13 +60,13 @@ public class InitMojo extends AbstractGatewayMojo {
 	protected void initDefaultPolicies() throws MojoExecutionException {
 		File dir = new File(this.sourceDirectory, DIR_POLICIES);
 		extractFedTemplate(this.templatePolicies, dir, "default policies");
-		createProjectFile(dir, this.project.getArtifactId());
+		createProjectFile(dir, buildProjectName());
 	}
 
 	protected void initDefaultGateway() throws MojoExecutionException {
 		File dir = new File(this.sourceDirectory, DIR_POLICIES);
 		extractFedTemplate(this.templateGateway, dir, "default gateway");
-		createProjectFile(dir, this.project.getArtifactId());
+		createProjectFile(dir, buildProjectName());
 	}
 
 	protected void initDefaultConfig() throws MojoExecutionException {
@@ -74,7 +74,7 @@ public class InitMojo extends AbstractGatewayMojo {
 			// write empty JSON configuration file
 			File configFile = new File(this.sourceDirectory, DeploymentArchiveMojo.FILE_GATEWAY_CONFIG_JSON);
 			if (!configFile.exists()) {
-				FileUtils.writeStringToFile(configFile, "{}",  "UTF-8");				
+				FileUtils.writeStringToFile(configFile, "{}", "UTF-8");
 			} else {
 				getLog().info("Nothing to do, configuration file already initialized.");
 			}
@@ -118,5 +118,15 @@ public class InitMojo extends AbstractGatewayMojo {
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error on creating project file", e);
 		}
+	}
+	
+	protected String buildProjectName() {
+		StringBuilder name = new StringBuilder();
+		name.append(this.project.getGroupId());
+		if (name.length() > 0)
+			name.append(".");
+		name.append(this.project.getArtifactId());
+
+		return name.toString();
 	}
 }
