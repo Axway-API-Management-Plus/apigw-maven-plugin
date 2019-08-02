@@ -142,7 +142,8 @@ class EnvConfig:
         value = None
         if "property" in f and f["property"] is not None:
             p = f["property"]
-            value = self.__properties.get_property(p)
+            if self.__properties:
+                value = self.__properties.get_property(p)
             if not value:
                 value = self.__get_property(p)
                 if not value:
