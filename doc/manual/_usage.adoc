@@ -144,4 +144,17 @@ So just click on the links.
 As _Deployment Projects_ don't have policies to be edited, the goal is not supported for projects of packaging type `axway-deployment-archive`.
 ====
 
-== Build & Package Project
+== Package & Install Project
+
+=== Cleanup
+
+=== Build Project Artifact
+
+== Miscellaneous
+
+=== Standalone Configuration Tools
+The plugin includes some Python based scripts to configure environment specific `.fed` files.
+The scripts can also be used as standalone tools.
+The goal `apigw:tools` extracts the included script to the `${project.build.directory}/tools` directory.
+
+  $ mvn apigw:tools

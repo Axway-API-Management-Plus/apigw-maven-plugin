@@ -155,3 +155,79 @@ All certificates and environmentalized fields are replace by configured values.
 <6> Generated readme file describing the content of the archive (e.g. version of depnednt server archive).
 <7> Generated readme file describing the content of the archive (e.g. version of dependent policy archives).
 Copied from server archive.
+
+== Properties
+
+The plugin can be configured by various properties.
+For most properties a default value exists, so the configuration effort is reduced to a minimum.
+
+.Properties
+[cols="1,3", options="header"]
+|===
+|Property|Description
+
+|axway.home
+|Home directory of the installed Axway API Gateway suite.
+This property has to be defined before using the plugin.
+
+Default: _none_
+
+|axway.home.apigw
+|Home directory of the installed AI Gateway.
+
+Default: ${axway.home}/apigateway
+
+|axway.home.policystudio
+|Home directory of installed PolicyStudio.
+
+Default: ${axway.home}/policystudio
+
+|axway.dir.source
+|Directory of gateway or configuration file source code used by the plugin.
+${basedir}/src/main/axwgw
+
+|axway.dir.resources
+|Directory of resources.
+
+Default: ${basedir}/src/main/resources
+
+|axway.dir.sharedProjects
+|Directory to extracted dependent policy projects.
+
+Default: ${project.build.directory}/sharedProjects
+
+|axway.dir.testServer
+|Source directory for the test API Gateway (only for policy projects).
+
+Default: ${basedir}/src/test/policies
+
+|axway.policystudio.data
+|Data directory for project specific PolicyStudio data.
+
+Default: ${basedir}/.data
+
+|axway.policystudio.dir
+|Data directory for project specific PolicyStudio configuration.
+
+Default: ${basedir}/.policystudio
+
+|axway.dir.archive.build
+|Directory for building project archives.
+
+Default: ${project.build.directory}/axway-archive
+
+|axway.template.gateway.fed
+|Template for the server project.
+
+Default: ${axway.home}/apigateway/system/conf/templates/BlankConfiguration-VordelGateway.fed
+
+|axway.template.policies.fed
+|Template for the policy project.
+
+Default: ${axway.home}/apigateway/system/conf/templates/BlankNoSettingsConfiguration-VordelGateway.fed
+
+|axway.tools.cfg.verbose
+|Set to _true_ to enable verbose mode for internal configuration tool.
+
+Default: false
+|===

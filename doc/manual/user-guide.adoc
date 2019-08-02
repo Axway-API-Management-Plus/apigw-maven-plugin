@@ -75,8 +75,6 @@ a|Deployment Archive
 
 include::_usage.adoc[leveloffset=+1]
 
-include::_maven-goals.adoc[leveloffset=+1]
-
 include::_config-tool.adoc[leveloffset=+1]
 
 include::_reference.adoc[leveloffset=+1]
