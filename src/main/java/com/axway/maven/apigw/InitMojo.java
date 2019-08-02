@@ -22,9 +22,6 @@ public class InitMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.template.policies.fed", defaultValue = "${axway.home}/apigateway/system/conf/templates/BlankNoSettingsConfiguration-VordelGateway.fed")
 	protected File templatePolicies;
 
-	@Parameter(property = "axway.template.config.env", defaultValue = "${axway.home}/apigateway/system/conf/templates/EmptyBlankConfiguration-VordelGateway.env")
-	protected File templateConfig;
-
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		checkAxwayHome();

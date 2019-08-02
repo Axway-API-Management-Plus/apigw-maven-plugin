@@ -23,7 +23,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	public static final String FILE_README = "readme-deployment-archive.txt";
 	public static final String FILE_GATEWAY_CONFIG_JSON = "gateway.config.json";
-
+	
 	private Artifact serverArchive;
 
 	@Parameter(property = "propertyFile", required = false)
@@ -31,6 +31,9 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	@Parameter(property = "certsFile", required = false)
 	private File certsFile;
+	
+	@Parameter(property = "axway.tools.cfg.verbose", defaultValue = "false", required = true)
+	protected boolean verboseCfgTools;
 
 	@Override
 	protected String getArchiveExtension() {
@@ -153,6 +156,10 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			args.add(outFedFile.getPath());
 			args.add("--output-env");
 			args.add(outEnvFile.getPath());
+			
+			if (this.verboseCfgTools) {
+				args.add("--verbose");
+			}
 			
 			args.add("-D");
 			args.add("_system.artifact.group:" + this.project.getArtifact().getGroupId());

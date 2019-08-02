@@ -52,7 +52,7 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 
 	@Parameter(property = "axway.policystudio.dir", defaultValue = "${basedir}/.policystudio")
 	protected File policyStudioDir;
-
+	
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 
