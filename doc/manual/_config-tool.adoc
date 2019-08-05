@@ -87,33 +87,6 @@ System properties can be used instead of custom defined properties.
 
 TIP: If no output file is specified the tool can be used to check the configuration and to update the configuration files.
 
-Additionally to the properties within the property or configuration file, the plugin provides a set of predefined system properties.
-
-.Predefined System Properties
-|===
-|System Property|Description|Provided by
-
-|_system.artifact.group
-|Group of the project artifact.
-|Plugin
-
-|_system.artifact.name
-|Name of the project artifact.
-|Plugin
-
-|_system.artifact.ver
-|Version of the project artifact.
-|Plugin
-
-|_system.artifact.id
-|Complete ID of the project artifact.
-|Plugin
-
-|_system.build.datetime
-|Build date and time in ISO format (YYYY-MM-DD'T'HH:MM:SS.S)
-|Config Tool
-|===
-
 == Build Template
 
 The template builder tool is used to build templates for the configuration files.
@@ -147,13 +120,85 @@ If a configuration file is updated by the plugin, all properties, including cust
 TIP: When a configuration file is written by the plugin, all JSON properties are sorted.
 This makes diff & merge easy.
 
+Following kind of configuration files are supported:
+
+  * Environmentalized fields: Mandatory configuration file for environmentalized fields.
+  * Certificates: Optional configuration file for certificates.
+  * Properties: Optional configuration file for properties.
+
+The location of the mandatory configuration file for environmentalized fields is implicitly set to `${basedir}/src/main/axwgw/gateway.config.json`.
+
+The file will be created during the initialization of the project (goal `apigw:init`).
+
+The location of the other configuration files can be specified in the `<configuration>` element of the plugin (see below).
+
+.pom.xml
+[source,xml,subs="verbatim,attributes"]
+----
+<!- ... ->
+<plugin>
+  <groupId>com.axway.maven.plugins</groupId>
+  <artifactId>apigw-maven-plugin</artifactId>
+  <version>{mvn-plugin-ver}</version>
+  <extensions>true</extensions>
+  <configuration>
+    <certsFile>${basedir}/src/main/axwgw/gateway.certs.json</certsFile> <!--1-->
+    <propertyFile>${basedir}/gateway.prop.json</propertyFile> <!--2-->
+  </configuration>
+</plugin>
+<!- ... ->
+----
+<1> Optional location of the configuration file for certificates.
+<2> Optional location of the configuration file for properties.
+
+NOTE: The configuration of the config files is only applicable for deployment projects.
+
 === Environmentalized Fields
 
 For configuring environmentalized fields a JSON file having an `entities` property is used.
 For each configured environmentalized entity a property exists.
 The name of the property is the _short hand key_ of the entity.
 
-.src/main/gateway.config.json
+The value of the field can be specified directly by a `value` property.
+It can also be specified indirectly by a property identified by the `property` property.
+
+Properties are name/value pairs.
+The value of the property is defined ... _(in order of precedence)_
+
+  . ... as predefined system property.
+  . ... as a system property via the command line of the configuration tool.
+  . ... within a separate property configuration file.
+  . ... within the environmentalized fields file (under `properties`).
+
+The plugin and the configuration tool provides a set of predefined system properties.
+
+.Predefined System Properties
+|===
+|System Property|Description|Provided by
+
+|_system.artifact.group
+|Group of the project artifact.
+|Plugin
+
+|_system.artifact.name
+|Name of the project artifact.
+|Plugin
+
+|_system.artifact.ver
+|Version of the project artifact.
+|Plugin
+
+|_system.artifact.id
+|Complete ID of the project artifact.
+|Plugin
+
+|_system.build.datetime
+|Build date and time in ISO format (YYYY-MM-DD'T'HH:MM:SS.S)
+|Config Tool
+|===
+
+
+.src/main/axwgw/gateway.config.json
 [source,json]
 ----
 {
@@ -162,7 +207,7 @@ The name of the property is the _short hand key_ of the entity.
             "description": "Name for the 'Hello World' message.", 
             "fields": {
                 "attributeValue#0": { <3>
-                    "property": null, <4>
+                    "property": "foobar", <4>
                     "type": "string", <5> 
                     "used": true, <6>
                     "value": null <7>
@@ -180,25 +225,46 @@ The name of the property is the _short hand key_ of the entity.
                 }
             }
         }
+        "/[CircuitContainer]name=Hello World/[FilterCircuit]name=Hello World Message/[SetAttributeFilter]name=Network zone": {
+            "description": "Network zone the API Gateway is located.", 
+            "fields": {
+                "attributeValue#0": {
+                    "type": "string",
+                    "used": true,
+                    "value": "internal" <9>
+                }
+            }
+        }
+    }
+    "properties": { <10>
+        "foobar": "myvalue"
     }
 }
 ----
 <1> Environmentalized entities are configured under an `entities` attribute.
 <2> Short hand key of the environmentalized entity.
 <3> Name and index of the environmentalized field.
-<4> Name of the property containing the value (see property file).
+<4> Name of the property containing the value.
 _null_ or missing property indicates that no property is used to configure the value. 
 <5> Type of the field (just for documentation, don't change it).
 <6> Indicates if the configured field is used.
 If _false_ the field is no longer environmentalized or the entity is renamed or removed.
 The property is automatically maintained by the plugin. 
 <7> Value of the field.
-_null_ indicates an unconfigured field.
+_null_ indicates that no value is defined.
 If `value` and `property` are configured the `property` value has precedence.
 <8> Use value of the predefined system property `_system.build.datetime`.
+<9> Value for the field.
+<10> An optional local definition of properties.
+If the same property is defined in a separate property file (see below), the separate property has precedence.
+
+NOTE: If `value` and `property` is _null_ the field is treated as undefined and the build will fail.
 
 === Certificates
+The configuration for certificates is stored in a separate JSON file.
+It specifies the alias of the certificates within the project and the source of the replacement certificate. 
 
+.src/main/axwgw/gateway.certs.json
 [source,json]
 ----
 {
@@ -280,6 +346,11 @@ This certificate will be added to the certificate store.
 
 === Properties
 
+Properties used in the configuration files for environmentalized fields and certificates can be resolved by a separate configuration file.
+The file is a JSON document containing a `properties` property.
+For each property a name/value pair exists.
+
+.gateway.props.json
 [source,json]
 ----
 {
@@ -292,3 +363,12 @@ This certificate will be added to the certificate store.
 <1> Properties are configured under a `properties` attribute.
 <2> For each configured property a name/value pair has to exist.
 The property is identified by its _name_.
+
+[NOTE]
+====
+Properties may contain sensitive information (e.g. credentials).
+The shift of properties to a separate file enables them to be exclude from the source code management system.
+
+In productive environments secretes may be stored in a secured configuration database.
+For the build process the property file may be temporarily generated from the configuration database.
+====

@@ -23,20 +23,20 @@ Policy projects may depend on other policy projects or external libraries (JARs)
 
 [listing, subs="verbatim,macros"]
 ----
-icon:folder-o[] project-home
-  icon:file-text-o[] pom.xml <1>
-  icon:folder-o[] src
-    icon:folder-o[] main <2>
-      icon:folder-o[] axwgw
-        icon:folder-o[] policies <3>
-          icon:file-text-o[] config.xml
-          icon:file-text-o[] ...
-        icon:folder-o[] resources
-          icon:folder-o[] staticFiles <4>
-    icon:folder-o[] test <5> 
-      icon:folder-o[] policies <6>
-        icon:file-text-o[] config.xml
-        icon:file-text-o[] ...
+icon:folder[] project-home
+  icon:file[] pom.xml <1>
+  icon:folder[] src
+    icon:folder[] main <2>
+      icon:folder[] axwgw
+        icon:folder[] policies <3>
+          icon:file[] config.xml
+          icon:file[] ...
+        icon:folder[] resources
+          icon:folder[] staticFiles <4>
+    icon:folder[] test <5> 
+      icon:folder[] policies <6>
+        icon:file[] config.xml
+        icon:file[] ...
 ----
 <1> Maven Project Object Model, which describes your project and the dependencies
 <2> Main sources of your project
@@ -51,11 +51,11 @@ It contains the policies of the project (as edited in PolicyStudio) and the stat
 
 [listing, subs="verbatim,macros"]
 ----
-icon:file-zip-o[] policy-archive.axpar <1>
-  icon:folder-o[] policies <2>
-    icon:file-text-o[] config.xml
-    icon:file-text-o[] ...
-  icon:folder-o[] staticFiles <3>
+icon:folder[] policy-archive.axpar <1>
+  icon:folder[] policies <2>
+    icon:file[] config.xml
+    icon:file[] ...
+  icon:folder[] staticFiles <3>
 ----
 <1> Generated policy archive.
 <2> Policies of the project (copied from `src/main/axwgw/policies`).
@@ -72,16 +72,16 @@ Server projects are environment independent.
 
 [listing, subs="verbatim,macros"]
 ----
-icon:folder-o[] project-home
-  icon:file-text-o[] pom.xml <1>
-  icon:folder-o[] src
-    icon:folder-o[] main <2>
-      icon:folder-o[] axwgw
-        icon:folder-o[] policies <3>
-          icon:file-text-o[] config.xml
-          icon:file-text-o[] ...
-        icon:folder-o[] resources
-          icon:folder-o[] staticFiles <4>
+icon:folder[] project-home
+  icon:file[] pom.xml <1>
+  icon:folder[] src
+    icon:folder[] main <2>
+      icon:folder[] axwgw
+        icon:folder[] policies <3>
+          icon:file[] config.xml
+          icon:file[] ...
+        icon:folder[] resources
+          icon:folder[] staticFiles <4>
 ----
 <1> Maven Project Object Model, which describes your project and the dependencies
 <2> Main sources of your project
@@ -94,12 +94,12 @@ The server archive contains everything required for a deployment of a gateway in
 
 [listing, subs="verbatim,macros"]
 ----
-icon:file-zip-o[] server-archive.axsar <1>
-  icon:folder-o[] lib <2>
-  icon:folder-o[] staticFiles <3>
-  icon:file-o[] gateway.pol <4>
-  icon:file-o[] gateway.env <5>
-  icon:file-o[] readme-server-archive.txt <6>
+icon:folder[] server-archive.axsar <1>
+  icon:folder[] lib <2>
+  icon:folder[] staticFiles <3>
+  icon:file[] gateway.pol <4>
+  icon:file[] gateway.env <5>
+  icon:file[] readme-server-archive.txt <6>
 ----
 <1> Generated server archive.
 <2> Folder containing dependent JARs.
@@ -117,12 +117,12 @@ A deployment project depends on exactly one server project.
 ==== Directory Layout
 [listing, subs="verbatim,macros"]
 ----
-icon:folder-o[] project-home
-  icon:file-text-o[] pom.xml <1>
-  icon:folder-o[] src
-    icon:folder-o[] main <2>
-      icon:folder-o[] axwgw
-        icon:file-text-o[] gateway.config.json <3>
+icon:folder[] project-home
+  icon:file-code[] pom.xml <1>
+  icon:folder[] src
+    icon:folder[] main <2>
+      icon:folder[] axwgw
+        icon:file[] gateway.config.json <3>
 ----
 <1> Maven Project Object Model, which describes your project and the dependencies
 <2> Main sources of your project
@@ -134,14 +134,14 @@ It contains a fully configured API gateway instance including required static fi
 
 [listing, subs="verbatim,macros"]
 ----
-icon:file-zip-o[] deploy-archive.axdar <1>
-  icon:folder-o[] lib <2>
-  icon:folder-o[] staticFiles <3>
-  icon:file-o[] gateway.fed <4>
-  icon:file-o[] gateway.pol <5>
-  icon:file-o[] gateway.env <6>
-  icon:file-o[] readme-deployment-archive.txt <7>
-  icon:file-o[] readme-server-archive.txt <8>
+icon:folder[] deploy-archive.axdar <1>
+  icon:folder[] lib <2>
+  icon:folder[] staticFiles <3>
+  icon:file[] gateway.fed <4>
+  icon:file[] gateway.pol <5>
+  icon:file[] gateway.env <6>
+  icon:file[] readme-deployment-archive.txt <7>
+  icon:file[] readme-server-archive.txt <8>
 ----
 <1> Generated server archive.
 <2> Folder containing dependent JARs.
@@ -150,13 +150,13 @@ The files are copied from the `staticFiles` folders of all dependent policy arch
 <4> Configured `.fed` file.
 It is environment specific and contains all configured certificates and environmentalized fields.
 <5> Packed `.pol` archive containing the server configuration and polices (including policies of all dependent policy archives)
-<5> Configured `.env` file containing all environment specific information.
+<6> Configured `.env` file containing all environment specific information.
 All certificates and environmentalized fields are replace by configured values.
-<6> Generated readme file describing the content of the archive (e.g. version of depnednt server archive).
-<7> Generated readme file describing the content of the archive (e.g. version of dependent policy archives).
+<7> Generated readme file describing the content of the archive (e.g. version of depnednt server archive).
+<8> Generated readme file describing the content of the archive (e.g. version of dependent policy archives).
 Copied from server archive.
 
-== Properties
+== Build Properties
 
 The plugin can be configured by various properties.
 For most properties a default value exists, so the configuration effort is reduced to a minimum.

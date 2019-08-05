@@ -24,9 +24,9 @@ This directory is used by the plugin as the _Axway Home_ directory.
 
 [listing, subs="verbatim,macros"]
 ----
-icon:folder-o[] axway-home
-  icon:folder-o[] apigateway
-  icon:folder-o[] policystudio
+icon:folder[] axway-home
+  icon:folder[] apigateway
+  icon:folder[] policystudio
 ----
 
 
@@ -49,7 +49,7 @@ Due to the location is individual for each developer, configure the property in 
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<axway.home>C:/Axway-7.6.2</axway.home> <!--1-->
+				<axway.home>c:/axway</axway.home> <!--1-->
 			</properties>
 		</profile>
 	</profiles>
@@ -60,6 +60,9 @@ Due to the location is individual for each developer, configure the property in 
 ----
 <1> Specify the location of your Axway installation here.
 
+Alternatively the Axway home directory can be specified via the `-D` option of Maven command:
+
+  $ mvn -Daxway.home=c:/axway package
 
 == Create Project
 To setup a new API Gateway project, create an empty folder and create a Maven `pom.xml` file.
@@ -139,6 +142,10 @@ This will download all dependent projects, configure the dependencies and will s
 For convenience the recently used projects are preset to your project.
 So just click on the links.
 
+To ensure that the latest version of dependent projects are used use the `apigw:policystudio` goal in combination with the `clean` goal.
+
+  $ mvn clean apigw:policystudio
+
 [NOTE]
 ====
 As _Deployment Projects_ don't have policies to be edited, the goal is not supported for projects of packaging type `axway-deployment-archive`.
@@ -147,8 +154,28 @@ As _Deployment Projects_ don't have policies to be edited, the goal is not suppo
 == Package & Install Project
 
 === Cleanup
+All artifacts and temporarily files are generated in the `target` folder.
+Use the goal `clean` to delete the target folder and to cleanup all generated artifacts.
+
+  $ mvn clean
 
 === Build Project Artifact
+
+To build the project artifacts use the `package` goal.
+
+  $ mvn clean package
+
+This will build the projects archives (policy archive, server archive or deployment archive) depending on the project type.
+
+=== Install Artifact
+
+To install the generated project archive to the local Maven repository use the `install` goal.
+
+  $ mvn clean install
+
+To deploy the generated project archive to the remote repository use the `deploy` goal.
+
+  $ mvn clean deploy
 
 == Miscellaneous
 
@@ -158,3 +185,40 @@ The scripts can also be used as standalone tools.
 The goal `apigw:tools` extracts the included script to the `${project.build.directory}/tools` directory.
 
   $ mvn apigw:tools
+
+== Maven Goals
+This section provides a short overview of the goals supported by the Maven plugin.
+
+.Maven Goals
+[cols="2,8,1,1,1", options="header"]
+|===
+|Goal|Description|Pfootnote:[Supported by Policy Project]|Sfootnote:[Supported by Server Project]|Dfootnote:[Supported by Deployment Project]
+
+|apigw:init
+|Initialize the project.
+|yes|yes|yes
+
+|apigw:policystudio
+|Open PolicyStudio to edit the project.
+|yes|yes|no
+
+|clean
+|Cleanup all generated artifacts.
+|yes|yes|yes
+
+|package
+|Build the archive according to the type of the project.
+|yes|yes|yes
+
+|install
+|Build and install the project archive to the local Maven repository.
+|yes|yes|yes
+
+|deploy
+|Build and deploy the project archive to the remote Maven repository.
+|yes|yes|yes
+
+|apigw:tools
+|Extract the scripts of the configuration tools to the target directory.
+|yes|yes|yes
+|===
