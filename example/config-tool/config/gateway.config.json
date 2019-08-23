@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "/[CircuitContainer]name=Demo/[FilterCircuit]name=Show Build Version/[SetAttributeFilter]name=Set artifact ID": {
+      "description": "", 
+      "fields": {
+        "attributeValue#0": {
+          "property": "artifact", 
+          "type": "string", 
+          "used": true, 
+          "value": null
+        }
+      }
+    }, 
+    "/[CircuitContainer]name=Demo/[FilterCircuit]name=Show Build Version/[SetAttributeFilter]name=Set build timestamp": {
+      "description": "", 
+      "fields": {
+        "attributeValue#0": {
+          "property": "_system.build.datetime", 
+          "type": "string", 
+          "used": true, 
+          "value": null
+        }
+      }
+    }, 
+    "/[NetService]name=Service/[HTTP]name=Default Service/[SSLInterface]name=HTTPS": {
+      "description": "", 
+      "fields": {
+        "address#0": {
+          "property": null, 
+          "type": "string", 
+          "used": true, 
+          "value": "localhost"
+        }, 
+        "port#0": {
+          "property": null, 
+          "type": "string", 
+          "used": true, 
+          "value": "18443"
+        }
+      }
+    }
+  }
+}

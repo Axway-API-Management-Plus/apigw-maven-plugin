@@ -48,4 +48,9 @@ Extracting the tool from the Maven plugin via the `apigw:tools` goal is still su
 Configured certificates were not updated by configuration tool.
 
 Now updating or adding certificates works as expected.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/6[#6]
+|Example for using standalone configuration tool added.
+
+Folder: `example/config-tool`
 |===

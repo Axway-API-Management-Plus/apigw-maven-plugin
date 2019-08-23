@@ -1,0 +1,82 @@
+= Standalone Configuration Tool Example
+:Author: Martin Look
+:Email: mlook@axway.com
+:toc:
+:sectnums:
+:source-highlighter: prettify
+ifndef::env-github[]
+:icons: font
+:icon-set: far
+endif::[]
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+== Introduction
+
+This folder contains an example project for demonstrating the usage of the standalone configuration tool.
+
+=== Gateway Project
+
+The source `.pol` and `.env` archives are located in the `src` folder of the example project. The archives are protected by the passphrase `changeme`.
+
+It is a simple API Gateway project providing an HTTPS endpoint `/version` which returns a JSON with the version of the project.
+
+[source]
+----
+$ curl -ks https://localhost:8443/version
+{
+  "version": {
+    "artifact": "undefined",
+    "buildTime": "1970-01-01T00:00:00"
+  }
+}
+----
+
+The project contains environmentalized attributes.
+So the values of the `artifact` and `buildTime` properties can be configured.
+Also the port and the host of the HTTPS endpoint is environmentalized.
+
+[NOTE]
+====
+For testing, you could deploy the `.fed` archive on a gateway.
+Remember to change the group passphrase with the `managedomain` tool.
+====
+
+== Hands On
+
+The goal of this demo is to configure the environmentalized fields for a staging environment.
+Also the server and CA certificates will be replaced by the certificates of the staging environment.
+
+The passphrase for the configured `.fed` archive will be changed to `changed`. 
+
+To execute the demo just start the `run.cmd`.
+It will generate a configured `gateway.fed` archive in the directory of the `run.cmd` file.
+
+If you deploy the configured archive to a gateway the API call looks similar to the following example.
+
+NOTE: For deployment, remember to set the group passphrase via `managedomain`.
+
+[source]
+----
+$ curl -ks https://localhost:18443/version <1>
+{
+  "version": {
+    "artifact": "demo-1.0.0", <2>
+    "buildTime": "2019-08-23T23:09:46.684000" <3>
+  }
+}
+----
+<1> port is changed to 18443
+<2> artifact is replaced
+<3> build time is set 
+
+== Known Limitations
+
+* The `run.cmd` script is available for Windows only.
