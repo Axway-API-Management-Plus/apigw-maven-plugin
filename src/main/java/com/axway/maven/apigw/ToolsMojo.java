@@ -17,7 +17,7 @@ import com.axway.maven.apigw.utils.ResourceExtractor;
 @Mojo(defaultPhase = LifecyclePhase.GENERATE_RESOURCES, name = "tools", requiresProject = true, threadSafe = false, requiresDirectInvocation = true)
 public class ToolsMojo extends AbstractMojo {
 
-	public static String CMD_PACKAGE = "batch";
+	public static String CMD_PACKAGE = "scripts";
 	public static String[] COMMANDS = { "buildfed.cmd", "buildfed.sh", "buildtemplate.cmd", "buildtemplate.sh" };
 
 	@Parameter(defaultValue = "${project}", readonly = true)

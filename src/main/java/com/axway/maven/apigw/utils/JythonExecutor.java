@@ -13,7 +13,7 @@ import org.apache.maven.plugin.logging.Log;
 
 public class JythonExecutor {
 
-	public static final String SCRIPT_RESOURCE_PACKAGE = "scripts";
+	public static final String SCRIPT_RESOURCE_PACKAGE = "scripts/lib";
 
 	public static final String[] SCRIPTS = { "buildfed.py", "buildtemplate.py", "envconfig.py", "fedconfig.py" };
 
