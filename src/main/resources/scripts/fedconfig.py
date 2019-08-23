@@ -7,6 +7,7 @@ from java.io import File
 from java.lang import String
 from java.security import KeyFactory, KeyStore
 
+from com.vordel.store.util import ChangeEncryptedFields
 from com.vordel.archive.fed import PolicyArchive, EnvironmentArchive, DeploymentArchive
 from com.vordel.common.base64 import Encoder, Decoder
 from com.vordel.security.openssl import PKCS12
@@ -21,16 +22,17 @@ from java.security.cert import CertificateFactory
 class FedConfigurator:
     __cert_config = None
 
-    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, property_path = None, passphase = ""):
+    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, property_path = None, passphrase = ""):
+        self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
         self.__env_archive = EnvironmentArchive(env_archive_path)
-        self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive)
+        self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive, self.__passphrase_in)
         self.__config = EnvConfig(config_path, property_path)
 
         if cert_config_path is not None:
             self.__cert_config = CertConfig(cert_config_path, property_path)
         
-        self.__passphrase = passphase
+
         print ""
         print "INFO : Deployment archive configuration initialized"
         return
@@ -39,7 +41,7 @@ class FedConfigurator:
         self.__config.set_system_properties(sys_properties)
 
     def update_templates(self):
-        fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase)
+        fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
         env_settings = fed_api.envSettings.getEnvSettings()
 
         for env_entity in env_settings.getEnvironmentalizedEntities():
@@ -58,9 +60,27 @@ class FedConfigurator:
             self.__cert_config.update_config_file()
         return
 
-    def configure_entities(self):
+    def configure(self, passphrase = ""):
+        succeeded = self.__configure_entities()
+        if succeeded:
+            succeeded = self.__configure_certificates()
+            if not succeeded:
+                print "ERROR: Configuration of certificates failed!"
+        else:
+            print "ERROR: Configuration of entities failed; check JSON configuration for unconfigured entity fields!"
+
+        if self.__passphrase_in != passphrase:
+            fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
+            changer = ChangeEncryptedFields(fed_api.entityStore)
+            changer.execute(passphrase, self.__passphrase_in)
+            fed_api.deploymentArchive.updateConfiguration(fed_api.entityStore)
+            print "INFO : Passphrase for output archives changed"
+
+        return succeeded
+
+    def __configure_entities(self):
         print "INFO : Configure environmentalized entities"
-        fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase)
+        fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
         env_settings = fed_api.envSettings.getEnvSettings()
         succeeded = True
 
@@ -98,7 +118,7 @@ class FedConfigurator:
 
     def __get_certificate_infos(self):
         infos = []
-        es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase)
+        es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase_in)
         cert_entities = es.getAll("/[Certificates]name=Certificate Store/[Certificate]**")
         cf = CertificateFactory.getInstance("X.509")
         for cert_entity in cert_entities:
@@ -158,7 +178,7 @@ class FedConfigurator:
                 cert_entity.removeField("key")
         return
 
-    def configure_certificates(self):
+    def __configure_certificates(self):
         if self.__cert_config is not None:
             # determine existing certificates
             cert_infos = self.__get_certificate_infos()
@@ -167,7 +187,7 @@ class FedConfigurator:
 
             # apply configured certificates
             certs = self.__cert_config.get_certificates()
-            es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase)
+            es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase_in)
 
             cert_infos = []
             cert = None
@@ -205,6 +225,7 @@ class FedConfigurator:
     def write_fed(self, fed_path):
         if "/" not in fed_path and "\\" not in fed_path:
             fed_path = "./" + fed_path
+    
         self.__fed_archive.writeToArchiveFile(fed_path)
         print "INFO : Deployment archive written to '%s'" % (fed_path)
         return

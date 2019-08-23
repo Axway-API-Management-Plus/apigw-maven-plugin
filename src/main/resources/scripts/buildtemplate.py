@@ -7,7 +7,7 @@ from fedconfig import FedConfigurator
 
 def main():
     prog = sys.argv[0]
-    version = "%prog 0.1.0"
+    version = "%prog 1.0.0"
     usage = "%prog OPTIONS"
  
     parser = OptionParser(usage=usage, version=version)
@@ -16,6 +16,8 @@ def main():
     parser.add_option("-p", "--pol", dest="pol_file_path", help="Path of policy archive (.pol)", metavar="FILEPATH")
     parser.add_option("-c", "--config", dest="config_file_path", help="Path of JSON configuration file", metavar="FILEPATH")
     parser.add_option("--cert", dest="cert_file_path", help="Path of JSON file for used certificates [optional]", metavar="FILEPATH")
+    parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
+
 
     (options, args) = parser.parse_args()
 
@@ -27,7 +29,11 @@ def main():
         parser.error("Configuration file option is missing!")
  
     try:
-        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, None)
+        passphrase_in = ""
+        if options.passphrase_in:
+            passphrase_in = options.passphrase_in
+
+        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, passphrase_in)
         fed_config.update_templates()
 
     except Exception as e:

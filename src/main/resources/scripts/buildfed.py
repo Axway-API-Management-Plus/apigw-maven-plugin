@@ -23,7 +23,7 @@ def parse_system_property(sys_prop):
 
 def main():
     prog = sys.argv[0]
-    version = "%prog 0.1.0"
+    version = "%prog 1.0.0"
     usage = "%prog OPTIONS"
  
     parser = OptionParser(usage=usage, version=version)
@@ -36,7 +36,8 @@ def main():
     parser.add_option("--output-fed", dest="out_fed_file_path", help="Path of output deployment archive file (.fed) [optional]", metavar="FILEPATH")
     parser.add_option("--output-env", dest="out_env_file_path", help="Path of output environment archive file (.env) [optional]", metavar="FILEPATH")
     parser.add_option("-D", "--define", dest="sys_properties", help="Define a system property [multiple]", metavar="NAME:VALUE", action="append")
-
+    parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
+    parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
     (options, args) = parser.parse_args()
 
     if not options.env_file_path:
@@ -56,26 +57,27 @@ def main():
             sys_properties[name] = value
  
     try:
-        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path)
+        passphrase_in = ""
+        if options.passphrase_in:
+            passphrase_in = options.passphrase_in
+
+        passphrase_out = ""
+        if options.passphrase_out:
+            passphrase_out = options.passphrase_out
+
+        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path, passphrase_in)
 
         for name, value in sys_properties.items():
             print "INFO : System property %s=%s" % (name, value)
         fed_config.set_system_properties(sys_properties)
 
-        succeeded = fed_config.configure_entities()
+        succeeded = fed_config.configure(passphrase_out)
         if succeeded:
-            succeeded = fed_config.configure_certificates()
-            if succeeded:
-                if options.out_fed_file_path:
-                    fed_config.write_fed(options.out_fed_file_path)
-                if options.out_env_file_path:
-                    fed_config.write_env(options.out_env_file_path)
-            else:
-                print "ERROR: Configuration of certificates failed!"
+            if options.out_fed_file_path:
+                fed_config.write_fed(options.out_fed_file_path)
+            if options.out_env_file_path:
+                fed_config.write_env(options.out_env_file_path)
         else:
-            print "ERROR: Configuration of entities failed; check JSON configuration for unconfigured entity fields!"
-
-        if not succeeded:
             sys.exit(1)
 
     except Exception as e:
