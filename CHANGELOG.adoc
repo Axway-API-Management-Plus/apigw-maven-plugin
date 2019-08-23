@@ -1,0 +1,44 @@
+= Changelog
+
+== Version 0.5.0
+
+=== Enhancements
+
+[cols="1,<10a", options="header"]
+|===
+|ID|Description
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/1[#1]
+|Configuration tool now supports passphrases for input archives (.pol and .env) and for output archives (.fed and .env).
+
+Example:
+
+  buildfed -e gateway.env -p gateway.pol -c gateway.config.json -passphrase-in=foo -passphrase-out=bar --output-fed=gateway.fed
+
+Use the passphrase "foo" to open the `gateway.env` and `gateway.pol` archive and use the passphrase "bar" to write the configured `gateway.fed` file.
+
+Limitation:
+
+ * For all input archives, the same passphrase will be used.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/2[#2]
+|The source directory layout for the configuration tool is changed.
+The tool can be invoked directly from the cloned project folder, now.
+
+Example:
+
+_Windows_
+
+  > git clone https://github.com/Axway-API-Management-Plus/apigw-maven-plugin.git
+  > cd apigw-mavem-plugin
+  > set AXWAY_HOME=c:\axway
+  > src\main\resources\scripts\buildfed.cmd -h
+
+_Unix_
+
+  $ git clone https://github.com/Axway-API-Management-Plus/apigw-maven-plugin.git
+  $ cd apigw-mavem-plugin
+  $ export AXWAY_HOME=/opt/axway
+  $ src/main/resources/scripts/buildfed.sh -h
+|===
+
