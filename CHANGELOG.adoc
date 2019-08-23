@@ -40,5 +40,12 @@ _Unix_
   $ cd apigw-mavem-plugin
   $ export AXWAY_HOME=/opt/axway
   $ src/main/resources/scripts/buildfed.sh -h
-|===
 
+Extracting the tool from the Maven plugin via the `apigw:tools` goal is still supported.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/7[#7]
+|*Bug Fix*
+Configured certificates were not updated by configuration tool.
+
+Now updating or adding certificates works as expected.
+|===

@@ -165,6 +165,7 @@ class FedConfigurator:
             cert_entity = es.createEntity("Certificate")
             cert_entity.setStringField("dname", alias)
             es.addEntity(cert_store, cert_entity)
+            cert_entity = es.getChild(cert_store, '[Certificate]dname=%s' % (es.escapeField(alias)))
 
         # Set certificate content
         cert_entity.setBinaryValue("content", cert.getEncoded())
@@ -176,6 +177,8 @@ class FedConfigurator:
             entity_private_key = cert_entity.getStringValue("key")
             if not entity_private_key:
                 cert_entity.removeField("key")
+        
+        es.updateEntity(cert_entity)
         return
 
     def __configure_certificates(self):
