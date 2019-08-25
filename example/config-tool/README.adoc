@@ -88,12 +88,12 @@ Remember to use the passphrase `changeme` for the `.pol`and `.env` archive and t
 
 We have three configuration files in the `config` folder:
 
- * `gateway.config.json`: Used to configures the environmentalized fields.
- * `gateway.certs.json`: Used to replace certificates identified by their alias.
- * `gateway.props.json`: Used for properties not applicable in the configuration or certs file.
+ * `gateway.config.json`: used to configure the environmentalized fields.
+ * `gateway.certs.json`: used to replace certificates identified by their alias.
+ * `gateway.props.json`: used for properties not applicable in the configuration or certs file.
  This file may be generated during the build process with values from external resources (e.g. configuration DB or secured vault).
 
-NOTE: For a description of the configuration files please check the link:../../doc/user-guide.adoc[User Guide]
+NOTE: For a description of the configuration files please check the link:../../doc/manual/user-guide.adoc[User Guide]
 
 In this example the `buildfed` tool will be invoked with the following parameters:
 
