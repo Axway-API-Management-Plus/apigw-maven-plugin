@@ -60,4 +60,9 @@ Folder: `example/config-tool`
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/8[#8]
 |Enhancement
 |Working directories of PolicyStudio consolidated under a single `.studio` folder.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/3[#3]
+|Enhancement
+|Generate default `.gitignore` file on initialization.
+
 |===

@@ -47,6 +47,8 @@ public class InitMojo extends AbstractGatewayMojo {
 		default:
 			throw new MojoExecutionException("Unsupported package type: " + getPackageType());
 		}
+		
+		initGitIgnoreFile();
 	}
 
 	protected void initTestGateway() throws MojoExecutionException {
@@ -115,5 +117,24 @@ public class InitMojo extends AbstractGatewayMojo {
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error on creating project file", e);
 		}
+	}
+	
+	protected void initGitIgnoreFile() throws MojoExecutionException {
+		File gitignore = new File(this.project.getBasedir(), ".gitignore");
+		if (!gitignore.exists()) {
+			StringBuilder str = new StringBuilder();
+			str.append("/.studio\n");
+			str.append("/target\n");
+			str.append(".projdeps.json\n");
+			
+			try {
+			FileUtils.write(gitignore, str.toString(), "UTF-8");
+			} catch (IOException e) {
+				throw new MojoExecutionException("Error on initializing .gitignore file");
+			}
+		} else {
+			getLog().warn(".gitignore already exists and will not be updated");
+		}
+		
 	}
 }
