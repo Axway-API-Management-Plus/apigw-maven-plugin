@@ -2,7 +2,6 @@
 :Author: Martin Look
 :Email: mlook@axway.com
 :toc:
-:sectnums:
 :source-highlighter: prettify
 ifndef::env-github[]
 :icons: font
@@ -76,6 +75,41 @@ $ curl -ks https://localhost:18443/version <1>
 <1> port is changed to 18443
 <2> artifact is replaced
 <3> build time is set 
+
+
+[NOTE]
+====
+You can check the archives with PolicyStudio by creating a new project from the `.pol`/`.env` file or from the `.fed` file.
+
+Remember to use the passphrase `changeme` for the `.pol`and `.env` archive and the passphrase `changed` for the generated `.fed` file.
+====
+
+== How does it work?
+
+We have three configuration files in the `config` folder:
+
+ * `gateway.config.json`: Used to configures the environmentalized fields.
+ * `gateway.certs.json`: Used to replace certificates identified by their alias.
+ * `gateway.props.json`: Used for properties not applicable in the configuration or certs file.
+ This file may be generated during the build process with values from external resources (e.g. configuration DB or secured vault).
+
+NOTE: For a description of the configuration files please check the link:../../doc/user-guide.adoc[User Guide]
+
+In this example the `buildfed` tool will be invoked with the following parameters:
+
+* `-e src\gateway.env`: specifies the path to the input `.env` archive
+* `-p src\gateway.pol`: specifies the path to the input `.pol` archive
+* `-c config\gateway.config.json`: specifies the path to the environmentalized fields configuration file
+* `--cert=config/gateway.certs.json`: specifies the path to the certificates configuration file
+* `--prop=config/gateway.props.json`: specifies the path to the properties file
+* `--output-fed=gateway.fed`: specifies the path for the configured `.fed` archive
+* `--passphrase-in=changeme`: passphrase for input archives (`.pol` and `.env`)
+* `--passphrase-out=changed`: passphrase for the generated `.fed` file
+* `-D artifact:demo-1.0.0`: specifies the value of property `artifact` via the command line instead of from the configuration files
+
+The tool reads the source archives, configures the environmentalized fields, replaces the certificates and write the configured `.fed` file.
+
+NOTE: The value of the build time is sourced from an auto-generated, tool internal, property.
 
 == Known Limitations
 
