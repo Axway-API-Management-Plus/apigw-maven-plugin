@@ -4,24 +4,26 @@
 
 === Enhancements
 
-[cols="1,<10a", options="header"]
+[cols="1,2,<10a", options="header"]
 |===
-|ID|Description
+|ID|Type|Description
 
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/1[#1]
+|Enhancement
 |Configuration tool now supports passphrases for input archives (.pol and .env) and for output archives (.fed and .env).
 
 Example:
 
   buildfed -e gateway.env -p gateway.pol -c gateway.config.json -passphrase-in=foo -passphrase-out=bar --output-fed=gateway.fed
 
-Use the passphrase "foo" to open the `gateway.env` and `gateway.pol` archive and use the passphrase "bar" to write the configured `gateway.fed` file.
+Uses the passphrase "foo" to open the `gateway.env` and `gateway.pol` archive and uses the passphrase "bar" to write the configured `gateway.fed` file.
 
 Limitation:
 
  * For all input archives, the same passphrase will be used.
 
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/2[#2]
+|Enhancement
 |The source directory layout for the configuration tool is changed.
 The tool can be invoked directly from the cloned project folder, now.
 
@@ -44,13 +46,18 @@ _Unix_
 Extracting the tool from the Maven plugin via the `apigw:tools` goal is still supported.
 
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/7[#7]
-|*Bug Fix*
-Configured certificates were not updated by configuration tool.
+|Fix
+|Configured certificates were not updated by configuration tool.
 
 Now updating or adding certificates works as expected.
 
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/6[#6]
+|Enhancement
 |Example for using standalone configuration tool added.
 
 Folder: `example/config-tool`
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/8[#8]
+|Enhancement
+|Working directories of PolicyStudio consolidated under a single `.studio` folder.
 |===

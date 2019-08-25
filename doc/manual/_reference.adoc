@@ -204,12 +204,12 @@ Default: ${basedir}/src/test/policies
 |axway.policystudio.data
 |Data directory for project specific PolicyStudio data.
 
-Default: ${basedir}/.data
+Default: ${basedir}/.studio/data
 
-|axway.policystudio.dir
-|Data directory for project specific PolicyStudio configuration.
+|axway.policystudio.config
+|Directory for project specific PolicyStudio configuration.
 
-Default: ${basedir}/.policystudio
+Default: ${basedir}/.studio/conf
 
 |axway.dir.archive.build
 |Directory for building project archives.

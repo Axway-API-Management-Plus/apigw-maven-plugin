@@ -59,7 +59,7 @@ public class PolicyStudioMojo extends AbstractGatewayMojo {
 
 	private void executePolicyStudio() throws IOException, MojoExecutionException {
 		this.policyStudioDataDir.mkdirs();
-		this.policyStudioDir.mkdirs();
+		this.policyStudioConfigDir.mkdirs();
 
 		List<String> cmd = new ArrayList<String>();
 		cmd.add(getPolicyStudio().getPath());
@@ -111,7 +111,7 @@ public class PolicyStudioMojo extends AbstractGatewayMojo {
 	}
 
 	private File getConfigDir() {
-		return new File(this.policyStudioDir, "configuration");
+		return new File(this.policyStudioConfigDir, "configuration");
 	}
 
 	private File getProjectConnectionFile() {
