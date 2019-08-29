@@ -64,3 +64,24 @@ Otherwise, for environment specific certificates, there will be a mismatch betwe
 
 NOTE: Remember, environmentalized references are not supported.
 So, for a environmentalized field, the link to the certificate (by alias) can't be changed.
+
+== Documentation
+
+=== What about the `.adoc` extension?
+
+The documentation is written in Asciidoc.
+So we use the extension `.adoc` for documentation files.
+
+=== How can I read the documentation of the cloned repository in a nice format?
+
+There is an _Asciidoctor.js_ extension for Chrome to view Asciidoc files in a beautiful format.
+
+=== How do I get the documentation in PDF format?
+
+link:https://asciidoctor.org/[Asciidoctor] provides some tools to render Asciidoc sources into various output formats.
+
+Just download the binary distribution from the link:https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] site and follow the installation instructions.
+
+To generate the PDF execute the following command:
+
+  $ asciidoctorj -b pdf -r asciidoctor-pdf doc/manual/user-guide.adoc -o user-guide.pdf
