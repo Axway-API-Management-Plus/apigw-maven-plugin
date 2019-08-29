@@ -110,6 +110,7 @@ The plugin supports three kind of API Gateway projects:
 
  * link:doc/getting-started/getting-started.adoc[Getting Started]
  * link:doc/manual/user-guide.adoc[User Guide]
+ * link:doc/manual/_faq.adoc[FAQ]
  * link:example/config-tool/README.adoc[Example for using standalone configuration tool]
 
 
