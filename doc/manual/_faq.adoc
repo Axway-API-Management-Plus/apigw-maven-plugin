@@ -1,0 +1,66 @@
+= FAQ
+:Author: Martin Look
+:Email: mlook@axway.com
+:source-highlighter: prettify
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+
+== Contribution
+
+=== I found a bug, what shall I do?
+
+If you find a bug, don't hesitate to open an issue on the GitHub project page.
+I'll try to help you as soon as possible.
+
+[NOTE]
+====
+Please remember, it is a community project.
+The plugin isn't officially supported by Axway.
+So, please *don't* open a case in the Axway support portal.
+====
+
+=== I have a great idea to improve the plugin, what shall I do?
+
+Feedback is always appreciated.
+So open an issue on the GitHub project and describe your ideas.
+
+== Features
+
+=== Why are passphrases not supported for policy projects?
+
+One of the main intention of policy projects is shareability.
+Policy projects are also environment independent.
+The _real_ configuration, including credentials and keys, is done during the deployment.
+So it is feasible to have policy projects without any secret or critical information.
+
+It's a tradeoff between security and usability.
+As a developer you have to remember not to store any secret information in a policy project.
+
+=== Why are references not supported for environmentalization?
+
+Environmentalized fields containing a reference to an entity (e.g. reference to a certificate or policy), store the reference as a path to the linked entity.
+Getting the path and formatting the XML reference is very difficult and error prone.
+
+Therefore, it is not yet planned to support references.
+
+Please open an issue on GitHub if this is a show stopper for you.
+I'll try to find a solution.
+
+=== How to work with certificates?
+
+Always use an alias describing the purpose of the certificate.
+If the same certificate is used for multiple purposes, add the certificate multiple times.
+
+Don't use the common name of a certificate as an alias.
+Otherwise, for environment specific certificates, there will be a mismatch between the CN in the alias and the CN in the replaced certificate.
+
+NOTE: Remember, environmentalized references are not supported.
+So, for a environmentalized field, the link to the certificate (by alias) can't be changed.
