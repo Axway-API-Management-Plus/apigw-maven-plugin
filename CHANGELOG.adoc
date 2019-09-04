@@ -65,4 +65,21 @@ Folder: `example/config-tool`
 |Enhancement
 |Generate default `.gitignore` file on initialization.
 
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/4[#4]
+|Enhancement
+|Maven plugin now supports passphrases for reading input packages and for writing output packages.
+Applicable for server and deployment packages only.
+
+You can use the properties `axway.passphrase.in` and `axway.passphrase.out` to specify the passphrases for reading and writing packages.
+
+_Examples:_
+
+  ~/server-project$ mvn -Daxway.passphrase.out=changeme clean install
+
+Generates a server archive containing passphrase protected `.pol` and `.env` packages.
+
+  ~/deploy-project$ mvn -Daxway.passphrase.in=changeme -Daxway.passphrase.out=changed clean install
+
+Uses a passphrase protected server archive and generates a deployment archive containing a passphrase protected `.fed` package.
+
 |===

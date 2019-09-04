@@ -55,6 +55,12 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
+	
+	@Parameter(property = "axway.passphrase.in", required = false)
+	protected String passphraseIn = null;
+
+	@Parameter(property = "axway.passphrase.out", required = false)
+	protected String passphraseOut = null;
 
 	protected PackageType getPackageType() throws MojoExecutionException {
 		String type = this.project.getArtifact().getType();

@@ -121,7 +121,11 @@ public class ServerPolicyArchive extends AbstractFlattendProjectArchiveMojo {
 			inputParam.add("pol");
 			inputParam.add("--dir");
 			inputParam.add(outDir.getPath());
-			inputParam.add("--passphrase-none");
+			if (this.passphraseOut == null) {
+				inputParam.add("--passphrase-none");
+			} else {
+				inputParam.add("--passphrase=" + this.passphraseOut);
+			}
 
 			inputParam.add("--add");
 			inputParam.add(getPoliciesDirectory().getPath());

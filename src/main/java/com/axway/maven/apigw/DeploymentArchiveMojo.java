@@ -71,7 +71,6 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			this.archiveBuildDir.mkdirs();
 
 			buildFedArchive(this.archiveBuildDir, srcPolFile, srcEnvFile);
-			FileUtils.copyFile(srcPolFile, new File(this.archiveBuildDir, getGatewayFileName(".pol")));
 
 			prepareReadme(this.archiveBuildDir);
 			FileUtils.copyFileToDirectory(
@@ -131,7 +130,6 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		File configFile = new File(this.sourceDirectory, FILE_GATEWAY_CONFIG_JSON);
 
 		File outFedFile = new File(targetDir, getGatewayFileName(".fed"));
-		File outEnvFile = new File(targetDir, getGatewayFileName(".env"));
 
 		try {
 			JythonExecutor jython = new JythonExecutor(getLog(), getJython(), new File(getTargetDir(), "temp-scripts"));
@@ -154,8 +152,13 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			}
 			args.add("--output-fed");
 			args.add(outFedFile.getPath());
-			args.add("--output-env");
-			args.add(outEnvFile.getPath());
+			
+			if (this.passphraseIn != null && !this.passphraseIn.isEmpty()) {
+				args.add("--passphrase-in=" + this.passphraseIn);
+			}
+			if (this.passphraseOut != null && !this.passphraseOut.isEmpty()) {
+				args.add("--passphrase-out=" + this.passphraseOut);
+			}
 			
 			if (this.verboseCfgTools) {
 				args.add("--verbose");

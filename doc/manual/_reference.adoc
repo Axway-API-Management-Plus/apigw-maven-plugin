@@ -230,4 +230,16 @@ Default: ${axway.home}/apigateway/system/conf/templates/BlankNoSettingsConfigura
 |Set to _true_ to enable verbose mode for internal configuration tool.
 
 Default: false
+
+|axway.passphrase.in
+|Passphrase for reading input (`.pol`, `.env`) packages.
+Applicable to deployment projects only.
+
+Default: _no passphrase_
+
+|axway.passphrase.out
+|Passphrase for writing output (`.pol`, `.env`, `.fed`) packages.
+Applicable to server and deployment projects.
+
+Default: _no passphrase_
 |===

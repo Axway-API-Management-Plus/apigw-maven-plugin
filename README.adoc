@@ -87,8 +87,6 @@ The plugin supports three kind of API Gateway projects:
 |Deployment Archive
 
  * .fed file (environment specific)
- * .env file (environment specific)
- * .pol file
  * static files
  * external libraries (JARs)
 |Configures the environment independent server projects for a specific environment or group. A deployment project depends on exactly one server project.
