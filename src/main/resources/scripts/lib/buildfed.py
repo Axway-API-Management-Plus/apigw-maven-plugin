@@ -68,7 +68,7 @@ def main():
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path, passphrase_in)
 
         for name, value in sys_properties.items():
-            print "INFO : System property %s=%s" % (name, value)
+            print "INFO : System property %s" % (name)
         fed_config.set_system_properties(sys_properties)
 
         succeeded = fed_config.configure(passphrase_out)
