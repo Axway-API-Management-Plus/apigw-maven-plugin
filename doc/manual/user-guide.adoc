@@ -18,7 +18,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-:mvn-plugin-ver: 0.5.0
+:mvn-plugin-ver: 0.6.0
 
 == About the Plugin
 
