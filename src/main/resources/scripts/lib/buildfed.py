@@ -38,6 +38,7 @@ def main():
     parser.add_option("-D", "--define", dest="sys_properties", help="Define a system property [multiple]", metavar="NAME:VALUE", action="append")
     parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
+    parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
     (options, args) = parser.parse_args()
 
     if not options.env_file_path:
@@ -66,6 +67,8 @@ def main():
             passphrase_out = options.passphrase_out
 
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path, passphrase_in)
+        if options.simulate:
+            fed_config.enable_simulation_mode()
 
         for name, value in sys_properties.items():
             print "INFO : System property %s" % (name)
@@ -73,15 +76,19 @@ def main():
 
         succeeded = fed_config.configure(passphrase_out)
         if succeeded:
-            if options.out_fed_file_path:
-                fed_config.write_fed(options.out_fed_file_path)
-            if options.out_env_file_path:
-                fed_config.write_env(options.out_env_file_path)
+            if options.simulate:
+                print "INFO : [SIMULATION_MODE] No output files written!"
+            else:
+                if options.out_fed_file_path:
+                    fed_config.write_fed(options.out_fed_file_path)
+                if options.out_env_file_path:
+                    fed_config.write_env(options.out_env_file_path)
         else:
             sys.exit(1)
 
     except Exception as e:
         if options.verbose:
+            print "ERROR: Error occurred, check details below:"
             traceback.print_exc()
         else:
             print "ERROR: %r" % (e)

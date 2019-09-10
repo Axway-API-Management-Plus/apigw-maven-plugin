@@ -99,30 +99,15 @@ Having different passphrases for `.pol` and `.env` file is not supported.
 |Passphrase for output archives.
 This passphrase is used on writing the configured archives.
 If not set the output archives have the same passphrase as the source archives.
+
+|-s, --simulation
+|Enable simulation mode.
+
+In simulation mode, no output files (`.fed` or `.env`) will be written.
+Also non existing certificate files will be ignored.
 |===
 
-TIP: If no output file is specified the tool can be used to check the configuration and to update the configuration files.
-
-== Build Template
-
-The template builder tool is used to build templates for the configuration files.
-
-....
-$ jython buildtemplate.py --help
-Usage: buildtemplate.py OPTIONS
-
-Options:
-  --version             show program's version number and exit
-  -h, --help            show this help message and exit
-  -v, --verbose         Enable verbose messages [optional]
-  -e FILEPATH, --env=FILEPATH
-                        Path of environment archive (.env)
-  -p FILEPATH, --pol=FILEPATH
-                        Path of policy archive (.pol)
-  -c FILEPATH, --config=FILEPATH
-                        Path of JSON configuration file
-  --cert=FILEPATH       Path of JSON file for used certificates [optional]
-....
+TIP: The simulation mode can be used to check the configuration and to update the configuration files.
 
 == Configuration Files
 

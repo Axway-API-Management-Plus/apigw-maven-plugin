@@ -21,6 +21,8 @@ from java.security.cert import CertificateFactory
 
 class FedConfigurator:
     __cert_config = None
+    __simulation_mode = False
+
 
     def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, property_path = None, passphrase = ""):
         self.__passphrase_in = passphrase
@@ -37,28 +39,11 @@ class FedConfigurator:
         print "INFO : Deployment archive configuration initialized"
         return
 
+    def enable_simulation_mode(self):
+        self.__simulation_mode = True
+
     def set_system_properties(self, sys_properties):
         self.__config.set_system_properties(sys_properties)
-
-    def update_templates(self):
-        fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
-        env_settings = fed_api.envSettings.getEnvSettings()
-
-        for env_entity in env_settings.getEnvironmentalizedEntities():
-            env_fields = env_entity.getEnvironmentalizedFields()
-            for env_field in env_fields:
-                field_value = self.__config.check_field(env_entity, env_field)
-                if (field_value.key.type == "reference"):
-                    raise ValueError("Reference types are not supported for environmentalization: name=%s; index=%d; type=%s; entity=%s" \
-                        % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
-            
-        self.__config.update_config_file(force=True)
-
-        if self.__cert_config is not None:
-            cert_infos = self.__get_certificate_infos()
-            self.__cert_config.set_cert_infos(cert_infos)
-            self.__cert_config.update_config_file()
-        return
 
     def configure(self, passphrase = ""):
         succeeded = self.__configure_entities()
@@ -184,11 +169,13 @@ class FedConfigurator:
     def __configure_certificates(self):
         if self.__cert_config is not None:
             # determine existing certificates
+            print "INFO : Determine existing certificates"
             cert_infos = self.__get_certificate_infos()
             self.__cert_config.set_cert_infos(cert_infos)
             self.__cert_config.update_config_file()
 
             # apply configured certificates
+            print "INFO : Configure certificates"
             certs = self.__cert_config.get_certificates()
             es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase_in)
 
@@ -198,15 +185,29 @@ class FedConfigurator:
             for cert_ref in certs:
                 if cert_ref.get_type() == "crt":
                     cf = CertificateFactory.getInstance("X.509")
-                    fis = FileInputStream (cert_ref.get_file())
-                    cert = cf.generateCertificate(fis)
-                    self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert)
-                    print "INFO : Certificate (CRT) added: alias=%s" % (cert_ref.get_alias())
+                    if os.path.isfile(cert_ref.get_file()):
+                        fis = FileInputStream (cert_ref.get_file())
+                        cert = cf.generateCertificate(fis)
+                        self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert)
+                        print "INFO : Certificate (CRT) added: alias=%s" % (cert_ref.get_alias())
+                    else:
+                        if self.__simulation_mode:
+                            print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (CRT) ignored: alias=%s" % (cert_ref.get_alias())
+                            continue
+                        else:
+                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
                 elif cert_ref.get_type() == "p12":
-                    key = self.__get_key_from_p12(cert_ref.get_file(), cert_ref.get_password())
-                    cert = self.__get_cert_from_p12(cert_ref.get_file(), cert_ref.get_password())
-                    self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)
-                    print "INFO : Certificate (P12) added: alias=%s" % (cert_ref.get_alias())
+                    if os.path.isfile(cert_ref.get_file()):                        
+                        key = self.__get_key_from_p12(cert_ref.get_file(), cert_ref.get_password())
+                        cert = self.__get_cert_from_p12(cert_ref.get_file(), cert_ref.get_password())
+                        self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)
+                        print "INFO : Certificate (P12) added: alias=%s" % (cert_ref.get_alias())
+                    else:
+                        if self.__simulation_mode:
+                            print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (P12) ignored: alias=%s" % (cert_ref.get_alias())
+                            continue
+                        else:
+                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
                 else:
                     raise ValueError("Unsupported certificate type: %s" % (cert_ref.get_type()))
 

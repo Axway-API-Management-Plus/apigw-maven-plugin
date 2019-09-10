@@ -14,6 +14,17 @@ A property `axway.skipPackaging` is provided to skip the `package` goal in case 
 
 NOTE: There is no check if source files are newer than the target archive.
 So ensure that the package goal was executed before.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/16[#16]
+|Enhancement
+|Support simulation mode for configuration tool.
+
+In simulation mode no output files (`.fed` or `.env`) are written.
+Also non existing certificate files will be ignored.
+
+To ensure proper configuration files, unconfigured fields or certificates will still raise a build error.
+
+NOTE: The `buildtemplate` tool is removed as it can be fully replaced by the `buildfed` tool.
 |===
 
 == Version 0.5.0
