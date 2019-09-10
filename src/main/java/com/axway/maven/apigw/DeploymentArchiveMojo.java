@@ -63,8 +63,8 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	@Override
 	protected List<ArchiveDir> prepareDirs() throws MojoExecutionException {
-		File srcEnvFile = new File(getSharedArtifactDir(serverArchive), ServerPolicyArchive.FILE_GATEWAY_ENV);
-		File srcPolFile = new File(getSharedArtifactDir(serverArchive), ServerPolicyArchive.FILE_GATEWAY_POL);
+		File srcEnvFile = new File(getSharedArtifactDir(serverArchive), ServerArchiveMojo.FILE_GATEWAY_ENV);
+		File srcPolFile = new File(getSharedArtifactDir(serverArchive), ServerArchiveMojo.FILE_GATEWAY_POL);
 
 		try {
 			FileUtils.deleteDirectory(this.archiveBuildDir);
@@ -74,11 +74,11 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 			prepareReadme(this.archiveBuildDir);
 			FileUtils.copyFileToDirectory(
-					new File(getSharedArtifactDir(this.serverArchive), ServerPolicyArchive.FILE_README),
+					new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.FILE_README),
 					this.archiveBuildDir);
 
 			prepareStaticFiles(new File(this.archiveBuildDir, DIR_STATIC_FILES));
-			prepareJars(new File(this.archiveBuildDir, ServerPolicyArchive.DIR_LIBS));
+			prepareJars(new File(this.archiveBuildDir, ServerArchiveMojo.DIR_LIBS));
 
 			List<ArchiveDir> dirs = new ArrayList<ArchiveDir>();
 			dirs.add(new ArchiveDir(this.archiveBuildDir, new String[] { "**" }, null));
@@ -120,7 +120,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	private void prepareJars(File targetDir) throws IOException, MojoExecutionException {
 		// Copy dependent JARs
-		File libs = new File(getSharedArtifactDir(this.serverArchive), ServerPolicyArchive.DIR_LIBS);
+		File libs = new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.DIR_LIBS);
 		if (libs.exists() && libs.isDirectory()) {
 			FileUtils.copyDirectory(libs, targetDir);
 		}

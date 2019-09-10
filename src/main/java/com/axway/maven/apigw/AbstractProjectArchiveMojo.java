@@ -21,6 +21,15 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 
 	@Parameter(property = "axway.dir.archive.build", defaultValue = "${project.build.directory}/axway-archive")
 	protected File archiveBuildDir;
+	
+	/**
+	 * Skip to build a package if the target package already exists.
+	 * 
+	 * This is useful to separate package and deployment goals for CI/CD.
+	 */
+	@Parameter(property = "axway.skipPackaging", required = false)
+	protected boolean skipPackaging = false;
+
 
 	@Component
 	private Map<String, Archiver> archivers;
@@ -37,7 +46,13 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		File archiveFile = createZipArchive(prepareDirs());
+		File archiveFile = getArchiveFile();
+		
+		if (!archiveFile.exists() || !this.skipPackaging) {
+			createZipArchive(archiveFile, prepareDirs());
+		} else {
+			getLog().info("Target file already exists and package skipping requested; package will not be re-generated.");
+		}
 
 		this.project.getArtifact().setFile(archiveFile);
 
@@ -70,18 +85,9 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 		}
 	}
 
-	protected boolean projectHasAlreadySetAnArtifact() {
-		if (this.project.getArtifact().getFile() != null) {
-			return this.project.getArtifact().getFile().isFile();
-		} else {
-			return false;
-		}
-	}
-
 	protected abstract List<ArchiveDir> prepareDirs() throws MojoExecutionException;
-
-	protected File createZipArchive(List<ArchiveDir> dirs) throws MojoExecutionException {
-		File archiveFile = getArchiveFile(getTargetDir(), this.finalName);
+	
+	protected void createZipArchive(File archiveFile, List<ArchiveDir> dirs) throws MojoExecutionException {
 		ZipArchiver zip = new ZipArchiver();
 		zip.setFilesonly(true);
 		zip.setForced(true);
@@ -94,10 +100,13 @@ public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 			}
 
 			zip.createArchive();
-			return archiveFile;
 		} catch (Exception e) {
 			throw new MojoExecutionException("Error assembling archive", e);
 		}
+	}
+	
+	protected File getArchiveFile() {
+		return getArchiveFile(getTargetDir(), this.finalName);
 	}
 
 	protected File getArchiveFile(File basedir, String resultFinalName) {

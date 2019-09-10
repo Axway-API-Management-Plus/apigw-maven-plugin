@@ -21,7 +21,7 @@ Clone the repository on your machine and install the plugin:
 
 The Axway API Gateway Maven plugin is now installed on your machine.
 
-The plugin requires the installation of the Axway API Gateway development and deployment tools.
+The plugin requires the installation of the Axway API Gateway _Package and Deploy Tools_.
 The location of the software has to be specified by the property `axway.home`.
 Due to the location is individual for each developer, configure the property in your `~/.m2/settings.xml` file.
 
@@ -115,7 +115,7 @@ To edit the policies start PolicyStudio by calling the Maven goal `apigw:policys
 
 [NOTE]
 ====
-If PolicyStudio is started the first time in the project directory it has to be initialized first.
+If PolicyStudio is started the first time in the project directory, it has to be initialized first.
 
 In this case you will be prompted to close PolicyStudio right after startup.
 So, just close PolicyStudio and invoke the Maven goal `apigw:policystudio` again.
@@ -364,7 +364,7 @@ And build your project again.
 
  $ mvn clean package
 
-Now the build succeeds and a deployment archive `hello-world-dev-0.1.0-SNAPSHOT.axdar` containing the .pol, .env and .fed files will be created.
+Now the build succeeds and a deployment archive `hello-world-dev-0.1.0-SNAPSHOT.axdar` containing the `.fed` file will be created.
 
 For manual checks via ConfigurationStudio the content of the archive is located in the `target/axway-archive` folder.
 

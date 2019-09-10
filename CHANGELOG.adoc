@@ -1,8 +1,23 @@
 = Changelog
 
-== Version 0.5.0
+== Version 0.6.0
 
-=== Enhancements
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/15[#15]
+|Enhancement
+|Optionally skip `package` goal.
+For CI/CD pipelines it would be usefully to separate the package and deployment phase.
+
+A property `axway.skipPackaging` is provided to skip the `package` goal in case of the target archive already exists.
+
+Limitation
+
+There is no check if source files are newer than the target archive. So ensure that the package goal was executed before.
+|===
+
+== Version 0.5.0
 
 [cols="1,2,<10a", options="header"]
 |===
@@ -81,5 +96,4 @@ Generates a server archive containing passphrase protected `.pol` and `.env` pac
   ~/deploy-project$ mvn -Daxway.passphrase.in=changeme -Daxway.passphrase.out=changed clean install
 
 Uses a passphrase protected server archive and generates a deployment archive containing a passphrase protected `.fed` package.
-
 |===

@@ -17,7 +17,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "axsar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE)
-public class ServerPolicyArchive extends AbstractFlattendProjectArchiveMojo {
+public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	public static final String DIR_ARCHIVE_ROOT = "archive";
 	public static final String DIR_LIBS = "lib";

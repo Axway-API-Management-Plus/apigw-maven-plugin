@@ -162,7 +162,7 @@ The plugin can be configured by various properties.
 For most properties a default value exists, so the configuration effort is reduced to a minimum.
 
 .Properties
-[cols="1,3", options="header"]
+[cols="1,3a", options="header"]
 |===
 |Property|Description
 
@@ -242,4 +242,11 @@ Default: _no passphrase_
 Applicable to server and deployment projects.
 
 Default: _no passphrase_
+
+|axway.skipPackaging
+|Set to _true_ to skip `package` goal in case of the target artifact already exists.
+
+Default: false
+
+NOTE: It is not checked if the source files are newer than the target artifact.
 |===
