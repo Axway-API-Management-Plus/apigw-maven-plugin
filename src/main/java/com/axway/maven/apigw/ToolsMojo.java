@@ -18,7 +18,7 @@ import com.axway.maven.apigw.utils.ResourceExtractor;
 public class ToolsMojo extends AbstractMojo {
 
 	public static String CMD_PACKAGE = "scripts";
-	public static String[] COMMANDS = { "buildfed.cmd", "buildfed.sh", "buildtemplate.cmd", "buildtemplate.sh" };
+	public static String[] COMMANDS = { "buildfed.cmd", "buildfed.sh" };
 
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
