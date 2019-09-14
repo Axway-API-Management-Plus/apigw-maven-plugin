@@ -37,16 +37,24 @@ Options:
                         Path of JSON configuration file
   --prop=FILEPATH       Path of JSON property file [optional]
   --cert=FILEPATH       Path of JSON certificate configuration file [optional]
+  --cert-expiration=DAYS
+                        Check if certificates expire within the next days
+                        [optional]
+  --cert-config-update  Enable writing of info section for 'update'
+                        certificates within the configuration file [optional]
   --output-fed=FILEPATH
-                        Path of output deployment archive file (.fed) [optional]
+                        Path of output deployment archive file (.fed)
+                        [optional]
   --output-env=FILEPATH
-                        Path of output environment archive file (.env) [optional]
+                        Path of output environment archive file (.env)
+                        [optional]
   -D NAME:VALUE, --define=NAME:VALUE
                         Define a system property [multiple]
   --passphrase-in=PASSPHRASE
                         Passphrase of input archive files [optional]
   --passphrase-out=PASSPHRASE
                         Passphrase for output archive files [optional]
+  -s, --simulate        Enable simulation mode [optional]
 ....
 
 If environmentalized fields or certificates are not configured, the build fails.
@@ -75,6 +83,17 @@ The option is mandatory.
 
 |--cert
 |An optional JSON file containing the certificate configuration.
+
+|--cert-expiration
+|Optional number of days for certificate expiration check.
+
+If at least one certificate expires with the next given days an error will be raised.
+
+|--cert-config-update
+|Enable writing of info section for 'update' certificates within the configuration file.
+
+Since version v0.7.0 the info section of "update" certificates are not written any more.
+Use this to enable the previous behavior.
 
 |--output-fed
 |The path of the configured `.fed` file.
@@ -105,6 +124,7 @@ If not set the output archives have the same passphrase as the source archives.
 
 In simulation mode, no output files (`.fed` or `.env`) will be written.
 Also non existing certificate files will be ignored.
+
 |===
 
 TIP: The simulation mode can be used to check the configuration and to update the configuration files.
@@ -279,11 +299,7 @@ It specifies the alias of the certificates within the project and the source of 
             },
             "update": { <6>
                 "file": "cert/extern.crt", <7>
-                "info": { <8>
-                    "not_after": "2020-05-21T07:04:00+02:00", 
-                    "subject": "CN=extern, O=Axway, L=Berlin, ST=Berlin, C=DE"
-                }, 
-                "type": "crt" <9>
+                "type": "crt" <8>
             }
         }, 
         "server-p12": {
@@ -295,11 +311,7 @@ It specifies the alias of the certificates within the project and the source of 
             },
             "update": {
                 "file": "cert/server.p12", 
-                "info": {
-                    "not_after": "2020-05-21T07:02:00+02:00", 
-                    "subject": "CN=server, O=Axway, L=Berlin, ST=Berlin, C=DE"
-                }, 
-                "password": "server", <10>
+                "password": "server", <9>
                 "type": "p12"
             }
         }, 
@@ -310,16 +322,12 @@ It specifies the alias of the certificates within the project and the source of 
                     "subject": "CN=DST Root CA X3, O=Digital Signature Trust Co."
                 }
             },
-            "update": null <11>
+            "update": null <10>
         },
-        "test2": { <12>
+        "test2": { <11>
             "update": {
                 "file": "cert/server.p12", 
-                "info": {
-                    "not_after": "2020-05-21T07:02:00+02:00", 
-                    "subject": "CN=server, O=Axway, L=Berlin, ST=Berlin, C=DE"
-                }, 
-                "password-property": "server.password", <13> 
+                "password-property": "server.password", <12> 
                 "type": "p12"
             }
         }
@@ -335,15 +343,13 @@ A missing `origin` attribute indicates the origin certificate store doesn't has 
 <6> Defines the certificate to update the certificate with the same alias within the certificate store.
 A missing `update` attribute indicates a new/unconfigured certificate.
 <7> Path to the new certificate file.
-<8> Information of the new certificate.
-Will be updated automatically be the plugin.
-<9> Type of the certificate.
+<8> Type of the certificate.
 `crt` for certificates and `p12` for certificates with key.
-<10> Password to for the `.p12` file.
-<11> _null_ value indicates that the certificate will not be updated.
-<12> Certificate without a `origin` attribute.
+<9> Password to for the `.p12` file.
+<10> _null_ value indicates that the certificate will not be updated.
+<11> Certificate without a `origin` attribute.
 This certificate will be added to the certificate store.
-<13> Password for the `.p12` file is retrieved from the property configuration file.
+<12> Password for the `.p12` file is retrieved from the property configuration file.
 
 === Properties
 

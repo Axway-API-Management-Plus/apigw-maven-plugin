@@ -32,6 +32,12 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	@Parameter(property = "certsFile", required = false)
 	private File certsFile;
 	
+	@Parameter(property = "axway.tools.cfg.cert.expirationDays", required = false)
+	private int certExpirationDays = 10;
+	
+	@Parameter(property = "axway.tools.cfg.cert.updateConfigured", required = false)
+	private boolean updateCertConfigFile = false;
+	
 	@Parameter(property = "axway.tools.cfg.verbose", defaultValue = "false", required = true)
 	protected boolean verboseCfgTools;
 
@@ -149,6 +155,14 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			if (this.certsFile != null) {
 				args.add("--cert");
 				args.add(this.certsFile.getPath());
+				
+				if (this.certExpirationDays >= 0) {
+					args.add("--cert-expiration=" + this.certExpirationDays);
+				}
+				
+				if (this.updateCertConfigFile) {
+					args.add("--cert-config-update");
+				}
 			}
 			args.add("--output-fed");
 			args.add(outFedFile.getPath());

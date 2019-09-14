@@ -33,6 +33,8 @@ def main():
     parser.add_option("-c", "--config", dest="config_file_path", help="Path of JSON configuration file", metavar="FILEPATH")
     parser.add_option("--prop", dest="prop_file_path", help="Path of JSON property file [optional]", metavar="FILEPATH")
     parser.add_option("--cert", dest="cert_file_path", help="Path of JSON certificate configuration file [optional]", metavar="FILEPATH")
+    parser.add_option("--cert-expiration", dest="cert_expiration_days", help="Check if certificates expire within the next days [optional]", metavar="DAYS")
+    parser.add_option("--cert-config-update", dest="cert_config_update", help="Enable writing of info section for 'update' certificates within the configuration file [optional]", action="store_true")
     parser.add_option("--output-fed", dest="out_fed_file_path", help="Path of output deployment archive file (.fed) [optional]", metavar="FILEPATH")
     parser.add_option("--output-env", dest="out_env_file_path", help="Path of output environment archive file (.env) [optional]", metavar="FILEPATH")
     parser.add_option("-D", "--define", dest="sys_properties", help="Define a system property [multiple]", metavar="NAME:VALUE", action="append")
@@ -69,6 +71,12 @@ def main():
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path, passphrase_in)
         if options.simulate:
             fed_config.enable_simulation_mode()
+
+        if options.cert_config_update:
+            fed_config.enable_cert_config_update()
+
+        if options.cert_expiration_days:
+            fed_config.set_cert_expiration_days(int(options.cert_expiration_days))
 
         for name, value in sys_properties.items():
             print "INFO : System property %s" % (name)

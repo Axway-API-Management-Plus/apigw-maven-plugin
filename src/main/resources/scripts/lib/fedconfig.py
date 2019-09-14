@@ -23,6 +23,8 @@ class FedConfigurator:
     __cert_config = None
     __simulation_mode = False
 
+    __update_cert_config = False
+    __expiration_days = -1
 
     def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, property_path = None, passphrase = ""):
         self.__passphrase_in = passphrase
@@ -39,8 +41,14 @@ class FedConfigurator:
         print "INFO : Deployment archive configuration initialized"
         return
 
+    def enable_cert_config_update(self):
+        self.__update_cert_config = True
+
     def enable_simulation_mode(self):
         self.__simulation_mode = True
+
+    def set_cert_expiration_days(self, days):
+        self.__expiration_days = days
 
     def set_system_properties(self, sys_properties):
         self.__config.set_system_properties(sys_properties)
@@ -189,7 +197,6 @@ class FedConfigurator:
                         fis = FileInputStream (cert_ref.get_file())
                         cert = cf.generateCertificate(fis)
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert)
-                        print "INFO : Certificate (CRT) added: alias=%s" % (cert_ref.get_alias())
                     else:
                         if self.__simulation_mode:
                             print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (CRT) ignored: alias=%s" % (cert_ref.get_alias())
@@ -201,7 +208,6 @@ class FedConfigurator:
                         key = self.__get_key_from_p12(cert_ref.get_file(), cert_ref.get_password())
                         cert = self.__get_cert_from_p12(cert_ref.get_file(), cert_ref.get_password())
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)
-                        print "INFO : Certificate (P12) added: alias=%s" % (cert_ref.get_alias())
                     else:
                         if self.__simulation_mode:
                             print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (P12) ignored: alias=%s" % (cert_ref.get_alias())
@@ -214,10 +220,26 @@ class FedConfigurator:
                 subject = cert.getSubjectDN().getName()
                 not_after = cert.getNotAfter()
 
-                cert_infos.append(CertInfo(cert_ref.get_alias(), subject, not_after))
+                cert_info = CertInfo(cert_ref.get_alias(), subject, not_after)
+                print "INFO : Certificate (%s) added/replaced: %s [%s] - %s" % (cert_ref.get_type(), cert_info.get_alias(), cert_info.format_not_after(), cert_info.get_subject())
 
-            self.__cert_config.set_update_cert_infos(cert_infos)
-            self.__cert_config.update_config_file()
+                cert_infos.append(cert_info)
+
+            if self.__update_cert_config:
+                self.__cert_config.set_update_cert_infos(cert_infos)
+                self.__cert_config.update_config_file()
+
+            if self.__expiration_days >= 0:
+                print "INFO : Checking for certificate expiration within %i days." % (self.__expiration_days)
+                has_expired = False
+                for cert_info in cert_infos:
+                    expiration_days = cert_info.expiration_in_days()
+                    if self.__expiration_days > expiration_days:
+                        print "ERROR: Certificate '%s' expires in %i days!" % (cert_info.get_alias(), expiration_days)
+                        has_expired = True
+                
+                if has_expired:
+                    raise ValueError("At least one certificate expires in less than %i days; check log file!" % (self.__expiration_days))
 
             DeploymentArchive.updateConfiguration(self.__fed_archive, es.es)
             print "INFO : Certificates updated."

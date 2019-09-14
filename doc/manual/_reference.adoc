@@ -231,6 +231,22 @@ Default: ${axway.home}/apigateway/system/conf/templates/BlankNoSettingsConfigura
 
 Default: false
 
+|axway.tools.cfg.cert.expirationDays
+|Minimum number of days before certificates expires.
+
+The build fails if at least one configured certificate expires within the next given days.
+Use -1 to disable the check.
+
+Default: 10
+
+|axway.tools.cfg.cert.updateConfigured
+|Set to _true_ to enable writing the info section of "update" certificates in the configuration file.
+
+Since version v0.7.0 the info section of "update" certificates are not written any more.
+This property can be used to enable the previous behavior.
+
+Default: false
+
 |axway.passphrase.in
 |Passphrase for reading input (`.pol`, `.env`) packages.
 Applicable to deployment projects only.

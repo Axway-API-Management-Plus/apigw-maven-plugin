@@ -1,5 +1,59 @@
 = Changelog
 
+== Version 0.7.0
+
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/17[#17]
+|Enhancement
+|Check expiration of configured certificates.
+
+The plugin and the configuration tool now supports to check if configured certificates expires within a given number of days.
+If at least one certificate expires within the time frame an error will be raised.
+
+For the configuration tool the check is disabled by default.
+
+For the plugin the default number of days is 10.
+To disable the check for the plugin specify set `axway.tools.cfg.cert.expirationDays` property to -1.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/18[#18]
+|Enhancement
+|Don't create "info" section for "update" certificates.
+Information about the configured certificates are written to log instead.
+
+Previously the configuration tool has written the "info" section (see below).
+This will change a source file, which is not suitable for build environments.
+
+.previous-cert-config.json
+....
+            "update": {
+                "file": "cert/server.p12", 
+                "info": { <1>
+                    "not_after": "2020-05-21T07:02:00+02:00", 
+                    "subject": "CN=server, O=Axway, L=Berlin, ST=Berlin, C=DE"
+                }, 
+                "password": "server",
+                "type": "p12"
+            }
+....
+<1> Information about the configured certificate, will no longer be created or updated.
+
+The "info" section is no longer created or updated for "update" certificates.
+
+.cert-config.json
+....
+            "update": {
+                "file": "cert/server.p12", 
+                "password": "server",
+                "type": "p12"
+            }
+....
+
+
+NOTE: To enable the previous behavior, use the `--cert-config-update` parameter of the configuration tool or the `axway.tools.cfg.cert.updateConfigured` property of the plugin.
+|===
+
 == Version 0.6.0
 
 [cols="1,2,<10a", options="header"]

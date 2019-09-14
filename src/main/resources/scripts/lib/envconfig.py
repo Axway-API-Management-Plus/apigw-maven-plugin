@@ -2,6 +2,8 @@ import json
 import os
 from com.vordel.es.xes import PortableESPKFactory;
 from java.text import SimpleDateFormat
+from java.util import Date
+from java.util.concurrent import TimeUnit
 
 class FieldKey:
     def __init__(self, entity_short_hand_key, field_name, field_index, field_type):
@@ -190,17 +192,38 @@ class CertRef:
         return self.__password
 
 class CertInfo:
-    alias = None
-    subject = None
-    not_after = None
+    __alias = None
+    __subject = None
+    __not_after = None
     def __init__(self, alias, subject, not_after):
-        self.alias = alias
-        self.subject = subject
-        self.not_after = not_after
+        self.__alias = alias
+        self.__subject = subject
+        self.__not_after = not_after
+
+    def get_alias(self):
+        return self.__alias
+
+    def get_subject(self):
+        return self.__subject
 
     def get_info(self):
+        return {"info": {"subject": self.__subject, "not_after": self.format_not_after() }}
+    
+    def format_not_after(self):
+        """
+        Formats the expiration date/time of the certificate.
+        """
         df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX")
-        return {"info": {"subject": self.subject, "not_after": df.format(self.not_after) }} 
+        return df.format(self.__not_after)
+
+    def expiration_in_days(self):
+        """
+        Return the number of days until the certificate expires.
+        If the certificate is already expired a negative number is returned.
+        """
+        now = Date()
+        diff = self.__not_after.getTime() - now.getTime()
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
 
 class CertConfig:
     __config_file_path = None
@@ -240,19 +263,19 @@ class CertConfig:
 
         # set certificate infos
         for info in cert_infos:
-            if info.alias in certificates:
-                certificates[info.alias]["origin"] = info.get_info()
+            if info.get_alias() in certificates:
+                certificates[info.get_alias()]["origin"] = info.get_info()
             else:
-                certificates[info.alias] = { "origin": info.get_info() }
+                certificates[info.get_alias()] = { "origin": info.get_info() }
         return
 
     def set_update_cert_infos(self, cert_infos):
         certificates = self.__config_json["certificates"]
 
         for info in cert_infos:
-            if info.alias in certificates:
-                if "update" in certificates[info.alias]:
-                    certificates[info.alias]["update"].update(info.get_info())
+            if info.get_alias() in certificates:
+                if "update" in certificates[info.get_alias()]:
+                    certificates[info.get_alias()]["update"].update(info.get_info())
         return
 
     def get_certificates(self):
