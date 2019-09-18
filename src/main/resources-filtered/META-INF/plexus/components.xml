@@ -6,8 +6,8 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
-					<package>com.axway.maven.plugins:apigw-maven-plugin:axpar</package>
+					<generate-sources>${project.groupId}:${project.artifactId}:dependent-policies</generate-sources>
+					<package>${project.groupId}:${project.artifactId}:axpar</package>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
@@ -19,8 +19,8 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
-					<package>com.axway.maven.plugins:apigw-maven-plugin:axsar</package>
+					<generate-sources>${project.groupId}:${project.artifactId}:dependent-policies</generate-sources>
+					<package>${project.groupId}:${project.artifactId}:axsar</package>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
@@ -32,8 +32,8 @@
 			<implementation>org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping</implementation>
 			<configuration>
 				<phases>
-					<generate-sources>com.axway.maven.plugins:apigw-maven-plugin:dependent-policies</generate-sources>
-					<package>com.axway.maven.plugins:apigw-maven-plugin:axdar</package>
+					<generate-sources>${project.groupId}:${project.artifactId}:dependent-policies</generate-sources>
+					<package>${project.groupId}:${project.artifactId}:axdar</package>
 					<install>org.apache.maven.plugins:maven-install-plugin:install</install>
 					<deploy>org.apache.maven.plugins:maven-deploy-plugin:deploy</deploy>
 				</phases>
