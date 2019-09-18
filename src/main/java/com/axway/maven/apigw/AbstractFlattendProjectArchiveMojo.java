@@ -1,6 +1,11 @@
 package com.axway.maven.apigw;
 
+import java.util.List;
+
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 
 public abstract class AbstractFlattendProjectArchiveMojo extends AbstractProjectArchiveMojo {
 
@@ -10,10 +15,19 @@ public abstract class AbstractFlattendProjectArchiveMojo extends AbstractProject
 		Model reducedModel = model.clone();
 
 		// Remove all dependences
-		reducedModel.getDependencies().clear();
+		List<Dependency> deps = reducedModel.getDependencies();
+		if (deps != null) {
+			deps.clear();
+		}
 
 		// Remove all plugins
-		reducedModel.getBuild().getPlugins().clear();
+		Build build = reducedModel.getBuild();
+		if (build != null) {
+			List<Plugin> plugins = build.getPlugins();
+			if (plugins != null) {
+				plugins.clear();
+			}
+		}
 
 		return reducedModel;
 	}

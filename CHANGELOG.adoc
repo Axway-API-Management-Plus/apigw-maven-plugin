@@ -52,6 +52,12 @@ The "info" section is no longer created or updated for "update" certificates.
 
 
 NOTE: To enable the previous behavior, use the `--cert-config-update` parameter of the configuration tool or the `axway.tools.cfg.cert.updateConfigured` property of the plugin.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/19[#19]
+|Fix
+|On flattening the resulting POM a NullPointerException occurred if the `pom.xml` has no <build> element (e.g. in case of the <build> element is defined in the parent POM).
+
+The issue occurred for server and deployment projects.
 |===
 
 == Version 0.6.0
