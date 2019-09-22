@@ -13,8 +13,7 @@ ifdef::env-github[]
 endif::[]
 
 For the configuration of the `.fed` and `.env` files the Maven plugin uses Python scripts.
-The scripts can also be used as an independent tool.
-There are two tools available.
+The scripts can also be used as a standalone tool.
 
 == Build FED
 

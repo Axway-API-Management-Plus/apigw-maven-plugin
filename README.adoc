@@ -13,10 +13,10 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-[WARNING]
-====
-This is a spare time project and currently in beta status.
-====
+image:https://img.shields.io/github/license/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
+image:https://img.shields.io/github/v/tag/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
+image:https://img.shields.io/badge/status-beta-yellow[]
+
 
 == Start with Why
 
