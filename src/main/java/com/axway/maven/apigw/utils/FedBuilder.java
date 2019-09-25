@@ -1,0 +1,147 @@
+package com.axway.maven.apigw.utils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.maven.plugin.MojoExecutionException;
+
+import com.axway.maven.apigw.AbstractGatewayMojo;
+
+public class FedBuilder {
+
+	private final AbstractGatewayMojo mojo;
+	private final File polFile;
+	private final File envFile;
+	private final File configFile;
+
+	private File propertyFile = null;
+	private File certsFile = null;
+
+	private int certExpirationDays = -1;
+
+	private String passphrasePol = null;
+	private String passphraseFed = null;
+
+	private boolean updateCertConfigFile = false;
+	private boolean verboseCfgTools = false;
+
+	public FedBuilder(AbstractGatewayMojo mojo, File polFile, File envFile, File configFile)
+			throws MojoExecutionException {
+		if (mojo == null)
+			throw new NullPointerException("mojo is null");
+		if (polFile == null)
+			throw new NullPointerException(".pol file is null");
+		if (!polFile.canRead())
+			throw new MojoExecutionException(".pol file not readable: " + polFile.getPath());
+		if (envFile == null)
+			throw new NullPointerException(".env file is null");
+		if (!envFile.canRead())
+			throw new MojoExecutionException(".env file not readable: " + envFile.getPath());
+		if (configFile == null)
+			throw new NullPointerException("config file is null");
+		if (!configFile.canRead())
+			throw new MojoExecutionException("config file not readable: " + configFile.getPath());
+
+		this.mojo = mojo;
+		this.polFile = polFile;
+		this.envFile = envFile;
+		this.configFile = configFile;
+	}
+
+	public void setPropertyFile(File propertyFile) {
+		this.propertyFile = propertyFile;
+	}
+
+	public void setCertificatesFile(File certsFile) {
+		this.certsFile = certsFile;
+	}
+
+	public void setCertificateExpirationDays(int days) {
+		this.certExpirationDays = days;
+	}
+
+	public void enableVerboseMode(boolean enabled) {
+		this.verboseCfgTools = enabled;
+	}
+
+	public void enableCertificateConfigFileUpdate(boolean enabled) {
+		this.updateCertConfigFile = enabled;
+	}
+
+	public void setPassphrasePol(String passphrase) {
+		this.passphrasePol = passphrase;
+	}
+
+	public void setPassphraseFed(String passphrase) {
+		this.passphraseFed = passphrase;
+	}
+
+	public int execute(File targetFed, Map<String, String> props) throws MojoExecutionException {
+		File outFedFile = targetFed;
+
+		try {
+			JythonExecutor jython = new JythonExecutor(mojo.getHomeAxwayGateway(), mojo.getLog(),
+					new File(mojo.getTargetDir(), "temp-scripts"));
+
+			ArrayList<String> args = new ArrayList<>();
+
+			args.add("--pol");
+			args.add(this.polFile.getPath());
+			args.add("--env");
+			args.add(this.envFile.getPath());
+			args.add("--config");
+			args.add(configFile.getPath());
+			if (this.propertyFile != null) {
+				args.add("--prop");
+				args.add(this.propertyFile.getPath());
+			}
+			if (this.certsFile != null) {
+				args.add("--cert");
+				args.add(this.certsFile.getPath());
+
+				if (this.certExpirationDays >= 0) {
+					args.add("--cert-expiration=" + this.certExpirationDays);
+				}
+
+				if (this.updateCertConfigFile) {
+					args.add("--cert-config-update");
+				}
+			}
+			args.add("--output-fed");
+			args.add(outFedFile.getPath());
+
+			if (this.passphrasePol != null && !this.passphrasePol.isEmpty()) {
+				args.add("--passphrase-in=" + this.passphrasePol);
+			}
+			if (this.passphraseFed != null && !this.passphraseFed.isEmpty()) {
+				args.add("--passphrase-out=" + this.passphraseFed);
+			}
+
+			if (this.verboseCfgTools) {
+				args.add("--verbose");
+			}
+
+			args.add("-D");
+			args.add("_system.artifact.group:" + mojo.getProject().getArtifact().getGroupId());
+			args.add("-D");
+			args.add("_system.artifact.name:" + mojo.getProject().getArtifact().getArtifactId());
+			args.add("-D");
+			args.add("_system.artifact.ver:" + mojo.getProject().getArtifact().getVersion());
+			args.add("-D");
+			args.add("_system.artifact.id:" + mojo.getProject().getArtifact().getId());
+
+			if (props != null) {
+				for (Entry<String, String> entry : props.entrySet()) {
+					args.add("-D");
+					args.add(entry.getKey() + ":" + entry.getValue());
+				}
+			}
+
+			return jython.execute("buildfed.py", args.toArray(new String[0]));
+		} catch (JythonExecutorException e) {
+			throw new MojoExecutionException("Error on executing .fed builder", e);
+		}
+	}
+}

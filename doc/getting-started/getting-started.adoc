@@ -5,7 +5,7 @@
 :sectnums:
 :source-highlighter: prettify
 
-:mvn-plugin-ver: 0.7.0
+:mvn-plugin-ver: 0.8.0-SNAPSHOT
 
 Here you get a simple introduction on how to use the _Maven Plugin for Axway API Gateway_.
 It assumes that you are familiar with https://maven.apache.org[Apache Maven] and that you are familiar with PolicyStudio and the API Gateway.
@@ -259,8 +259,17 @@ For building an environment specific API Gateway instance create a separate fold
 
   <name>Hello World (DEV)</name>
 
+  <properties>
+    <!--3-->
+    <!--
+    <axway.config.certs>${basedir}/src/main/axwgw/gateway-cert.json</axway.config.certs>
+    <axway.config.props>${basedir}/src/main/axwgw/gateway-prop.json</axway.config.props
+    -->
+  </properties>
+
+
   <dependencies>
-    <dependency> <!--3-->
+    <dependency> <!--4-->
       <groupId>com.example</groupId>
       <artifactId>hello-world-gw</artifactId>
       <version>0.1.0-SNAPSHOT</version>
@@ -270,18 +279,11 @@ For building an environment specific API Gateway instance create a separate fold
 
   <build>
     <plugins>
-      <plugin> <!--4-->
+      <plugin> <!--5-->
         <groupId>com.axway.maven.plugins</groupId>
         <artifactId>apigw-maven-plugin</artifactId>
         <version>{mvn-plugin-ver}</version>
         <extensions>true</extensions>
-        <configuration>
-          <!--5-->
-          <!--
-          <certsFile>${basedir}/src/main/axwgw/gateway-cert.json</certsFile>
-          <propertyFile>${basedir}/src/main/axwgw/gateway-prop.json</propertyFile>
-          -->
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -289,9 +291,10 @@ For building an environment specific API Gateway instance create a separate fold
 ----
 <1> Environment specific artifact, so the name should include the target environment.
 <2> The packaging type `axway-deployment-archive` marks it as a deployment project.
-<3> Include the dependency of your previously created server archive.
-<4> Use _Maven Plugin for API Gateway_ for this project.
-<5> Optionally specify additional configuration files.
+<3> Optionally specify additional configuration files.
+<4> Include the dependency of your previously created server archive.
+<5> Use _Maven Plugin for API Gateway_ for this project.
+
 
 To initialize the project invoke the Maven goal `apigw:init`.
 
@@ -299,7 +302,7 @@ To initialize the project invoke the Maven goal `apigw:init`.
 
 This will create a source folder with an empty configuration file.
 
-.src/main/gateway.config.json
+.src/main/axwgw/gateway.config.json
 [source,json]
 ----
 {}
@@ -317,7 +320,7 @@ As we haven't configured our project yet, the build will fail.
 
 For convenience the plugin will automatically add new fields to the configuration file (see below).
 
-.src/main/gateway.config.json
+.src/main/axwgw/gateway.config.json
 [source,json]
 ----
 {
@@ -364,13 +367,22 @@ And build your project again.
 
  $ mvn clean package
 
-Now the build succeeds and a deployment archive `hello-world-dev-0.1.0-SNAPSHOT.axdar` containing the `.fed` file will be created.
+Now the build succeeds and a deployment archive `hello-world-dev-0.1.0-SNAPSHOT.axdar` containing the `.fed` file is created.
 
 For manual checks via ConfigurationStudio the content of the archive is located in the `target/axway-archive` folder.
 
 == Deployment
 
-Deployment of the gateway is currently not in scope of the plugin.
-But it should be very easy to incorporate the deployment archive in your deployment pipeline.
-Extract the content of the archive and use the `projdeploy` tool for deployment.
+The project can be deployed to a gateway via the plugin.
+
+Just invoke the `apigw:deploy` goal within the deployment project and specify the target domain and group.
+
+In the following example it is assumed that the Admin Node Manager is located at `localhost:8090`.
+The user `admin` is allowed to deploy projects and has the password `changeme`.
+The project shall be deployed to the group `test`. 
+
+  $ mvn -Daxway.anm.host=localhost -Daxway.anm.port=8090 \
+    -Daxway.anm.user=admin -Daxway.anm.password=changeme \
+    -Daxway.deploy.group=test \
+    clean apigw:deploy
 

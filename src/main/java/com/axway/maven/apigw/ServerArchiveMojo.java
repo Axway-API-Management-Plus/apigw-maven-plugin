@@ -1,13 +1,13 @@
 package com.axway.maven.apigw;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -15,6 +15,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import com.axway.maven.apigw.utils.ProjectPack;
 
 @Mojo(name = "axsar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE)
 public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
@@ -41,20 +43,22 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		File outDir = executeProjPack();
 		File polFile = new File(outDir, FILE_GATEWAY_POL);
 		File envFile = new File(outDir, FILE_GATEWAY_ENV);
+		
+		File archiveBuildDir = getArchiveBuildDir();
 
 		try {
-			FileUtils.deleteDirectory(this.archiveBuildDir);
-			this.archiveBuildDir.mkdirs();
+			FileUtils.deleteDirectory(archiveBuildDir);
+			archiveBuildDir.mkdirs();
 
-			FileUtils.copyFileToDirectory(polFile, this.archiveBuildDir);
-			FileUtils.copyFileToDirectory(envFile, this.archiveBuildDir);
+			FileUtils.copyFileToDirectory(polFile, archiveBuildDir);
+			FileUtils.copyFileToDirectory(envFile, archiveBuildDir);
 
-			prepareReadme(this.archiveBuildDir);
-			prepareStaticFiles(new File(this.archiveBuildDir, DIR_STATIC_FILES));
-			prepareJars(new File(this.archiveBuildDir, DIR_LIBS));
+			prepareReadme(archiveBuildDir);
+			prepareStaticFiles(new File(archiveBuildDir, DIR_STATIC_FILES));
+			prepareJars(new File(archiveBuildDir, DIR_LIBS));
 
 			List<ArchiveDir> dirs = new ArrayList<ArchiveDir>();
-			dirs.add(new ArchiveDir(this.archiveBuildDir, new String[] { "**" }, null));
+			dirs.add(new ArchiveDir(archiveBuildDir, new String[] { "**" }, null));
 
 			return dirs;
 		} catch (IOException e) {
@@ -106,65 +110,22 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	private File executeProjPack() throws MojoExecutionException {
 		try {
-			getLog().info("Prepare project pack command");
 			File outDir = new File(getTargetDir(), DIR_ARCHIVE_ROOT);
-
-			outDir.mkdirs();
-
-			List<String> inputParam = new ArrayList<String>();
-			inputParam.add(getProjectPack().getAbsolutePath());
-			inputParam.add("--create");
-
-			inputParam.add("--name");
-			inputParam.add(FILE_GATEWAY);
-			inputParam.add("--type");
-			inputParam.add("pol");
-			inputParam.add("--dir");
-			inputParam.add(outDir.getPath());
-			if (this.passphraseOut == null) {
-				inputParam.add("--passphrase-none");
-			} else {
-				inputParam.add("--passphrase=" + this.passphraseOut);
-			}
-
-			inputParam.add("--add");
-			inputParam.add(getPoliciesDirectory().getPath());
-			inputParam.add("--projpass-none");
-
-			inputParam.add("--polprop");
-			inputParam.add("ArtifactGroup: " + this.project.getArtifact().getGroupId());
-
-			inputParam.add("--polprop");
-			inputParam.add("ArtifactName: " + this.project.getArtifact().getArtifactId());
-
-			inputParam.add("--polprop");
-			inputParam.add("ArtifactType: " + getType());
-
-			inputParam.add("--polprop");
-			inputParam.add("ArtifactVersion: " + this.project.getVersion());
-
+			
+			ProjectPack packer = new ProjectPack(this.homeAxwayGW, getLog());
+			packer.setPassphrasePol(this.passphrasePol);
+			Map<String, String> polProps = new HashMap<>();
+			polProps.put("Name", this.project.getGroupId() + ":" + this.project.getArtifactId());
+			polProps.put("Version", this.project.getVersion());			
+			polProps.put("Type", getType());
+			
 			int index = 0;
 			for (Artifact a : getDependentPolicyArchives()) {
-				inputParam.add("--polprop");
-				inputParam.add("Dependency_" + index + ": " + a.getId());
+				polProps.put("Dependency_" + index, a.getId());
 				index++;
 			}
-
-			ProcessBuilder pb = new ProcessBuilder(inputParam);
-			pb.redirectErrorStream(true);
-			Process process = pb.start();
-			BufferedReader br = null;
-			try {
-				br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-				String line = null;
-				getLog().info("--- Project Pack (Start) ----------------------------");
-				while ((line = br.readLine()) != null) {
-					getLog().info(line);
-				}
-				getLog().info("--- Project Pack (End) ------------------------------");
-			} finally {
-				br.close();
-			}
+			
+			packer.execute(outDir, FILE_GATEWAY, getPoliciesDirectory(), polProps);
 
 			return outDir;
 		} catch (IOException e) {

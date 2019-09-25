@@ -21,15 +21,9 @@ public class JythonExecutor {
 	private final File scriptDir;
 	private final Log log;
 
-	public JythonExecutor(Log log, File pythonIntepreter, File scriptDir) throws JythonExecutorException {
+	public JythonExecutor(File homeAxwayGateway, Log log, File scriptDir) throws JythonExecutorException {
 		this.log = Objects.requireNonNull(log);
-		Objects.requireNonNull(pythonIntepreter);
-
-		if (!pythonIntepreter.exists() || !pythonIntepreter.canExecute()) {
-			throw new JythonExecutorException("Python interpreter not found: " + pythonIntepreter.getPath());
-		}
-
-		this.python = pythonIntepreter.getAbsolutePath();
+		this.python = getJython(homeAxwayGateway).getAbsolutePath();
 		this.scriptDir = Objects.requireNonNull(scriptDir);
 	}
 
@@ -67,6 +61,7 @@ public class JythonExecutor {
 
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 			String line = null;
+			this.log.info("--- " + scriptName + " (Start) ----------------------------");
 			while ((line = br.readLine()) != null) {
 				if (line.matches("^ERROR.*: .*")) {
 					this.log.error(stripLevel(line));
@@ -80,9 +75,32 @@ public class JythonExecutor {
 					this.log.info(line);
 				}
 			}
+			this.log.info("--- " + scriptName + " (End) ------------------------------");
 		}
 
 		return process.exitValue();
+	}
+
+	private File getJython(File homeAxwayGateway) throws JythonExecutorException {
+		File jythonWin = new File(homeAxwayGateway, "Win32/bin/jython.bat");
+		File jythonUnix = new File(homeAxwayGateway, "posix/bin/jython");
+
+		File jython = null;
+
+		if (jythonWin.exists()) {
+			jython = jythonWin;
+		} else if (jythonUnix.exists()) {
+			jython = jythonUnix;
+		} else {
+			throw new JythonExecutorException(
+					"Jython not found! Checked: " + jythonWin.getPath() + " and " + jythonUnix.getPath());
+		}
+
+		if (!jython.canExecute()) {
+			throw new JythonExecutorException("Python interpreter not found: " + jython.getPath());
+		}
+
+		return jython;
 	}
 
 	private String stripLevel(String line) {

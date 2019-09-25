@@ -19,9 +19,6 @@ import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 public abstract class AbstractProjectArchiveMojo extends AbstractGatewayMojo {
 
-	@Parameter(property = "axway.dir.archive.build", defaultValue = "${project.build.directory}/axway-archive")
-	protected File archiveBuildDir;
-	
 	/**
 	 * Skip to build a package if the target package already exists.
 	 * 

@@ -52,15 +52,60 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 
 	@Parameter(property = "axway.policystudio.config", defaultValue = "${basedir}/.studio/conf")
 	protected File policyStudioConfigDir;
+
+	/**
+	 * Passphrase for .pol and .env files.
+	 */
+	@Parameter(property = "axway.passphrase.pol", required = false)
+	protected String passphrasePol = null;
+
+	/**
+	 * Passphrase for .fed file.
+	 */
+	@Parameter(property = "axway.passphrase.fed", required = false)
+	protected String passphraseFed = null;
+
+	/**
+	 * Path to configuration file for environmentalized fields.
+	 */
+	@Parameter(property = "axway.config.envs", required = false)
+	protected File configConfigFile;
+
+	/**
+	 * Path to configuration file for properties.
+	 * 
+	 * Properties may be used by the environmentalized fields and certificates
+	 * configuration file.
+	 */
+	@Parameter(property = "axway.config.props", required = false)
+	protected File configPropertyFile;
+
+	/**
+	 * Path to the certificates configuration file.
+	 */
+	@Parameter(property = "axway.config.certs", required = false)
+	protected File configCertsFile;
+
 	
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
 	
-	@Parameter(property = "axway.passphrase.in", required = false)
-	protected String passphraseIn = null;
+	public MavenProject getProject() {
+		return this.project;
+	}
 
-	@Parameter(property = "axway.passphrase.out", required = false)
-	protected String passphraseOut = null;
+	public File getTargetDir() {
+		return new File(this.project.getBuild().getDirectory());
+	}
+
+	public File getHomeAxay() {
+		return this.homeAxway;
+	}
+	
+	public File getHomeAxwayGateway() {
+		return this.homeAxwayGW;
+	}
+
 
 	protected PackageType getPackageType() throws MojoExecutionException {
 		String type = this.project.getArtifact().getType();
@@ -68,34 +113,6 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 			return PackageType.fromType(type);
 		} catch (IllegalArgumentException e) {
 			throw new MojoExecutionException("Unsupported package type: " + type);
-		}
-	}
-
-	protected File getJython() throws MojoExecutionException {
-		File jythonWin = new File(this.homeAxwayGW, "Win32/bin/jython.bat");
-		File jythonUnix = new File(this.homeAxwayGW, "posix/bin/jython");
-
-		if (jythonWin.exists()) {
-			return jythonWin;
-		} else if (jythonUnix.exists()) {
-			return jythonUnix;
-		} else {
-			throw new MojoExecutionException(
-					"Jython not found! Checked: " + jythonWin.getPath() + " and " + jythonUnix.getPath());
-		}
-	}
-
-	protected File getProjectPack() throws MojoExecutionException {
-		File projpackWin = new File(this.homeAxwayGW, "Win32/bin/projpack.bat");
-		File projpackUnix = new File(this.homeAxwayGW, "posix/bin/projpack");
-
-		if (projpackWin.exists()) {
-			return projpackWin;
-		} else if (projpackUnix.exists()) {
-			return projpackUnix;
-		} else {
-			throw new MojoExecutionException(
-					"projpack not found! Checked: " + projpackWin.getPath() + " and " + projpackUnix.getPath());
 		}
 	}
 
@@ -113,8 +130,13 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 		}
 	}
 
-	protected File getTargetDir() {
-		return new File(this.project.getBuild().getDirectory());
+	/**
+	 * Returns the folder for building archives.
+	 * 
+	 * @return archive folder
+	 */
+	protected File getArchiveBuildDir() {
+		return new File(getTargetDir(), "axway-archive");
 	}
 
 	protected void checkAxwayHome() throws MojoExecutionException {
@@ -193,7 +215,7 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	protected File getSharedArtifactDir(Artifact a) {
 		return new File(this.sharedProjectsDir, a.getArtifactId());
 	}
-	
+
 	protected String buildProjectName() {
 		StringBuilder name = new StringBuilder();
 		name.append(this.project.getGroupId());

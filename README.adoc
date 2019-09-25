@@ -115,7 +115,6 @@ The plugin supports three kind of API Gateway projects:
 == Known Limitations
 
  * Documentation is not complete.
- * Deployment to API Gateway is currently not supported (on the road map).
  * Automatic adding of dependent JARs to PolicyStudio is currently not supported (on the road map).
  * Environmentalized fields containing references are not supported.
  * Unconfigured envSettings are not detected.

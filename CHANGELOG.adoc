@@ -1,5 +1,38 @@
 = Changelog
 
+== Version 0.8.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/11[#11]
+|Enhancement
+|Deployment to gateway via plugin.
+
+The plugin now supports to deploy a project directly via the plugin goal `apigw:deploy`. Only the standard deployment is supported. The deployment of static files and JARs are not supported.
+
+New properties:
+
+  * `axway.anm.host`: Host of the Admin Node Manager.
+  * `axway.anm.port`: Port of the Admin Node Manager (default: 8090).
+  * `axway.anm.user`: User to connect to the Admin Node Manager (default: admin).
+  * `axway.anm.password`: Password of the user.
+  * `axway.deploy.group`: Name of the group the project is deployed to.
+  * `axway.passphrase.pol`: Passphrase for `.pol` and `.env` packages.
+  * `axway.passphrase.fed`: Passphrase for `.fed` packages.
+  * `axway.passphrase.deploy`: Passphrase for deployment group.
+  * `axway.config.envs`: Path to environmentalized fields configuration file.
+  * `axway.config.certs`: Path to certificates configuration file.
+  * `axway.config.props`: Path to properties configuration file.
+
+Deleted properties:
+
+  * `axway.passphrase.in`: replaced by `axway.passphrase.pol`
+  * `axway.passphrase.out`: replaced by `axway.passphrase.out`
+  * `propertyFile`: replaced by `axway.config.props`
+  * `certsFile`: replaced by `axway.config.certs`
+
+|===
+
 == Version 0.7.0
 
 [cols="1,2,<10a", options="header"]

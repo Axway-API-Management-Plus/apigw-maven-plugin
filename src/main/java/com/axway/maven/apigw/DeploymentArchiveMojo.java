@@ -15,29 +15,23 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import com.axway.maven.apigw.utils.JythonExecutor;
-import com.axway.maven.apigw.utils.JythonExecutorException;
+import com.axway.maven.apigw.utils.FedBuilder;
 
 @Mojo(name = "axdar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE)
 public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
+	public static final String FILE_FED_NAME = "gateway.fed";
 	public static final String FILE_README = "readme-deployment-archive.txt";
 	public static final String FILE_GATEWAY_CONFIG_JSON = "gateway.config.json";
-	
+
 	private Artifact serverArchive;
 
-	@Parameter(property = "propertyFile", required = false)
-	private File propertyFile;
-
-	@Parameter(property = "certsFile", required = false)
-	private File certsFile;
-	
 	@Parameter(property = "axway.tools.cfg.cert.expirationDays", required = false)
 	private int certExpirationDays = 10;
-	
+
 	@Parameter(property = "axway.tools.cfg.cert.updateConfigured", required = false)
 	private boolean updateCertConfigFile = false;
-	
+
 	@Parameter(property = "axway.tools.cfg.verbose", defaultValue = "false", required = true)
 	protected boolean verboseCfgTools;
 
@@ -72,22 +66,23 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		File srcEnvFile = new File(getSharedArtifactDir(serverArchive), ServerArchiveMojo.FILE_GATEWAY_ENV);
 		File srcPolFile = new File(getSharedArtifactDir(serverArchive), ServerArchiveMojo.FILE_GATEWAY_POL);
 
+		File archiveBuildDir = getArchiveBuildDir();
+
 		try {
-			FileUtils.deleteDirectory(this.archiveBuildDir);
-			this.archiveBuildDir.mkdirs();
+			FileUtils.deleteDirectory(archiveBuildDir);
+			archiveBuildDir.mkdirs();
 
-			buildFedArchive(this.archiveBuildDir, srcPolFile, srcEnvFile);
+			buildFedArchive(archiveBuildDir, srcPolFile, srcEnvFile);
 
-			prepareReadme(this.archiveBuildDir);
+			prepareReadme(archiveBuildDir);
 			FileUtils.copyFileToDirectory(
-					new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.FILE_README),
-					this.archiveBuildDir);
+					new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.FILE_README), archiveBuildDir);
 
-			prepareStaticFiles(new File(this.archiveBuildDir, DIR_STATIC_FILES));
-			prepareJars(new File(this.archiveBuildDir, ServerArchiveMojo.DIR_LIBS));
+			prepareStaticFiles(new File(archiveBuildDir, DIR_STATIC_FILES));
+			prepareJars(new File(archiveBuildDir, ServerArchiveMojo.DIR_LIBS));
 
 			List<ArchiveDir> dirs = new ArrayList<ArchiveDir>();
-			dirs.add(new ArchiveDir(this.archiveBuildDir, new String[] { "**" }, null));
+			dirs.add(new ArchiveDir(archiveBuildDir, new String[] { "**" }, null));
 
 			return dirs;
 		} catch (IOException e) {
@@ -133,71 +128,32 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	}
 
 	private void buildFedArchive(File targetDir, File srcPolFile, File srcEnvFile) throws MojoExecutionException {
-		File configFile = new File(this.sourceDirectory, FILE_GATEWAY_CONFIG_JSON);
-
-		File outFedFile = new File(targetDir, getGatewayFileName(".fed"));
-
-		try {
-			JythonExecutor jython = new JythonExecutor(getLog(), getJython(), new File(getTargetDir(), "temp-scripts"));
-
-			ArrayList<String> args = new ArrayList<>();
-
-			args.add("--pol");
-			args.add(srcPolFile.getPath());
-			args.add("--env");
-			args.add(srcEnvFile.getPath());
-			args.add("--config");
-			args.add(configFile.getPath());
-			if (this.propertyFile != null) {
-				args.add("--prop");
-				args.add(this.propertyFile.getPath());
-			}
-			if (this.certsFile != null) {
-				args.add("--cert");
-				args.add(this.certsFile.getPath());
-				
-				if (this.certExpirationDays >= 0) {
-					args.add("--cert-expiration=" + this.certExpirationDays);
-				}
-				
-				if (this.updateCertConfigFile) {
-					args.add("--cert-config-update");
-				}
-			}
-			args.add("--output-fed");
-			args.add(outFedFile.getPath());
-			
-			if (this.passphraseIn != null && !this.passphraseIn.isEmpty()) {
-				args.add("--passphrase-in=" + this.passphraseIn);
-			}
-			if (this.passphraseOut != null && !this.passphraseOut.isEmpty()) {
-				args.add("--passphrase-out=" + this.passphraseOut);
-			}
-			
-			if (this.verboseCfgTools) {
-				args.add("--verbose");
-			}
-			
-			args.add("-D");
-			args.add("_system.artifact.group:" + this.project.getArtifact().getGroupId());
-			args.add("-D");
-			args.add("_system.artifact.name:" + this.project.getArtifact().getArtifactId());
-			args.add("-D");
-			args.add("_system.artifact.ver:" + this.project.getArtifact().getVersion());
-			args.add("-D");
-			args.add("_system.artifact.id:" + this.project.getArtifact().getId());
-
-			int exitCode = jython.execute("buildfed.py", args.toArray(new String[0]));
-
-			if (exitCode != 0) {
-				throw new MojoExecutionException("Failed to build .fed file: exitCode=" + exitCode);
-			}
-		} catch (JythonExecutorException e) {
-			throw new MojoExecutionException("Error on executing .fed builder", e);
+		File configFile = this.configConfigFile;
+		if (configFile == null) {
+			configFile = new File(this.sourceDirectory, FILE_GATEWAY_CONFIG_JSON);
 		}
-	}
 
-	private String getGatewayFileName(String prefix) {
-		return "gateway" + prefix;
+		File outFedFile = new File(targetDir, FILE_FED_NAME);
+
+		FedBuilder fedBuilder = new FedBuilder(this, srcPolFile, srcEnvFile, configFile);
+
+		if (this.configPropertyFile != null) {
+			fedBuilder.setPropertyFile(this.configPropertyFile);
+		}
+		if (this.configCertsFile != null) {
+			fedBuilder.setCertificatesFile(this.configCertsFile);
+			fedBuilder.setCertificateExpirationDays(this.certExpirationDays);
+			fedBuilder.enableCertificateConfigFileUpdate(this.updateCertConfigFile);
+		}
+
+		fedBuilder.setPassphrasePol(this.passphrasePol);
+		fedBuilder.setPassphraseFed(this.passphraseFed);
+
+		fedBuilder.enableVerboseMode(this.verboseCfgTools);
+
+		int exitCode = fedBuilder.execute(outFedFile, null);
+		if (exitCode != 0) {
+			throw new MojoExecutionException("Build configured .fed package failed: exitCode=" + exitCode);
+		}
 	}
 }

@@ -173,7 +173,7 @@ This property has to be defined before using the plugin.
 Default: _none_
 
 |axway.home.apigw
-|Home directory of the installed AI Gateway.
+|Home directory of the installed API Gateway.
 
 Default: ${axway.home}/apigateway
 
@@ -226,6 +226,21 @@ Default: ${axway.home}/apigateway/system/conf/templates/BlankConfiguration-Vorde
 
 Default: ${axway.home}/apigateway/system/conf/templates/BlankNoSettingsConfiguration-VordelGateway.fed
 
+|axway.config.envs
+|Path to configuration file for environmentalized fields (required for deployment or deployment projects).
+
+Default: ${axway.dir.source}/gateway.config.json _(only for deployment projects)_
+
+|axway.config.certs
+|Path to configuration file for certificates (required for deployment or deployment projects).
+
+Default: _none_
+
+|axway.config.props
+|Path to configuration file for properties (required for deployment or deployment projects).
+
+Default: _none_
+
 |axway.tools.cfg.verbose
 |Set to _true_ to enable verbose mode for internal configuration tool.
 
@@ -247,17 +262,45 @@ This property can be used to enable the previous behavior.
 
 Default: false
 
-|axway.passphrase.in
-|Passphrase for reading input (`.pol`, `.env`) packages.
-Applicable to deployment projects only.
+|axway.passphrase.pol
+|Passphrase for reading or generating `.pol` and `.env` packages.
 
 Default: _no passphrase_
 
-|axway.passphrase.out
-|Passphrase for writing output (`.pol`, `.env`, `.fed`) packages.
-Applicable to server and deployment projects.
+|axway.passphrase.fed
+|Passphrase for reading or writing `.fed` packages.
 
 Default: _no passphrase_
+
+|axway.passphrase.deploy
+|Passphrase for gateway deployment.
+
+Default: _no passphrase_
+
+|axway.anm.host
+|Host of Admin Node Manager (required for deployment only)
+
+Default: _none_
+
+|axway.anm.port
+|Port of Admin Node Manager (required for deployment only)
+
+Default: 8090
+
+|axway.anm.user
+|Admin user for Admin Node Manager (required for deployment only)
+
+Default: admin
+
+|axway.anm.password
+|Password word Admin Node Manager (required for deployment only)
+
+Default: _none_
+
+|axway.deploy.group
+|Group the projects have to be deployed to (required for deployment only)
+
+Default: _none_
 
 |axway.skipPackaging
 |Set to _true_ to skip `package` goal in case of the target artifact already exists.

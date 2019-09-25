@@ -177,6 +177,98 @@ To deploy the generated project archive to the remote repository use the `deploy
 
   $ mvn clean deploy
 
+== Deploy Project to API Gateway
+
+To install the project to a gateway instance the goal `apigw:deploy` is used.
+It only supports a standard deployment.
+Deployment of static files or JARs are not supported.
+
+For deployment following properties are used:
+
+[cols="1,<5a,1", options="header"]
+|===
+|Property|Description|Mandatory
+
+|`axway.anm.host`
+|Host of the Admin Node Manager.
+|yes
+
+|`axway.anm.port`
+|Port of the Admin Node Manager (default: 8090).
+|no
+
+|`axway.anm.user`
+|User to connect to the Admin Node Manager (default: admin).
+|no
+
+|`axway.anm.password`
+|Password of the user.
+|yes
+
+|`axway.deploy.group`
+|Name of the group the project is deployed to.
+|yes
+
+|`axway.passphrase.pol`
+|Passphrase for `.pol` and `.env` packages.
+|no
+
+|`axway.passphrase.fed`
+|Passphrase for `.fed` packages.
+|no
+
+|`axway.passphrase.deploy`
+|Passphrase for deployment group.
+|no
+
+|`axway.config.envs`
+|Path to environmentalized fields configuration file.
+|yes
+
+|`axway.config.certs`
+|Path to certificates configuration file.
+|no
+
+|`axway.config.props`
+|Path to properties configuration file.
+|no
+|===
+
+Example:
+
+  $ mvn -Daxway.anm.host=localhost -Daxway.anm.password=changeme -Daxway.deploy.group=test -Daxway.config.envs=gateway.config.json clean apigw:deploy
+
+=== Policy Projects
+
+For policy projects the test server which is included in the project is deployed.
+
+Steps:
+
+  . Execute `package` lifecycle.
+  . Build `.pol` and `.env` packages.
+  . Build and configure `.fed` package.
+  . Deploy `.fed` package to gateway
+
+=== Server Projects
+
+For server projects the generated `.pol` and `.env` packages are deployed.
+
+Steps:
+
+  . Execute `package` lifecycle.
+  . Build and configure `.fed` package from `.pol` and `.env` packages.
+  . Deploy `.fed` package to gateway
+
+=== Deployment Projects
+
+For deployment projects the `.fed` package of the generated artifact is deployed.
+
+Steps:
+
+  . Execute `package` lifecycle.
+  . Deploy `.fed` package to gateway
+
+
 == Miscellaneous
 
 === Standalone Configuration Tools
@@ -220,5 +312,9 @@ This section provides a short overview of the goals supported by the Maven plugi
 
 |apigw:tools
 |Extract the scripts of the configuration tools to the target directory.
+|yes|yes|yes
+
+|apigw:deploy
+|Deploy project to a gateway.
 |yes|yes|yes
 |===
