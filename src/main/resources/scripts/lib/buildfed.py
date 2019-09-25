@@ -25,8 +25,9 @@ def main():
     prog = sys.argv[0]
     version = "%prog 1.0.0"
     usage = "%prog OPTIONS"
+    epilog = "Build configured .fed package."
  
-    parser = OptionParser(usage=usage, version=version)
+    parser = OptionParser(usage=usage, version=version, epilog=epilog)
     parser.add_option("-v", "--verbose", dest="verbose", help="Enable verbose messages [optional]", action="store_true")
     parser.add_option("-e", "--env", dest="env_file_path", help="Path of environment archive (.env)", metavar="FILEPATH")
     parser.add_option("-p", "--pol", dest="pol_file_path", help="Path of policy archive (.pol)", metavar="FILEPATH")
