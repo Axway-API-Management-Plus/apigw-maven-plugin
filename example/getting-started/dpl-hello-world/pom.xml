@@ -30,12 +30,6 @@
         <artifactId>apigw-maven-plugin</artifactId>
         <version>${axway.maven.plugin.ver}</version>
         <extensions>true</extensions>
-        <configuration>
-          <!--
-          <certsFile>${basedir}/src/main/axwgw/gateway-cert.json</certsFile>
-          <propertyFile>${basedir}/src/main/axwgw/gateway-prop.json</propertyFile>
-          -->
-        </configuration>
       </plugin>
     </plugins>
   </build>
