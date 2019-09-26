@@ -30,7 +30,7 @@ class FedConfigurator:
         self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
         self.__env_archive = EnvironmentArchive(env_archive_path)
-        self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive, self.__passphrase_in)
+        self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive)
         self.__config = EnvConfig(config_path, property_path)
 
         if cert_config_path is not None:

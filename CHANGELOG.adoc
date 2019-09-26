@@ -1,5 +1,15 @@
 = Changelog
 
+== Version 0.8.1
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/20[#20]
+|Fix
+|Configuration tool now supports API Gateway 7.5.3
+
+|===
+
 == Version 0.8.0
 [cols="1,2,<10a", options="header"]
 |===
