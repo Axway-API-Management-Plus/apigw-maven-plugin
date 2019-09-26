@@ -32,9 +32,6 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	@Parameter(property = "axway.tools.cfg.cert.updateConfigured", required = false)
 	private boolean updateCertConfigFile = false;
 
-	@Parameter(property = "axway.tools.cfg.verbose", defaultValue = "false", required = true)
-	protected boolean verboseCfgTools;
-
 	@Override
 	protected String getArchiveExtension() {
 		return PackageType.DEPLOYMENT.getExtension();

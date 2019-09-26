@@ -119,6 +119,7 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 		fc.setPassphraseFed(this.passphraseFed);
 		fc.setPropertyFile(this.configPropertyFile);
 		fc.setCertificatesFile(this.configCertsFile);
+		fc.enableVerboseMode(this.verboseCfgTools);
 
 		File fed = new File(getTempDir(), PROJECT_NAME + ".fed");
 

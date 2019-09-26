@@ -8,6 +8,10 @@
 |Fix
 |Configuration tool now supports API Gateway 7.5.3
 
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/21[#21]
+|Fix
+|Support verbose mode of configuration tool for goal `apigw:deploy`.
+
 |===
 
 == Version 0.8.0

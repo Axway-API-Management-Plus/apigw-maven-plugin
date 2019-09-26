@@ -53,6 +53,9 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	@Parameter(property = "axway.policystudio.config", defaultValue = "${basedir}/.studio/conf")
 	protected File policyStudioConfigDir;
 
+	@Parameter(property = "axway.tools.cfg.verbose", defaultValue = "false", required = true)
+	protected boolean verboseCfgTools;
+
 	/**
 	 * Passphrase for .pol and .env files.
 	 */
