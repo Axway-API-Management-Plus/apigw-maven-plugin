@@ -14,7 +14,7 @@ ifdef::env-github[]
 endif::[]
 
 image:https://img.shields.io/github/license/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
-image:https://img.shields.io/github/v/tag/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
+image:https://img.shields.io/github/v/release/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
 image:https://img.shields.io/badge/status-beta-yellow[]
 
 
