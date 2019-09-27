@@ -101,8 +101,11 @@ The plugin supports three kind of API Gateway projects:
    ** Each project has a separate PolicyStudio configuration (running multiple PolicyStudio instances is supported).
  * Configure environmentalized fields via JSON configuration.
  * Support of separate property file for credentials.
- * Check for unconfigured environmentalize fields (build fails in case of unconfigured fields)
- * Add or replace certificates by alias.
+ * Check for unconfigured environmentalize fields (build fails in case of unconfigured fields).
+ * Add or replace certificates by alias via JSON configuration.
+ * Check of certificate expiration.
+ * Deploy projects to gateway via plugin.
+
 
 == More to Read
 
