@@ -79,9 +79,9 @@ There is an _Asciidoctor.js_ extension for Chrome to view Asciidoc files in a be
 === How do I get the documentation in PDF format?
 
 link:https://asciidoctor.org/[Asciidoctor] provides some tools to render Asciidoc sources into various output formats.
+link:https://github.com/asciidoctor/asciidoctor-pdf[Asciidoctor PDF] can be used to convert the documentation into a well layouted PDF document.
+Follow the instructions on the the home page to install the tool.
 
-Just download the binary distribution from the link:https://github.com/asciidoctor/asciidoctorj[AsciidoctorJ] site and follow the installation instructions.
+To generate the PDF execute the following command in the root project folder:
 
-To generate the PDF execute the following command:
-
-  $ asciidoctorj -b pdf -r asciidoctor-pdf doc/manual/user-guide.adoc -o user-guide.pdf
+  $ asciidoctor-pdf -a pdf-themesdir=doc/pdf-themes -a pdf-theme=axway doc/manual/user-guide.adoc -d book -o user-guide.pdf

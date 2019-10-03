@@ -1,0 +1,49 @@
+extends: default
+
+page:
+  size: A4
+  layout: portrait
+  margin: [2.5cm, 1.5cm, 2.5cm, 1.5cm]
+
+outline-list:
+  text-align: left
+
+title_page:
+  align: center
+  title:
+    top: 0%
+  logo:
+    image: image:images/axway-logo-big.jpeg[pdfwidth=30%,align=center]
+    top: 20%
+  background-image: image:images/background.jpeg[]
+
+running_content:
+  start_at: toc
+
+footer:
+  recto:
+    right:
+      content: '{page-number}'
+    left:
+      content: '{document-title}'
+  verso:
+    left:
+      content: $footer_recto_left_content
+    right:
+      content: $footer_recto_right_content
+
+header:
+  height: 2.0cm
+  vertical_align: bottom
+  border_color: dddddd
+  border_width: 0.25
+  recto:
+    left:
+      content: "{chapter-title}"
+    right:
+      content: image:images/axway-logo.png[width=50%]
+  verso:
+    left:
+      content: $header_recto_left_content
+    right:
+      content: $header_recto_right_content
