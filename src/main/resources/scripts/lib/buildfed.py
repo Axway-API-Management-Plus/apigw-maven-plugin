@@ -1,18 +1,20 @@
 import sys
 import traceback
- 
+import logging
+
 from optparse import OptionParser
 from fedconfig import FedConfigurator
+from envconfig import PropConfig
 from datetime import datetime
 
 def parse_system_property(sys_prop):
     if not sys_prop:
-        print "ERROR: Empty system property not allowed!"
+        logging.error("Empty system property not allowed!")
         exit(1)
 
     s = sys_prop.split(":", 1)
     if not s[0]:
-        print "ERROR: Empty system property name!"
+        logging.error("Empty system property name!")
         exit(1)
 
     name = s[0]
@@ -23,7 +25,7 @@ def parse_system_property(sys_prop):
 
 def main():
     prog = sys.argv[0]
-    version = "%prog 1.0.0"
+    version = "%prog 1.1.0"
     usage = "%prog OPTIONS"
     epilog = "Build configured .fed package."
  
@@ -32,7 +34,7 @@ def main():
     parser.add_option("-e", "--env", dest="env_file_path", help="Path of environment archive (.env)", metavar="FILEPATH")
     parser.add_option("-p", "--pol", dest="pol_file_path", help="Path of policy archive (.pol)", metavar="FILEPATH")
     parser.add_option("-c", "--config", dest="config_file_path", help="Path of JSON configuration file", metavar="FILEPATH")
-    parser.add_option("--prop", dest="prop_file_path", help="Path of JSON property file [optional]", metavar="FILEPATH")
+    parser.add_option("--prop", dest="prop_file_path_list", help="Path of JSON property file [multiple]", metavar="FILEPATH", action="append")
     parser.add_option("--cert", dest="cert_file_path", help="Path of JSON certificate configuration file [optional]", metavar="FILEPATH")
     parser.add_option("--cert-expiration", dest="cert_expiration_days", help="Check if certificates expire within the next days [optional]", metavar="DAYS")
     parser.add_option("--cert-config-update", dest="cert_config_update", help="Enable writing of info section for 'update' certificates within the configuration file [optional]", action="store_true")
@@ -51,6 +53,12 @@ def main():
     if not options.config_file_path:
         parser.error("Configuration file option is missing!")
 
+    logging.basicConfig(format='%(levelname)s: %(message)s')
+    if options.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    else:
+        logging.getLogger().setLevel(logging.INFO)
+
     # Add some standard system properties
     sys_properties = {}
     sys_properties["_system.build.datetime"] = datetime.now().isoformat()
@@ -59,8 +67,15 @@ def main():
         for sp in options.sys_properties:
             (name, value) = parse_system_property(sp)
             sys_properties[name] = value
- 
+
     try:
+        # Set properties from files and system properties
+        properties = PropConfig(options.prop_file_path_list)
+        for name, value in sys_properties.items():
+            logging.info("Provided system property %s" % (name))
+            properties.set_property(name, value)
+
+        # Set passphrases
         passphrase_in = ""
         if options.passphrase_in:
             passphrase_in = options.passphrase_in
@@ -69,7 +84,8 @@ def main():
         if options.passphrase_out:
             passphrase_out = options.passphrase_out
 
-        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, options.prop_file_path, passphrase_in)
+        # Execute configuration
+        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in)
         if options.simulate:
             fed_config.enable_simulation_mode()
 
@@ -79,14 +95,10 @@ def main():
         if options.cert_expiration_days:
             fed_config.set_cert_expiration_days(int(options.cert_expiration_days))
 
-        for name, value in sys_properties.items():
-            print "INFO : System property %s" % (name)
-        fed_config.set_system_properties(sys_properties)
-
         succeeded = fed_config.configure(passphrase_out)
         if succeeded:
             if options.simulate:
-                print "INFO : [SIMULATION_MODE] No output files written!"
+                logging.info("[SIMULATION_MODE] No output files written!")
             else:
                 if options.out_fed_file_path:
                     fed_config.write_fed(options.out_fed_file_path)
@@ -97,10 +109,9 @@ def main():
 
     except Exception as e:
         if options.verbose:
-            print "ERROR: Error occurred, check details below:"
-            traceback.print_exc()
+            logging.error("Error occurred, check details:", exc_info=True)
         else:
-            print "ERROR: %r" % (e)
+            logging.error("%r" % (e))
         sys.exit(1) 
 
     sys.exit(0)

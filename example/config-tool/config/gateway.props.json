@@ -1,5 +1,6 @@
 {
 	"properties": {
-		"cert.password.staged.server": "changeme"
+		"service.address": "localhost",
+		"service.port": "18443"
 	}
 }

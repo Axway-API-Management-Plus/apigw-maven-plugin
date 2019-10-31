@@ -2,6 +2,7 @@ package com.axway.maven.apigw.utils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -16,7 +17,7 @@ public class FedBuilder {
 	private final File envFile;
 	private final File configFile;
 
-	private File propertyFile = null;
+	private final List<File> propertyFiles = new ArrayList<File>();
 	private File certsFile = null;
 
 	private int certExpirationDays = -1;
@@ -50,8 +51,12 @@ public class FedBuilder {
 		this.configFile = configFile;
 	}
 
-	public void setPropertyFile(File propertyFile) {
-		this.propertyFile = propertyFile;
+	public void addPropertyFile(File propertyFile) {
+		this.propertyFiles.add(propertyFile);
+	}
+
+	public void addPropertyFiles(List<File> propertyFiles) {
+		this.propertyFiles.addAll(propertyFiles);
 	}
 
 	public void setCertificatesFile(File certsFile) {
@@ -93,9 +98,9 @@ public class FedBuilder {
 			args.add(this.envFile.getPath());
 			args.add("--config");
 			args.add(configFile.getPath());
-			if (this.propertyFile != null) {
+			for (File propertyFile : this.propertyFiles) {
 				args.add("--prop");
-				args.add(this.propertyFile.getPath());
+				args.add(propertyFile.getPath());
 			}
 			if (this.certsFile != null) {
 				args.add("--cert");

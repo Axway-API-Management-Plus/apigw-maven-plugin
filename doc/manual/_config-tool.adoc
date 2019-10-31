@@ -34,7 +34,7 @@ Options:
                         Path of policy archive (.pol)
   -c FILEPATH, --config=FILEPATH
                         Path of JSON configuration file
-  --prop=FILEPATH       Path of JSON property file [optional]
+  --prop=FILEPATH       Path of JSON property file [multiple]
   --cert=FILEPATH       Path of JSON certificate configuration file [optional]
   --cert-expiration=DAYS
                         Check if certificates expire within the next days
@@ -78,7 +78,10 @@ The option is mandatory.
 The option is mandatory.
 
 |--prop
-|An optional JSON file containing the property configuration.
+|Path to a JSON file containing the property configuration.
+Multiple files are supported by specifying the parameter multiple times.
+
+If a property occurs in multiple files the value from the last file is used.
 
 |--cert
 |An optional JSON file containing the certificate configuration.
@@ -105,6 +108,7 @@ If missing, no `.env` file is generated.
 |--define
 |Define a system property `name:value`.
 System properties can be used instead of custom defined properties.
+Multiple properties are supported by specifying the parameter multiple times.
 
 |--passphrase-in
 |Passphrase for source archives.
@@ -144,34 +148,7 @@ Following kind of configuration files are supported:
 
   * Environmentalized fields: Mandatory configuration file for environmentalized fields.
   * Certificates: Optional configuration file for certificates.
-  * Properties: Optional configuration file for properties.
-
-The location of the mandatory configuration file for environmentalized fields is implicitly set to `${basedir}/src/main/axwgw/gateway.config.json`.
-
-The file will be created during the initialization of the project (goal `apigw:init`).
-
-The location of the other configuration files can be specified in the `<configuration>` element of the plugin (see below).
-
-.pom.xml
-[source,xml,subs="verbatim,attributes"]
-----
-<!- ... ->
-<plugin>
-  <groupId>com.axway.maven.plugins</groupId>
-  <artifactId>apigw-maven-plugin</artifactId>
-  <version>{mvn-plugin-ver}</version>
-  <extensions>true</extensions>
-  <configuration>
-    <certsFile>${basedir}/src/main/axwgw/gateway.certs.json</certsFile> <!--1-->
-    <propertyFile>${basedir}/gateway.prop.json</propertyFile> <!--2-->
-  </configuration>
-</plugin>
-<!- ... ->
-----
-<1> Optional location of the configuration file for certificates.
-<2> Optional location of the configuration file for properties.
-
-NOTE: The configuration of the config files is only applicable for deployment projects.
+  * Properties: Optional configuration files for properties.
 
 === Environmentalized Fields
 

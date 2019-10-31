@@ -1,5 +1,56 @@
 = Changelog
 
+== Version 0.9.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/22[#22]
+|Fix
+|Broken passphrase feature for API Gateway 7.6.2 is fixed.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/23[#23]
+|Enhancement
+|Support for multiple property files.
+
+Additionally to the `axway.config.props` property, property files can be configured via the <configuration> element of the <plugin> element or via the `axway.config.props.files` property.
+
+.pom.xml
+[source,xml]
+----
+<plugin>
+  <groupId>com.axway.maven.plugins</groupId>
+  <artifactId>apigw-maven-plugin</artifactId>
+  <version>${axway.maven.plugin.ver}</version>
+  <extensions>true</extensions>
+  <configuration>
+    <configPropertyFiles> <!--1-->
+      <configPropertyFile>${basedir}/a.json</configPropertyFile>
+      <configPropertyFile>${basedir}/b.json</configPropertyFile>
+    </configPropertyFiles>
+  </configuration>
+</plugin>
+----
+<1> Configure multiple property files. 
+
+.command line
+....
+$ mvn package -Daxway.config.props.files=c.json,d.json
+....
+
+The files are used in the following order:
+
+  1. File specified by `axway.config.props` property.
+  1. Files specified in the <configuration> element.
+  1. Files specified by `axway.config.props.files` property.
+
+If a property exists in the multiple property files the value of from the last property file is used.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/24[#24]
+|Enhancement
+|Use Python logging for `buildfed`` tool.
+
+|===
+
 == Version 0.8.1
 [cols="1,2,<10a", options="header"]
 |===

@@ -134,9 +134,8 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 		FedBuilder fedBuilder = new FedBuilder(this, srcPolFile, srcEnvFile, configFile);
 
-		if (this.configPropertyFile != null) {
-			fedBuilder.setPropertyFile(this.configPropertyFile);
-		}
+		fedBuilder.addPropertyFiles(getPropertyFiles());
+
 		if (this.configCertsFile != null) {
 			fedBuilder.setCertificatesFile(this.configCertsFile);
 			fedBuilder.setCertificateExpirationDays(this.certExpirationDays);

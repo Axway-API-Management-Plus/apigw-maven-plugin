@@ -4,7 +4,7 @@
       "description": "", 
       "fields": {
         "attributeValue#0": {
-          "property": "artifact", 
+          "property": "artifact",
           "type": "string", 
           "used": true, 
           "value": null
@@ -21,21 +21,21 @@
           "value": null
         }
       }
-    }, 
+    },
     "/[NetService]name=Service/[HTTP]name=Default Service/[SSLInterface]name=HTTPS": {
       "description": "", 
       "fields": {
         "address#0": {
-          "property": null, 
-          "type": "string", 
-          "used": true, 
-          "value": "localhost"
+          "property": "service.address",
+          "type": "string",
+          "used": true,
+          "value": null
         }, 
         "port#0": {
-          "property": null, 
+          "property": "service.port", 
           "type": "string", 
           "used": true, 
-          "value": "18443"
+          "value": null
         }
       }
     }

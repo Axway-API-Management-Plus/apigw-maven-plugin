@@ -83,6 +83,12 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	@Parameter(property = "axway.config.props", required = false)
 	protected File configPropertyFile;
 
+	@Parameter(required = false)
+	protected File[] configPropertyFiles;
+
+	@Parameter(property = "axway.config.props.files", required = false)
+	protected File[] configPropertyFilesAdditional;
+
 	/**
 	 * Path to the certificates configuration file.
 	 */
@@ -104,7 +110,7 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	public File getHomeAxay() {
 		return this.homeAxway;
 	}
-	
+
 	public File getHomeAxwayGateway() {
 		return this.homeAxwayGW;
 	}
@@ -227,5 +233,25 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 		name.append(this.project.getArtifactId());
 
 		return name.toString();
+	}
+	
+	protected List<File> getPropertyFiles() {
+		List<File> propFiles = new ArrayList<File>();
+
+		if (this.configPropertyFile != null) {
+			propFiles.add(this.configPropertyFile);
+		}
+		if(this.configPropertyFiles != null) {
+			for (File pf : this.configPropertyFiles) {
+				propFiles.add(pf);
+			}
+		}
+		if(this.configPropertyFilesAdditional != null) {
+			for (File pf : this.configPropertyFilesAdditional) {
+				propFiles.add(pf);
+			}
+		}
+
+		return propFiles;
 	}
 }

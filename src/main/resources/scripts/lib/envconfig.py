@@ -1,5 +1,7 @@
 import json
 import os
+import logging
+
 from com.vordel.es.xes import PortableESPKFactory;
 from java.text import SimpleDateFormat
 from java.util import Date
@@ -19,50 +21,59 @@ class FieldValue:
 
 
 class PropConfig:
-    __properties_json = None
+    __properties = {}
 
-    def __init__(self, property_file_path):
-        with open(property_file_path) as property_file:
-            self.__properties_json = json.load(property_file)
+    def __init__(self, property_file_path_list):
+        if not property_file_path_list:
+            return
 
-        if "properties" not in self.__properties_json:
-            raise ValueError("File '%s' is not a valid property file; missing 'properties' attribute!" % (property_file_path))
+        for property_file_path in property_file_path_list:
+            if not os.path.exists(property_file_path):
+                raise ValueError("Property file '%s' doesn't exist!" % (property_file_path))
 
+            logging.info("Reading property file '%s'" % (property_file_path))
+            with open(property_file_path) as property_file:
+                properties_json = json.load(property_file)
+
+                if "properties" not in properties_json:
+                    raise ValueError("File '%s' is not a valid property file; missing 'properties' attribute!" % (property_file_path))
+                
+                for p in properties_json["properties"]:
+                    self.__properties[p] = properties_json["properties"][p]
         return
 
     def get_property(self, key):
-        if key not in self.__properties_json["properties"]:
+        if key not in self.__properties:
             return None
-        return self.__properties_json["properties"][key]
+        return self.__properties[key]
 
+    def set_property(self, key, value):
+        self.__properties[key] = value
 
 class EnvConfig:
     __config_file_path = None
     __config_json = None
     __properties = None
-    __sys_properties = None
 
     __missing_vars = False
     __file_updated = False
 
     __unconfigured_fields = []
         
-    def __init__(self, config_file_path, property_file_path = None):
+    def __init__(self, config_file_path, properties):
+        self.__properties = properties
         self.__pespk_factory = PortableESPKFactory.newInstance()
 
         self.__config_file_path = config_file_path
         if os.path.isfile(self.__config_file_path):
+            logging.info("Reading configuration file '%s'" % (self.__config_file_path))
             with open(self.__config_file_path) as config_file:
                 self.__config_json = json.load(config_file)
             self.reset_usage()
         else:
+            logging.info("Configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
             self.__config_json = {}
-
-        if (property_file_path is not None):
-            self.__properties = PropConfig(property_file_path)
-
-    def set_system_properties(self, sys_props):
-        self.__sys_properties = sys_props
+        return
 
     def __get_entities(self):
         json_entities = None
@@ -101,13 +112,14 @@ class EnvConfig:
 
     def __get_property(self, p):
         v = None
-        if self.__sys_properties and p in self.__sys_properties:
-            v = self.__sys_properties[p]
-        if "properties" not in self.__config_json:
-            return v
-        if p not in self.__config_json["properties"]:
-            return v
-        return self.__config_json["properties"][p]
+
+        if self.__properties:
+            v = self.__properties.get_property(p)
+
+        if not v:
+            if "properties" in self.__config_json and p in self.__config_json["properties"]:
+                v = self.__config_json["properties"][p]
+        return v
 
     def reset_usage(self):
         json_entities = self.__get_entities()
@@ -144,12 +156,9 @@ class EnvConfig:
         value = None
         if "property" in f and f["property"] is not None:
             p = f["property"]
-            if self.__properties:
-                value = self.__properties.get_property(p)
+            value = self.__get_property(p)
             if not value:
-                value = self.__get_property(p)
-                if not value:
-                    raise ValueError("Missing configured property '%s'" % (p))
+                raise ValueError("Missing configured property '%s'" % (p))
         else:
             value = f["value"]
 
@@ -166,7 +175,7 @@ class EnvConfig:
             with open(self.__config_file_path, "w") as config_file:
                 json.dump(self.__config_json, config_file, sort_keys=True, indent=2)
             self.__file_updated = True
-            print "INFO : Configuration file updated: %s" % (self.__config_file_path)
+            logging.info("Configuration file updated: %s" % (self.__config_file_path))
         return self.__file_updated
 
     def is_config_file_updated(self):
@@ -230,28 +239,30 @@ class CertConfig:
     __config_json = None
     __properties = None
 
-    def __init__(self, config_file_path, property_file_path = None):
+    def __init__(self, config_file_path, properties):
+        self.__properties = properties
         self.__config_file_path = config_file_path
         if os.path.isfile(self.__config_file_path):
-            with open(config_file_path) as config_file:
+            with open(self.__config_file_path) as config_file:
+                logging.info("Reading certificate configuration '%s'." % (self.__config_file_path))
                 self.__config_json = json.load(config_file)
 
                 if "certificates" not in self.__config_json:
-                    raise ValueError("File '%s' is not a valid certification config file; missing 'certificates' attribute!" % (config_file_path))
+                    raise ValueError("File '%s' is not a valid certification config file; missing 'certificates' attribute!" % (self.__config_file_path))
         else:
+            logging.info("Certificate configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
             self.__config_json = {"certificates": {}}
-
-        if (property_file_path is not None):
-            self.__properties = PropConfig(property_file_path)
-
         return
 
     def __get_property(self, p):
-        if "properties" not in self.__config_json:
-            return None
-        if p not in self.__config_json["properties"]:
-            return None
-        return self.__config_json["properties"][p]
+        v = None
+        if self.__properties:
+            v = self.__properties.get_property(p)
+
+        if not v:
+            if "properties" in self.__config_json and p in self.__config_json["properties"]:
+                v = self.__config_json["properties"][p]
+        return v
 
     def set_cert_infos(self, cert_infos):
         certificates = self.__config_json["certificates"]
@@ -298,9 +309,7 @@ class CertConfig:
                 password = None
                 if "password-property" in cert:
                     p = cert["password-property"]
-                    password = self.__properties.get_property(p)
-                    if not password:
-                        password = self.__get_property(p)
+                    password = self.__get_property(p)
                     if not password:
                         raise ValueError("Missing configured property '%s'" % (p))
                 elif "password" in cert:
@@ -313,5 +322,5 @@ class CertConfig:
     def update_config_file(self):
         with open(self.__config_file_path, "w") as cert_file:
             json.dump(self.__config_json, cert_file, sort_keys=True, indent=2)
-        print "INFO : Certificate configuration file updated: %s" % (self.__config_file_path)
+        logging.info("Certificate configuration file updated: %s" % (self.__config_file_path))
         return

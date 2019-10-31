@@ -1,5 +1,6 @@
 import vutil, os, sys, re, json
- 
+import logging
+
 from archiveutil import DeploymentArchiveAPI
 from esapi import EntityStoreAPI
 
@@ -26,19 +27,22 @@ class FedConfigurator:
     __update_cert_config = False
     __expiration_days = -1
 
-    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, property_path = None, passphrase = ""):
+    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, properties = None, passphrase = ""):
         self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
         self.__env_archive = EnvironmentArchive(env_archive_path)
-        self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive)
-        self.__config = EnvConfig(config_path, property_path)
+        self.__fed_archive = None
+        try:
+            self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive, self.__passphrase_in)
+        except TypeError:
+            # backward compatibility for 7.5.3
+            self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive)
+        self.__config = EnvConfig(config_path, properties)
 
         if cert_config_path is not None:
-            self.__cert_config = CertConfig(cert_config_path, property_path)
-        
+            self.__cert_config = CertConfig(cert_config_path, properties)
 
-        print ""
-        print "INFO : Deployment archive configuration initialized"
+        logging.info("Deployment archive configuration initialized")
         return
 
     def enable_cert_config_update(self):
@@ -58,21 +62,21 @@ class FedConfigurator:
         if succeeded:
             succeeded = self.__configure_certificates()
             if not succeeded:
-                print "ERROR: Configuration of certificates failed!"
+                logging.error("Configuration of certificates failed!")
         else:
-            print "ERROR: Configuration of entities failed; check JSON configuration for unconfigured entity fields!"
+            logging.error("Configuration of entities failed; check JSON configuration for unconfigured entity fields!")
 
-        if self.__passphrase_in != passphrase:
+        if succeeded and self.__passphrase_in != passphrase:
             fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
             changer = ChangeEncryptedFields(fed_api.entityStore)
             changer.execute(passphrase, self.__passphrase_in)
             fed_api.deploymentArchive.updateConfiguration(fed_api.entityStore)
-            print "INFO : Passphrase for output archives changed"
+            logging.info("Passphrase for output archives changed")
 
         return succeeded
 
     def __configure_entities(self):
-        print "INFO : Configure environmentalized entities"
+        logging.info("Configure environmentalized entities")
         fed_api = DeploymentArchiveAPI(self.__fed_archive, self.__passphrase_in)
         env_settings = fed_api.envSettings.getEnvSettings()
         succeeded = True
@@ -88,7 +92,7 @@ class FedConfigurator:
                         % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
 
                 if (field_value.value is not None):
-                    print "INFO : Configure field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key)
+                    logging.info("Configure field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
 
                     if field_value.key.short_hand_key not in config:
                         config[field_value.key.short_hand_key] = []
@@ -98,12 +102,12 @@ class FedConfigurator:
                     else:
                         config[field_value.key.short_hand_key].append([field_value.key.name, field_value.key.index, str(field_value.value)])
                 else:
-                    print "ERROR: Unconfigured field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key)
+                    logging.error("Unconfigured field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
                     succeeded = False
     
         if succeeded:
             fed_api.addEnvSettings(config)
-            print "INFO : Environmentalized fields updated."
+            logging.info("Environmentalized fields updated.")
         
         self.__config.update_config_file()
 
@@ -177,13 +181,13 @@ class FedConfigurator:
     def __configure_certificates(self):
         if self.__cert_config is not None:
             # determine existing certificates
-            print "INFO : Determine existing certificates"
+            logging.info("Determine existing certificates")
             cert_infos = self.__get_certificate_infos()
             self.__cert_config.set_cert_infos(cert_infos)
             self.__cert_config.update_config_file()
 
             # apply configured certificates
-            print "INFO : Configure certificates"
+            logging.info("Configure certificates")
             certs = self.__cert_config.get_certificates()
             es = EntityStoreAPI.wrap(self.__fed_archive.getEntityStore(), self.__passphrase_in)
 
@@ -199,7 +203,7 @@ class FedConfigurator:
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert)
                     else:
                         if self.__simulation_mode:
-                            print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (CRT) ignored: alias=%s" % (cert_ref.get_alias())
+                            logging.warning("[SIMULATION_MODE] Certificate file not found, certificate (CRT) ignored: alias=%s" % (cert_ref.get_alias()))
                             continue
                         else:
                             raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
@@ -210,7 +214,7 @@ class FedConfigurator:
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)
                     else:
                         if self.__simulation_mode:
-                            print "WARN : [SIMULATION_MODE] Certificate file not found, certificate (P12) ignored: alias=%s" % (cert_ref.get_alias())
+                            logging.warning("[SIMULATION_MODE] Certificate file not found, certificate (P12) ignored: alias=%s" % (cert_ref.get_alias()))
                             continue
                         else:
                             raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
@@ -221,7 +225,7 @@ class FedConfigurator:
                 not_after = cert.getNotAfter()
 
                 cert_info = CertInfo(cert_ref.get_alias(), subject, not_after)
-                print "INFO : Certificate (%s) added/replaced: %s [%s] - %s" % (cert_ref.get_type(), cert_info.get_alias(), cert_info.format_not_after(), cert_info.get_subject())
+                logging.info("Certificate (%s) added/replaced: %s [%s] - %s" % (cert_ref.get_type(), cert_info.get_alias(), cert_info.format_not_after(), cert_info.get_subject()))
 
                 cert_infos.append(cert_info)
 
@@ -230,19 +234,19 @@ class FedConfigurator:
                 self.__cert_config.update_config_file()
 
             if self.__expiration_days >= 0:
-                print "INFO : Checking for certificate expiration within %i days." % (self.__expiration_days)
+                logging.info("Checking for certificate expiration within %i days." % (self.__expiration_days))
                 has_expired = False
                 for cert_info in cert_infos:
                     expiration_days = cert_info.expiration_in_days()
                     if self.__expiration_days > expiration_days:
-                        print "ERROR: Certificate '%s' expires in %i days!" % (cert_info.get_alias(), expiration_days)
+                        logging.error("Certificate '%s' expires in %i days!" % (cert_info.get_alias(), expiration_days))
                         has_expired = True
                 
                 if has_expired:
                     raise ValueError("At least one certificate expires in less than %i days; check log file!" % (self.__expiration_days))
 
             DeploymentArchive.updateConfiguration(self.__fed_archive, es.es)
-            print "INFO : Certificates updated."
+            logging.info("Certificates updated.")
         return True
 
     def get_unconfigured_fields(self):
@@ -253,7 +257,7 @@ class FedConfigurator:
             fed_path = "./" + fed_path
     
         self.__fed_archive.writeToArchiveFile(fed_path)
-        print "INFO : Deployment archive written to '%s'" % (fed_path)
+        logging.info("Deployment archive written to '%s'" % (fed_path))
         return
 
     def write_env(self, env_path):
@@ -261,5 +265,5 @@ class FedConfigurator:
             env_path = "./" + env_path
         env_archive = EnvironmentArchive(self.__fed_archive)
         env_archive.writeToArchiveFile(env_path)
-        print "INFO : Environment archive written to '%s'" % (env_path)
+        logging.info("Environment archive written to '%s'" % (env_path))
         return

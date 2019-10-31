@@ -101,7 +101,8 @@ In this example the `buildfed` tool will be invoked with the following parameter
 * `-p src\gateway.pol`: specifies the path to the input `.pol` archive
 * `-c config\gateway.config.json`: specifies the path to the environmentalized fields configuration file
 * `--cert=config/gateway.certs.json`: specifies the path to the certificates configuration file
-* `--prop=config/gateway.props.json`: specifies the path to the properties file
+* `--prop=config/gateway.props.json`: specifies the path to a properties file
+* `--prop=config/passwords.props.json`: specifies the path to a second properties file
 * `--output-fed=gateway.fed`: specifies the path for the configured `.fed` archive
 * `--passphrase-in=changeme`: passphrase for input archives (`.pol` and `.env`)
 * `--passphrase-out=changed`: passphrase for the generated `.fed` file

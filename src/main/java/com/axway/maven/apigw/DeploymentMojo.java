@@ -114,16 +114,18 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 	}
 
 	private File configFed(File pol, File env) throws MojoExecutionException {
-		FedBuilder fc = new FedBuilder(this, pol, env, this.configConfigFile);
-		fc.setPassphrasePol(this.passphrasePol);
-		fc.setPassphraseFed(this.passphraseFed);
-		fc.setPropertyFile(this.configPropertyFile);
-		fc.setCertificatesFile(this.configCertsFile);
-		fc.enableVerboseMode(this.verboseCfgTools);
+		FedBuilder fb = new FedBuilder(this, pol, env, this.configConfigFile);
+		fb.setPassphrasePol(this.passphrasePol);
+		fb.setPassphraseFed(this.passphraseFed);
+
+		fb.addPropertyFiles(getPropertyFiles());
+
+		fb.setCertificatesFile(this.configCertsFile);
+		fb.enableVerboseMode(this.verboseCfgTools);
 
 		File fed = new File(getTempDir(), PROJECT_NAME + ".fed");
 
-		int exitCode = fc.execute(fed, null);
+		int exitCode = fb.execute(fed, null);
 		if (exitCode != 0) {
 			throw new MojoExecutionException("failed to configure project: exitCode=" + exitCode);
 		}

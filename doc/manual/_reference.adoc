@@ -241,6 +241,11 @@ Default: _none_
 
 Default: _none_
 
+|axway.config.props.files
+|Comma separated path to configuration files for properties.
+
+Default: _none_
+
 |axway.tools.cfg.verbose
 |Set to _true_ to enable verbose mode for internal configuration tool.
 
@@ -309,3 +314,36 @@ Default: false
 
 NOTE: It is not checked if the source files are newer than the target artifact.
 |===
+
+== Plugin Configuration
+
+The plugin can also be configured in the `pom.xml` via the <configuration> element of the plugin.
+
+.pom.xml
+[source,xml,subs="verbatim,attributes"]
+----
+<!- ... ->
+<plugin>
+  <groupId>com.axway.maven.plugins</groupId>
+  <artifactId>apigw-maven-plugin</artifactId>
+  <version>{mvn-plugin-ver}</version>
+  <extensions>true</extensions>
+  <configuration>
+    <configConfigFile>${basedir}/src/main/axwgw/gateway.config.json</configConfigFile> <!--1-->
+
+    <configCertsFile>${basedir}/src/main/axwgw/gateway.certs.json</configCertsFile> <!--2-->
+
+    <configPropertyFile>${basedir}/gateway.prop.json</configPropertyFile> <!--3-->
+
+    <configPropertyFiles> <!--4-->
+      <configPropertyFile>${basedir}/prop-a.json</configPropertyFile>
+      <configPropertyFile>${basedir}/prop-b.json</configPropertyFile>
+    </configPropertFiles>
+  </configuration>
+</plugin>
+<!- ... ->
+----
+<1> Location of the configuration file for environmentalized fields.
+<2> Location of the configuration file for certificates.
+<3> Location of a configuration file for properties.
+<4> Location of a list of configuration files for properties.
