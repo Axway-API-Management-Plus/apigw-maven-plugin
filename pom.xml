@@ -19,7 +19,7 @@
 
 	<groupId>com.axway.maven.plugins</groupId>
 	<artifactId>apigw-maven-plugin</artifactId>
-	<version>0.9.1</version>
+	<version>0.9.2</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Axway API Gateway Maven Plugin</name>
@@ -147,4 +147,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>Axway API Gateway Maven Plugin Packages</name>
+			<url>https://maven.pkg.github.com/Axway-API-Management-Plus/apigw-maven-plugin</url>
+		</repository>
+	</distributionManagement>
 </project>

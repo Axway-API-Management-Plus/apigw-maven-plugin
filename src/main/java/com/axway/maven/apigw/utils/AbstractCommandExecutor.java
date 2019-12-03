@@ -21,7 +21,7 @@ public abstract class AbstractCommandExecutor {
 	}
 
 	protected abstract File getCommand() throws IOException;
-	
+
 	protected Log getLog() {
 		return this.log;
 	}
@@ -62,6 +62,15 @@ public abstract class AbstractCommandExecutor {
 			br.close();
 		}
 
-		return process.exitValue();
+		int rc;
+
+		try {
+			rc = process.waitFor();
+		} catch (InterruptedException e) {
+			this.log.error("Comman executor interrupted");
+			rc = 1;
+		}
+
+		return rc;
 	}
 }

@@ -78,7 +78,16 @@ public class JythonExecutor {
 			this.log.info("--- " + scriptName + " (End) ------------------------------");
 		}
 
-		return process.exitValue();
+		int rc;
+
+		try {
+			rc = process.waitFor();
+		} catch (InterruptedException e) {
+			this.log.error("Jython executor interrupted");
+			rc = 1;
+		}
+
+		return rc;
 	}
 
 	private File getJython(File homeAxwayGateway) throws JythonExecutorException {
