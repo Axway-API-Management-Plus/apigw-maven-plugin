@@ -2,6 +2,11 @@
 if [ "${AXWAY_HOME}" != "" ]
 then
 	JYTHON=${AXWAY_HOME}/apigateway/posix/bin/jython
+	if [ $(uname -o) == "Msys" ]
+	then
+		JYTHON=${AXWAY_HOME}/apigateway/Win32/bin/jython.bat
+	fi
+
 	if [ -f "${JYTHON}" ]
 	then
 		CMD_HOME=`dirname $0`

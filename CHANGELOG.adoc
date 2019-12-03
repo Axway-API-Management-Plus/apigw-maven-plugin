@@ -1,5 +1,18 @@
 = Changelog
 
+== Version 0.9.1
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/26[#26]
+|Enhancement
+|Add MinGW (Minimalistic GNU for Windows) support for `buildfed.sh`.
+
+Remark: MinGW is provided as part of Git for Windows.
+This enhancement allows to execute the plugin within a Git Bash shell on Windows.
+|===
+
+
 == Version 0.9.0
 [cols="1,2,<10a", options="header"]
 |===
