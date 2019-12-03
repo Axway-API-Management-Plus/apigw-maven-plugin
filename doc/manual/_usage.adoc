@@ -329,9 +329,9 @@ $ mvn package -Daxway.config.certs=gateway.certs.json
 The Maven plugin supports three options to specify configuration properties:
 
   1. Embedded in the configuration files for environmentalized fields or for certificates.
-  1. Via a configuration file specified by the property `axway.config.props` or via the <configPropertyFile> element in the <configuration> element of the plugin. This is the _master_ configuration file.
-  1. Via configuration files specified by the <configPropertyFiles> element in the <configuration> element of the plugin.
-  1. Via configuration files specified by a comma separated list of the property `axway.config.props.files`. These are called the _additionally_ configuration files.
+  2. Via a configuration file specified by the property `axway.config.props` or via the <configPropertyFile> element in the <configuration> element of the plugin. This is the _master_ configuration file.
+  3. Via configuration files specified by the <configPropertyFiles> element in the <configuration> element of the plugin.
+  4. Via configuration files specified by a comma separated list of the property `axway.config.props.files`. These are called the _additionally_ configuration files.
 
 Properties are read in the order listed above.
 If a property exists in multiple configuration files the value of the latest configuration file is used.

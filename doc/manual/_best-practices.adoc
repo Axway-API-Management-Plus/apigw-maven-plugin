@@ -1,0 +1,20 @@
+= Best Practices
+:Author: Martin Look
+:Email: mlook@axway.com
+:source-highlighter: prettify
+ifdef::env-github[]
+:outfilesuffix: .adoc
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+endif::[]
+
+This section provides some best practices when developing projects using the plugin.
+
+== Source Code
+
+=== Naming Conventions
+
