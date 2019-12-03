@@ -10,6 +10,10 @@
 
 Remark: MinGW is provided as part of Git for Windows.
 This enhancement allows to execute the plugin within a Git Bash shell on Windows.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/27[#27]
+|Bug
+|The `buildfed` shall not update the in-memory entity store in simulation mode.
 |===
 
 

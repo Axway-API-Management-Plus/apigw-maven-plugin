@@ -94,20 +94,24 @@ class FedConfigurator:
                 if (field_value.value is not None):
                     logging.info("Configure field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
 
-                    if field_value.key.short_hand_key not in config:
-                        config[field_value.key.short_hand_key] = []
+                    if not self.__simulation_mode:
+                        if field_value.key.short_hand_key not in config:
+                            config[field_value.key.short_hand_key] = []
 
-                    if field_value.key.type == "integer":
-                        config[field_value.key.short_hand_key].append([field_value.key.name, field_value.key.index, int(field_value.value)])
-                    else:
-                        config[field_value.key.short_hand_key].append([field_value.key.name, field_value.key.index, str(field_value.value)])
+                        if field_value.key.type == "integer":
+                            config[field_value.key.short_hand_key].append([field_value.key.name, field_value.key.index, int(field_value.value)])
+                        else:
+                            config[field_value.key.short_hand_key].append([field_value.key.name, field_value.key.index, str(field_value.value)])
                 else:
                     logging.error("Unconfigured field: name=%s; index=%d; type=%s; entity=%s" % (field_value.key.name, field_value.key.index, field_value.key.type, field_value.key.short_hand_key))
                     succeeded = False
     
         if succeeded:
-            fed_api.addEnvSettings(config)
-            logging.info("Environmentalized fields updated.")
+            if not self.__simulation_mode:
+                fed_api.addEnvSettings(config)
+                logging.info("Environmentalized fields updated.")
+            else:
+                logging.info("[SIMULATION_MODE] Environmentalized fields simulation succeeded.")
         
         self.__config.update_config_file()
 
@@ -245,8 +249,11 @@ class FedConfigurator:
                 if has_expired:
                     raise ValueError("At least one certificate expires in less than %i days; check log file!" % (self.__expiration_days))
 
-            DeploymentArchive.updateConfiguration(self.__fed_archive, es.es)
-            logging.info("Certificates updated.")
+            if not self.__simulation_mode:
+                DeploymentArchive.updateConfiguration(self.__fed_archive, es.es)
+                logging.info("Certificates updated.")
+            else:
+                logging.info("[SIMULATION_MODE] Certificates simulation succeeded.")
         return True
 
     def get_unconfigured_fields(self):
