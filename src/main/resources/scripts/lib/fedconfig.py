@@ -199,6 +199,7 @@ class FedConfigurator:
             cert = None
 
             for cert_ref in certs:
+                logging.info("Process alias '%s' (%s): %s" % (cert_ref.get_alias(), cert_ref.get_type(), cert_ref.get_file()))
                 if cert_ref.get_type() == "crt":
                     cf = CertificateFactory.getInstance("X.509")
                     if os.path.isfile(cert_ref.get_file()):
@@ -212,7 +213,7 @@ class FedConfigurator:
                         else:
                             raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
                 elif cert_ref.get_type() == "p12":
-                    if os.path.isfile(cert_ref.get_file()):                        
+                    if os.path.isfile(cert_ref.get_file()):
                         key = self.__get_key_from_p12(cert_ref.get_file(), cert_ref.get_password())
                         cert = self.__get_cert_from_p12(cert_ref.get_file(), cert_ref.get_password())
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)

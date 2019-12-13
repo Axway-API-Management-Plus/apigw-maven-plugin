@@ -3,4 +3,5 @@
 .policystudio
 .vscode
 .projdeps.json
+*.class
 target
