@@ -4,10 +4,10 @@
       "description": "", 
       "fields": {
         "attributeValue#0": {
-          "property": "artifact",
+          "source": "property", 
           "type": "string", 
           "used": true, 
-          "value": null
+          "value": "artifact"
         }
       }
     }, 
@@ -15,27 +15,27 @@
       "description": "", 
       "fields": {
         "attributeValue#0": {
-          "property": "_system.build.datetime", 
+          "source": "property", 
           "type": "string", 
           "used": true, 
-          "value": null
+          "value": "_system.build.datetime"
         }
       }
-    },
+    }, 
     "/[NetService]name=Service/[HTTP]name=Default Service/[SSLInterface]name=HTTPS": {
       "description": "", 
       "fields": {
         "address#0": {
-          "property": "service.address",
-          "type": "string",
-          "used": true,
-          "value": null
-        }, 
-        "port#0": {
-          "property": "service.port", 
+          "source": "property", 
           "type": "string", 
           "used": true, 
-          "value": null
+          "value": "service.address"
+        }, 
+        "port#0": {
+          "source": "property", 
+          "type": "string", 
+          "used": true, 
+          "value": "service.port"
         }
       }
     }

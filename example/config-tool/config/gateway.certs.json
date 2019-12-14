@@ -13,7 +13,8 @@
           "not_after": "2020-08-23T20:26:00+02:00", 
           "subject": "CN=staged, O=ACME Inc., C=EX"
         }, 
-        "password-property": "cert.password.staged.server", 
+        "password": "cert.password.staged.server", 
+        "source": "property", 
         "type": "p12"
       }
     }, 

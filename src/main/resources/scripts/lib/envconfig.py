@@ -57,6 +57,7 @@ class EnvConfig:
 
     __missing_vars = False
     __file_updated = False
+    __migrated = False
 
     __unconfigured_fields = []
         
@@ -69,7 +70,7 @@ class EnvConfig:
             logging.info("Reading configuration file '%s'" % (self.__config_file_path))
             with open(self.__config_file_path) as config_file:
                 self.__config_json = json.load(config_file)
-            self.reset_usage()
+            self.__reset()
         else:
             logging.info("Configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
             self.__config_json = {}
@@ -105,7 +106,7 @@ class EnvConfig:
             json_field = json_entity["fields"][fpk]
             json_field["used"] = True
         else:
-            json_field = {"type": field_key.type, "value": None, "property": None, "used": True}
+            json_field = {"type": field_key.type, "value": None, "used": True, "source": "value"}
             json_entity["fields"][fpk] = json_field
             self.__missing_vars = True
         return json_field
@@ -121,13 +122,26 @@ class EnvConfig:
                 v = self.__config_json["properties"][p]
         return v
 
-    def reset_usage(self):
+    def __reset(self):
         json_entities = self.__get_entities()
         for entity in json_entities.values():
-                if "fields" in entity:
-                    for field in entity["fields"].values():
-                        if "used" in field:
-                            field["used"] = False
+            if "fields" in entity:
+                for field in entity["fields"].values():
+                    # reset used flag
+                    if "used" in field:
+                        field["used"] = False
+
+                    # convert to newer version
+                    if "property" in field:
+                        if field["property"]:
+                            source = "property"
+                            field["value"] = field["property"]
+                            field["source"] = "property"
+                        del field["property"]
+                        self.__migrated = True
+                    elif "source" not in field:
+                        field["source"] = "value"
+                        self.__migrated = True
         return
 
     def has_unused_vars(self):
@@ -154,13 +168,19 @@ class EnvConfig:
         f = self.__get_field(fk)
 
         value = None
-        if "property" in f and f["property"] is not None:
-            p = f["property"]
-            value = self.__get_property(p)
-            if not value:
-                raise ValueError("Missing configured property '%s'" % (p))
-        else:
+        if "source" not in f:
+            raise ValueError("Missing 'source' property in field '%s#%s' of entity '%s'" % (fk.name, str(fk.index), fk.short_hand_key))
+
+        if "property" == f["source"]:
+            if f["value"]:
+                p = f["value"]
+                value = self.__get_property(p)
+                if not value:
+                    raise ValueError("Missing configured property '%s'" % (p))
+        elif "value" == f["source"]:
             value = f["value"]
+        else:
+            raise ValueError("Invalid source property '%s'" % f["source"])
 
         if value is None:
             self.__unconfigured_fields.append(fk)
@@ -171,11 +191,13 @@ class EnvConfig:
         return self.__unconfigured_fields
 
     def update_config_file(self, force=False):
-        if self.__missing_vars or self.has_unused_vars() or force:
+        if self.__missing_vars or self.has_unused_vars() or force or self.__migrated:
             with open(self.__config_file_path, "w") as config_file:
                 json.dump(self.__config_json, config_file, sort_keys=True, indent=2)
             self.__file_updated = True
             logging.info("Configuration file updated: %s" % (self.__config_file_path))
+            if self.__migrated:
+                logging.info("Configuration file migrated to new version.")
         return self.__file_updated
 
     def is_config_file_updated(self):
@@ -238,6 +260,7 @@ class CertConfig:
     __config_file_path = None
     __config_json = None
     __properties = None
+    __migrated = False
 
     def __init__(self, config_file_path, properties):
         self.__properties = properties
@@ -249,9 +272,28 @@ class CertConfig:
 
                 if "certificates" not in self.__config_json:
                     raise ValueError("File '%s' is not a valid certification config file; missing 'certificates' attribute!" % (self.__config_file_path))
+            self.__migrate()
         else:
             logging.info("Certificate configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
             self.__config_json = {"certificates": {}}
+        return
+
+    def __migrate(self):
+        if "certificates" in self.__config_json:
+            for alias, cert_cfg in self.__config_json["certificates"].items():
+                if "update" not in cert_cfg or cert_cfg["update"] is None:
+                    continue
+
+                cert = cert_cfg["update"]
+
+                if "password-property" in cert:
+                    cert["password"] = cert["password-property"]
+                    cert["source"] = "property"
+                    del cert["password-property"]
+                    self.__migrated = True
+                elif "password" in cert and "source" not in cert:
+                    cert["source"] = "password"
+                    self.__migrated = True
         return
 
     def __get_property(self, p):
@@ -307,13 +349,19 @@ class CertConfig:
                 cert_file = cert["file"]
 
                 password = None
-                if "password-property" in cert:
-                    p = cert["password-property"]
-                    password = self.__get_property(p)
-                    if not password:
-                        raise ValueError("Missing configured property '%s'" % (p))
-                elif "password" in cert:
-                    password = cert["password"]
+                if "password" in cert:
+                    if "source" not in cert:
+                        raise ValueError("Missing 'source' property in 'update' for alias '%s'!" % alias)
+
+                    if "property" == cert["source"]:
+                        p = cert["password"]
+                        password = self.__get_property(p)
+                        if not password:
+                            raise ValueError("Missing configured property '%s' for alias '%s'!" % (p, alias))
+                    elif "password" == cert["source"]:
+                        password = cert["password"]
+                    else:
+                        raise ValueError("Invalid password source '%s' for alias '%s'!" % (cert["source"], alias))
 
                 c = CertRef(alias, cert_type, cert_file, password)
                 certs.append(c)
@@ -323,4 +371,6 @@ class CertConfig:
         with open(self.__config_file_path, "w") as cert_file:
             json.dump(self.__config_json, cert_file, sort_keys=True, indent=2)
         logging.info("Certificate configuration file updated: %s" % (self.__config_file_path))
+        if self.__migrated:
+            logging.info("Certificate configuration file migrated to new version.")
         return

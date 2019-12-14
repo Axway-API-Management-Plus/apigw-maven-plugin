@@ -4,6 +4,7 @@
       "description": "", 
       "fields": {
         "attributeValue#0": {
+          "source": "value", 
           "type": "string", 
           "used": true, 
           "value": "Fred"

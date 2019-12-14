@@ -5,7 +5,7 @@
 :sectnums:
 :source-highlighter: prettify
 
-:mvn-plugin-ver: 0.9.2
+:mvn-plugin-ver: 0.10.0
 
 Here you get a simple introduction on how to use the _Maven Plugin for Axway API Gateway_.
 It assumes that you are familiar with https://maven.apache.org[Apache Maven] and that you are familiar with PolicyStudio and the API Gateway.
@@ -329,9 +329,10 @@ For convenience the plugin will automatically add new fields to the configuratio
       "description": "", 
       "fields": {
         "attributeValue#0": { <2>
-          "type": "string", <3> 
-          "used": true, <4>
-          "value": null <5>
+          "source": "value", <3>
+          "type": "string", <4> 
+          "used": true, <5>
+          "value": null <6>
         }
       }
     }
@@ -340,11 +341,12 @@ For convenience the plugin will automatically add new fields to the configuratio
 ----
 <1> Short handed key of the environmentalized entity.
 <2> Name and index of the environmentalized field.
-<3> Type of the field (just for documentation, don't change it).
-<4> Indicates if the configured field is used.
+<3> Specifies that the field value is literally retrieved form "value".
+<4> Type of the field (just for documentation, don't change it).
+<5> Indicates if the configured field is used.
 If _false_ the field is no longer environmentalized or the entity is renamed or removed.
 The property is automatically maintained by the plugin. 
-<5> Value of the field. _null_ indicates an unconfigured field.
+<6> Literal value of the field. _null_ indicates an unconfigured field.
 
 TIP: When the configuration file is written by the plugin, all JSON properties are sorted.
 This makes diff & merge easy.
@@ -355,6 +357,7 @@ Now configure the field in the configuration file.
 ----
 {
   "attributeValue#0": {
+    "source": "value",
     "type": "string",
     "used": true,
     "value": "Fred" <1>

@@ -204,10 +204,10 @@ The plugin and the configuration tool provides a set of predefined system proper
             "description": "Name for the 'Hello World' message.", 
             "fields": {
                 "attributeValue#0": { <3>
-                    "property": "foobar", <4>
+                    "source": "property", <4>
                     "type": "string", <5> 
                     "used": true, <6>
-                    "value": null <7>
+                    "value": "foobar" <7>
                 }
             }
         },
@@ -215,10 +215,10 @@ The plugin and the configuration tool provides a set of predefined system proper
             "description": "Build time in ISO format.", 
             "fields": {
                 "attributeValue#0": {
-                    "property": "_system.build.datetime", <8>
+                    "source": "property",
                     "type": "string",
                     "used": true,
-                    "value": null
+                    "value": "_system.build.datetime" <8>
                 }
             }
         }
@@ -226,6 +226,7 @@ The plugin and the configuration tool provides a set of predefined system proper
             "description": "Network zone the API Gateway is located.", 
             "fields": {
                 "attributeValue#0": {
+                    "source": "value"
                     "type": "string",
                     "used": true,
                     "value": "internal" <9>
@@ -241,21 +242,18 @@ The plugin and the configuration tool provides a set of predefined system proper
 <1> Environmentalized entities are configured under an `entities` attribute.
 <2> Short hand key of the environmentalized entity.
 <3> Name and index of the environmentalized field.
-<4> Name of the property containing the value.
-_null_ or missing property indicates that no property is used to configure the value. 
+<4> Declares a property (named `foobar`, see "value") as the source of the field value.
 <5> Type of the field (just for documentation, don't change it).
 <6> Indicates if the configured field is used.
 If _false_ the field is no longer environmentalized or the entity is renamed or removed.
 The property is automatically maintained by the plugin. 
-<7> Value of the field.
-_null_ indicates that no value is defined.
-If `value` and `property` are configured the `property` value has precedence.
+<7> Name of the property containing the value.
 <8> Use value of the predefined system property `_system.build.datetime`.
-<9> Value for the field.
+<9> Literal value for the field.
 <10> An optional local definition of properties.
 If the same property is defined in a separate property file (see below), the separate property has precedence.
 
-NOTE: If `value` and `property` is _null_ the field is treated as undefined and the build will fail.
+NOTE: If `value` is _null_ the field is treated as undefined and the build will fail.
 
 === Certificates
 The configuration for certificates is stored in a separate JSON file.
@@ -288,6 +286,7 @@ It specifies the alias of the certificates within the project and the source of 
             "update": {
                 "file": "cert/server.p12", 
                 "password": "server", <9>
+                "source": "password", <10>
                 "type": "p12"
             }
         }, 
@@ -298,12 +297,13 @@ It specifies the alias of the certificates within the project and the source of 
                     "subject": "CN=DST Root CA X3, O=Digital Signature Trust Co."
                 }
             },
-            "update": null <10>
+            "update": null <11>
         },
-        "test2": { <11>
+        "test2": { <12>
             "update": {
                 "file": "cert/server.p12", 
-                "password-property": "server.password", <12> 
+                "password": "server.password", <13>
+                "source": "property", <14>
                 "type": "p12"
             }
         }
@@ -321,11 +321,13 @@ A missing `update` attribute indicates a new/unconfigured certificate.
 <7> Path to the new certificate file.
 <8> Type of the certificate.
 `crt` for certificates and `p12` for certificates with key.
-<9> Password to for the `.p12` file.
-<10> _null_ value indicates that the certificate will not be updated.
-<11> Certificate without a `origin` attribute.
+<9> Literal password for the `.p12` file.
+<10> Declares a property (`server.password`, see "password") as the source for the password.
+<11> _null_ value indicates that the certificate will not be updated.
+<12> Certificate without a `origin` attribute.
 This certificate will be added to the certificate store.
-<12> Password for the `.p12` file is retrieved from the property configuration file.
+<13> Password for the `.p12` file is retrieved from the property configuration file.
+<14> Declares the property "password" as the source of the password for the `.p12` file.
 
 === Properties
 

@@ -1,5 +1,119 @@
 = Changelog
 
+== Version 0.10.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/30[#30]
+|Enhancement
+|New property "source" for fields and certificates to specify the source for the values or passwords.
+
+The are following advantages:
+
+  * Easy extensibility for new sources (e.g. environment variables).
+  * Easier to find missing configurations (search for `"value": null` or `"password": null`).
+
+*Environmentalized Fields*
+
+For field values there are separate properties ("property" and "value") to configure the field value (see example below).
+
+.Old Format
+[source,json]
+----
+{
+  "field#0" {
+    "property": null, <1>
+    "type": "string", 
+    "used": true, 
+    "value": null <2>
+  }
+}
+----
+<1> specifies a property as the source of the field value
+<2> literal field value
+
+A new property "source" is introduced to specify the source of the field value.
+The property defines the kind of the "value" property.
+In case of "source" is equal to "value" the field value is directly configured by the value of the "value" property.
+In case of "source" is equal to "property" the field value is retrieved from the property named by the "value" property.
+
+.New Format
+[source,json]
+----
+{
+  "field#0": {
+    "source": "property", <1>
+    "type": string",
+    "used": true,
+    "value": "property.name" <2>
+  },
+  "field#1": {
+    "source": "value", <3>
+    "type": string",
+    "used": true,
+    "value": "field value" <4>
+  }
+}
+----
+<1> specifies a property as the source of a field value
+<2> field value is retrieved from the property named `property.name`
+<3> field value is retrieved directly from "value"
+<4> literal field value
+
+*Certificates*
+
+For certificate passwords there are separate properties ("password" and "password-property") to configure the password (see example below).
+
+.Old Format
+[source,json]
+----
+"update": {
+  "file": "cert/server.p12",
+  "password": "server.password", <1> 
+  "type": "p12"
+}
+...
+"update": {
+  "file": "cert/server.p12",
+  "password-property": "property.name", <3> 
+  "type": "p12"
+}
+----
+<1> literal password value
+<2> password is retrieved from a property named `property.name`
+
+
+A new property "source" is introduced to specify the source of the certificate password.
+The property defines the kind of the "password" property.
+In case of "source" is equal to "password" the password is directly configured by the value of the "password" property.
+In case of "source" is equal to "property" the password is retrieved form the property named by the "password" property.
+
+.New Format
+[source,json]
+----
+"update": {
+  "file": "cert/server.p12",
+  "password": "server.password", <1> 
+  "source": "password" <2>
+  "type": "p12"
+}
+...
+"update": {
+  "file": "cert/server.p12",
+  "password": "property.name", <3> 
+  "source": "property" <4>
+  "type": "p12"
+}
+----
+<1> literal password value
+<2> password is retrieved directly from "password"
+<3> password is retrieved from the property named `property.name`
+<4> specifies a property as the source of the password
+
+NOTE: Configuration files in the old format are automatically converted into the new format.
+|===
+
+
 == Version 0.9.2
 [cols="1,2,<10a", options="header"]
 |===
