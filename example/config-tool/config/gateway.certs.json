@@ -1,5 +1,13 @@
 {
   "certificates": {
+    "new-server": {
+      "update": {
+        "file": "config/certs/staged-server.p12", 
+        "password": "NEW_SERVER_PASSWORD", 
+        "source": "env", 
+        "type": "p12"
+      }
+    }, 
     "server": {
       "origin": {
         "info": {
@@ -9,10 +17,6 @@
       }, 
       "update": {
         "file": "config/certs/staged-server.p12", 
-        "info": {
-          "not_after": "2020-08-23T20:26:00+02:00", 
-          "subject": "CN=staged, O=ACME Inc., C=EX"
-        }, 
         "password": "cert.password.staged.server", 
         "source": "property", 
         "type": "p12"
@@ -27,10 +31,6 @@
       }, 
       "update": {
         "file": "config/certs/staged-root-ca.crt", 
-        "info": {
-          "not_after": "2029-08-23T20:22:00+02:00", 
-          "subject": "CN=staged-acme-inc-example, O=ACME Inc. (staged), C=EX"
-        }, 
         "type": "crt"
       }
     }

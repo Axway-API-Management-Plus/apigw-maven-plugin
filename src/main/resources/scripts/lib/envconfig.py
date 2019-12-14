@@ -167,10 +167,13 @@ class EnvConfig:
         fk = FieldKey(self.to_shorthandkey(entity), entity_field.getEntityFieldName(), entity_field.getIndex(), entity_field.getType())
         f = self.__get_field(fk)
 
-        value = None
         if "source" not in f:
             raise ValueError("Missing 'source' property in field '%s#%s' of entity '%s'" % (fk.name, str(fk.index), fk.short_hand_key))
 
+        if "value" not in f:
+            raise ValueError("Missing 'value' property in field '%s#%s' of entity '%s'" % (fk.name, str(fk.index), fk.short_hand_key))
+
+        value = None
         if "property" == f["source"]:
             if f["value"]:
                 p = f["value"]
@@ -179,6 +182,10 @@ class EnvConfig:
                     raise ValueError("Missing configured property '%s'" % (p))
         elif "value" == f["source"]:
             value = f["value"]
+        elif "env" == f["source"]:
+            if f["value"]:
+                e = f["value"]
+                value = os.environ[e]
         else:
             raise ValueError("Invalid source property '%s'" % f["source"])
 
@@ -350,6 +357,9 @@ class CertConfig:
 
                 password = None
                 if "password" in cert:
+                    if not cert["password"]:
+                        raise ValueError("Missing value for 'password' property in 'update' for alias '%s'!" % alias)
+
                     if "source" not in cert:
                         raise ValueError("Missing 'source' property in 'update' for alias '%s'!" % alias)
 
@@ -360,6 +370,9 @@ class CertConfig:
                             raise ValueError("Missing configured property '%s' for alias '%s'!" % (p, alias))
                     elif "password" == cert["source"]:
                         password = cert["password"]
+                    elif "env" == cert["source"]:
+                        e = cert["password"]
+                        password = os.environ[e]
                     else:
                         raise ValueError("Invalid password source '%s' for alias '%s'!" % (cert["source"], alias))
 

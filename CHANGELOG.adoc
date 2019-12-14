@@ -111,6 +111,39 @@ In case of "source" is equal to "property" the password is retrieved form the pr
 <4> specifies a property as the source of the password
 
 NOTE: Configuration files in the old format are automatically converted into the new format.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/29[#29]
+|Enhancement
+|Add support for environment variables for field and password configuration.
+
+The `source` property new supports a new value `env` to specify an environment variable as the source for field values and certificate passwords.
+
+*Environmentalized Fields*
+[source,json]
+----
+  "field#0": {
+    "source": "env", <1>
+    "type": string",
+    "used": true,
+    "value": "ENV_NAME" <2>
+  }
+----
+<1> specifies an environment variable as the source of the field value
+<2> field value is retrieved from the environment variable `ENV_NAME`
+
+*Certificates*
+[source,json]
+----
+"update": {
+  "file": "cert/server.p12",
+  "password": "SERVER_PASSWORD", <1> 
+  "source": "env" <2>
+  "type": "p12"
+}
+----
+<1> password is retrieved from the environment variable `SERVER_PASSWORD`
+<2> specifies an environment variable as the source of the password
+
 |===
 
 

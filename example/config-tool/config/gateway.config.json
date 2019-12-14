@@ -32,10 +32,10 @@
           "value": "service.address"
         }, 
         "port#0": {
-          "source": "property", 
+          "source": "env", 
           "type": "string", 
           "used": true, 
-          "value": "service.port"
+          "value": "SERVICE_PORT"
         }
       }
     }

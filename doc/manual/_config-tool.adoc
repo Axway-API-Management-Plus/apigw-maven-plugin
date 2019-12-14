@@ -157,7 +157,7 @@ For each configured environmentalized entity a property exists.
 The name of the property is the _short hand key_ of the entity.
 
 The value of the field can be specified directly by a `value` property.
-It can also be specified indirectly by a property identified by the `property` property.
+It can also be specified indirectly by a property or environment variables (controlled via the `source` property).
 
 Properties are name/value pairs.
 The value of the property is defined ... _(in order of precedence)_
@@ -221,7 +221,7 @@ The plugin and the configuration tool provides a set of predefined system proper
                     "value": "_system.build.datetime" <8>
                 }
             }
-        }
+        },
         "/[CircuitContainer]name=Hello World/[FilterCircuit]name=Hello World Message/[SetAttributeFilter]name=Network zone": {
             "description": "Network zone the API Gateway is located.", 
             "fields": {
@@ -232,9 +232,20 @@ The plugin and the configuration tool provides a set of predefined system proper
                     "value": "internal" <9>
                 }
             }
+        },
+        "/[CircuitContainer]name=Hello World/[FilterCircuit]name=Hello World Message/[SetAttributeFilter]name=User": {
+            "description": "Name of the user building the .fed", 
+            "fields": {
+                "attributeValue#0": {
+                    "source": "env" <10>
+                    "type": "string",
+                    "used": true,
+                    "value": "USERNAME" <11>
+                }
+            }
         }
     }
-    "properties": { <10>
+    "properties": { <12>
         "foobar": "myvalue"
     }
 }
@@ -250,7 +261,9 @@ The property is automatically maintained by the plugin.
 <7> Name of the property containing the value.
 <8> Use value of the predefined system property `_system.build.datetime`.
 <9> Literal value for the field.
-<10> An optional local definition of properties.
+<10> Specifies an environment variable as the source for the field value.
+<11> Field value is retrieved from the `USERNAME` environment variable.
+<12> An optional local definition of properties.
 If the same property is defined in a separate property file (see below), the separate property has precedence.
 
 NOTE: If `value` is _null_ the field is treated as undefined and the build will fail.
@@ -306,6 +319,14 @@ It specifies the alias of the certificates within the project and the source of 
                 "source": "property", <14>
                 "type": "p12"
             }
+        },
+        "test3": {
+            "update": {
+                "file": "cert/server.p12", 
+                "password": "TEST3_PASSWORD", <15>
+                "source": "env", <16>
+                "type": "p12"
+            }
         }
     }
 }
@@ -328,6 +349,8 @@ A missing `update` attribute indicates a new/unconfigured certificate.
 This certificate will be added to the certificate store.
 <13> Password for the `.p12` file is retrieved from the property configuration file.
 <14> Declares the property "password" as the source of the password for the `.p12` file.
+<15> The password is retrieved from the `TEST3_PASSWORD` environment variable.
+<16> Specifies an environment variable as the source of the password.
 
 === Properties
 
