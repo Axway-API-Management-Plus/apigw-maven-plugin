@@ -7,7 +7,7 @@
   <packaging>pom</packaging>
 
   <properties>
-      <axway.maven.plugin.ver>0.9.2</axway.maven.plugin.ver>
+      <axway.maven.plugin.ver>0.10.0</axway.maven.plugin.ver>
   </properties>
 
   <modules>

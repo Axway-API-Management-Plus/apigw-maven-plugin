@@ -5,3 +5,4 @@
 .projdeps.json
 *.class
 target
+example/config-tool/gateway.fed
