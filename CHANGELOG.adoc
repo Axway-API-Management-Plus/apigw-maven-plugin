@@ -1,5 +1,22 @@
 = Changelog
 
+== Version 0.11.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/31[#31]
+|Enhancement
+|The `buildfed` tool is enhanced to set properties from the content of a specified file.
+
+A new `-F NAME:FILE` command line parameter is introduced.
+
+Example:
+
+  $ buildfed ... -F description:config/description.txt
+
+This will define a new property `description` which is populated from the content of the `description.txt` file.
+|===
+
 == Version 0.10.0
 [cols="1,2,<10a", options="header"]
 |===

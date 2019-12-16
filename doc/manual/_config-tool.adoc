@@ -48,7 +48,9 @@ Options:
                         Path of output environment archive file (.env)
                         [optional]
   -D NAME:VALUE, --define=NAME:VALUE
-                        Define a system property [multiple]
+                        Define a command line property [multiple]
+  -F NAME:FILE, --fromFile=NAME:FILE
+                        Define a command line property from file content [multiple]
   --passphrase-in=PASSPHRASE
                         Passphrase of input archive files [optional]
   --passphrase-out=PASSPHRASE
@@ -106,9 +108,15 @@ If missing, no `.fed` file is generated.
 If missing, no `.env` file is generated. 
 
 |--define
-|Define a system property `name:value`.
-System properties can be used instead of custom defined properties.
+|Define a command line property `name:value`.
+Command line properties can be used instead of custom defined properties.
 Multiple properties are supported by specifying the parameter multiple times.
+
+|--fromFile
+|Define a command line property from file content `name:file`.
+The file has to contain an UTF-8 encoded text.
+The content of the file will be placed into the defined property.
+Multiple files are supported by specifying the parameter multiple times.
 
 |--passphrase-in
 |Passphrase for source archives.
@@ -163,7 +171,7 @@ Properties are name/value pairs.
 The value of the property is defined ... _(in order of precedence)_
 
   . ... as predefined system property.
-  . ... as a system property via the command line of the configuration tool.
+  . ... as a command line property via the command line of the configuration tool.
   . ... within a separate property configuration file.
   . ... within the environmentalized fields file (under `properties`).
 

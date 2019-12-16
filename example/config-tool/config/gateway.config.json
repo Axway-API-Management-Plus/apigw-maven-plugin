@@ -22,6 +22,28 @@
         }
       }
     }, 
+    "/[CircuitContainer]name=Demo/[FilterCircuit]name=Show Build Version/[SetAttributeFilter]name=Set description": {
+      "description": "", 
+      "fields": {
+        "attributeValue#0": {
+          "source": "property", 
+          "type": "string", 
+          "used": true, 
+          "value": "info.descr"
+        }
+      }
+    }, 
+    "/[CircuitContainer]name=Demo/[FilterCircuit]name=Show Build Version/[SetAttributeFilter]name=Set name": {
+      "description": "", 
+      "fields": {
+        "attributeValue#0": {
+          "source": "env", 
+          "type": "string", 
+          "used": true, 
+          "value": "INFO_NAME"
+        }
+      }
+    }, 
     "/[NetService]name=Service/[HTTP]name=Default Service/[SSLInterface]name=HTTPS": {
       "description": "", 
       "fields": {
@@ -32,10 +54,10 @@
           "value": "service.address"
         }, 
         "port#0": {
-          "source": "env", 
+          "source": "property", 
           "type": "string", 
           "used": true, 
-          "value": "SERVICE_PORT"
+          "value": "service.port"
         }
       }
     }

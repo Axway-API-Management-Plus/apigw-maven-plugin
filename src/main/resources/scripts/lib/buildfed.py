@@ -1,4 +1,6 @@
 import sys
+import codecs
+import os
 import traceback
 import logging
 
@@ -7,18 +9,21 @@ from fedconfig import FedConfigurator
 from envconfig import PropConfig
 from datetime import datetime
 
-def parse_system_property(sys_prop):
-    if not sys_prop:
-        logging.error("Empty system property not allowed!")
+def parse_cli_property(cli_prop):
+    if not cli_prop:
+        logging.error("Empty property not allowed!")
         exit(1)
 
-    s = sys_prop.split(":", 1)
+    s = cli_prop.split(":", 1)
     if not s[0]:
-        logging.error("Empty system property name!")
+        logging.error("Empty property name!")
         exit(1)
 
     name = s[0]
     value = s[1] if len(s) > 1 else None
+
+    if not value:
+        logging.warn("Empty value for property '%s'." % name)
 
     return (name, value)
 
@@ -40,7 +45,8 @@ def main():
     parser.add_option("--cert-config-update", dest="cert_config_update", help="Enable writing of info section for 'update' certificates within the configuration file [optional]", action="store_true")
     parser.add_option("--output-fed", dest="out_fed_file_path", help="Path of output deployment archive file (.fed) [optional]", metavar="FILEPATH")
     parser.add_option("--output-env", dest="out_env_file_path", help="Path of output environment archive file (.env) [optional]", metavar="FILEPATH")
-    parser.add_option("-D", "--define", dest="sys_properties", help="Define a system property [multiple]", metavar="NAME:VALUE", action="append")
+    parser.add_option("-D", "--define", dest="cli_properties", help="Define a command line property [multiple]", metavar="NAME:VALUE", action="append")
+    parser.add_option("-F", "--fromFile", dest="file_properties", help="Define a command line property from file content [multiple]", metavar="NAME:FILE", action="append")
     parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
@@ -59,20 +65,31 @@ def main():
     else:
         logging.getLogger().setLevel(logging.INFO)
 
-    # Add some standard system properties
-    sys_properties = {}
-    sys_properties["_system.build.datetime"] = datetime.now().isoformat()
+    # Add some standard command line properties
+    cli_properties = {}
+    cli_properties["_system.build.datetime"] = datetime.now().isoformat()
 
-    if options.sys_properties:
-        for sp in options.sys_properties:
-            (name, value) = parse_system_property(sp)
-            sys_properties[name] = value
+    # Add command line properties
+    if options.cli_properties:
+        for sp in options.cli_properties:
+            (name, value) = parse_cli_property(sp)
+            cli_properties[name] = value
+
+    if options.file_properties:
+        for fp in options.file_properties:
+            (name, prop_file) = parse_cli_property(fp)
+            if not os.path.isfile(prop_file):
+                raise ValueError("File for command line property '%s' doesn't exist: %s" % (name, prop_file))
+            
+            logging.debug("Reading command line property '%s' from file '%s'" % (name, prop_file))
+            with codecs.open(prop_file, encoding='utf-8', mode='r') as pf:
+                cli_properties[name] = pf.read()
 
     try:
-        # Set properties from files and system properties
+        # Set properties from files and command line properties
         properties = PropConfig(options.prop_file_path_list)
-        for name, value in sys_properties.items():
-            logging.info("Provided system property %s" % (name))
+        for name, value in cli_properties.items():
+            logging.info("Provided command line property %s" % (name))
             properties.set_property(name, value)
 
         # Set passphrases

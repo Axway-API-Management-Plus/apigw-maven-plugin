@@ -33,7 +33,9 @@ $ curl -ks https://localhost:8443/version
 {
   "version": {
     "artifact": "undefined",
-    "buildTime": "1970-01-01T00:00:00"
+    "buildTime": "1970-01-01T00:00:00",
+    "name": "", 
+    "description": ""
   }
 }
 ----
@@ -68,14 +70,17 @@ $ curl -ks https://localhost:18443/version <1>
 {
   "version": {
     "artifact": "demo-1.0.0", <2>
-    "buildTime": "2019-08-23T23:09:46.684000" <3>
+    "buildTime": "2019-12-16T20:38:11.080000", <3>
+    "name", Demo, <4>
+    "description": "Service for demonstration of configuration tool." <5>
   }
 }
 ----
-<1> port is changed to 18443
-<2> artifact is replaced
-<3> build time is set 
-
+<1> Server and port is set to `localhost:18443`
+<2> Artifact is replaced.
+<3> Build time is automatically generated.
+<4> Name is set.
+<5> Description is set.
 
 [NOTE]
 ====
@@ -95,7 +100,8 @@ We have three configuration files in the `config` folder:
 
 NOTE: For a description of the configuration files please check the link:../../doc/manual/user-guide.adoc[User Guide]
 
-In this example the `buildfed` tool will be invoked with the following parameters:
+In this example some environment variables (`INFO_NAME` and `NEW_SERVER_PASSWORD`) are set.
+Then the `buildfed` tool will be invoked with the following parameters:
 
 * `-e src\gateway.env`: specifies the path to the input `.env` archive
 * `-p src\gateway.pol`: specifies the path to the input `.pol` archive
@@ -107,6 +113,7 @@ In this example the `buildfed` tool will be invoked with the following parameter
 * `--passphrase-in=changeme`: passphrase for input archives (`.pol` and `.env`)
 * `--passphrase-out=changed`: passphrase for the generated `.fed` file
 * `-D artifact:demo-1.0.0`: specifies the value of property `artifact` via the command line instead of from the configuration files
+* `-F info.descr:config/description.txt`: specifies to set the value of property `info.descr` from the content of the `config/description.txt` file
 
 The tool reads the source archives, configures the environmentalized fields, replaces the certificates and write the configured `.fed` file.
 

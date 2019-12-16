@@ -1,5 +1,6 @@
 {
 	"properties": {
-		"service.address": "localhost"
+		"service.address": "localhost",
+		"service.port": 18443
 	}
 }
