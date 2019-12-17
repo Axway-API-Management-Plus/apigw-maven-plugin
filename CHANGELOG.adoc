@@ -102,7 +102,7 @@ For certificate passwords there are separate properties ("password" and "passwor
 ...
 "update": {
   "file": "cert/server.p12",
-  "password-property": "property.name", <3> 
+  "password-property": "property.name", <2> 
   "type": "p12"
 }
 ----
@@ -240,8 +240,8 @@ $ mvn package -Daxway.config.props.files=c.json,d.json
 The files are used in the following order:
 
   1. File specified by `axway.config.props` property.
-  1. Files specified in the <configuration> element.
-  1. Files specified by `axway.config.props.files` property.
+  2. Files specified in the <configuration> element.
+  3. Files specified by `axway.config.props.files` property.
 
 If a property exists in the multiple property files the value of from the last property file is used.
 
