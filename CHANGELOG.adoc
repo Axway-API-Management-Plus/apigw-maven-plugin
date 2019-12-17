@@ -48,7 +48,7 @@ For field values there are separate properties ("property" and "value") to confi
 [source,json]
 ----
 {
-  "field#0" {
+  "field#0": {
     "property": null, <1>
     "type": "string", 
     "used": true, 
