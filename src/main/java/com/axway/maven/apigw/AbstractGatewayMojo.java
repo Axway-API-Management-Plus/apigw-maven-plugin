@@ -1,7 +1,9 @@
 package com.axway.maven.apigw;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  *
@@ -253,5 +259,30 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 		}
 
 		return propFiles;
+	}
+	
+	protected ObjectNode buildBasicArtifactInfo() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		ObjectMapper mapper = new ObjectMapper();
+		
+		ObjectNode artifact = mapper.createObjectNode();
+		artifact.put("groupID", this.project.getGroupId());
+		artifact.put("artifactID",  this.project.getArtifactId());
+		artifact.put("version",  this.project.getVersion());
+		
+		ObjectNode root = mapper.createObjectNode();
+		root.put("id", this.project.getId());
+		root.put("name", this.project.getName());
+		root.put("description",  this.project.getDescription());
+		root.put("buildTime", df.format(new Date()));
+		root.set("artifact", artifact);
+		
+		ArrayNode deps = mapper.createArrayNode();
+		for (Artifact a : getDependencies(null)) {
+			deps.add(a.getId());
+		}
+		root.set("dependencies", deps);
+
+		return root;
 	}
 }

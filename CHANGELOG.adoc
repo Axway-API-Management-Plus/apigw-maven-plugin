@@ -15,6 +15,16 @@ Example:
   $ buildfed ... -F description:config/description.txt
 
 This will define a new property `description` which is populated from the content of the `description.txt` file.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/32[#32]
+|Enhancement
+|Build artifact information JSON.
+
+For server and deployment archives the plugin will generate a `gateway.info.json` file.
+The file contains information about the version of the artifact and its dependencies.
+
+On configuring  the `.fed` package, the plugin passes the content of the `gateway.info.json` file as `_system.artifact.info` property to the `buildfed` tool.
+This enables the developer to use the contained JSON document to build an endpoint providing information about the currently deployed version.
 |===
 
 == Version 0.10.0

@@ -16,11 +16,14 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.axway.maven.apigw.utils.FedBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Mojo(name = "axdar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE)
 public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 	public static final String FILE_FED_NAME = "gateway.fed";
+	public static final String FILE_GATEWAY_INFO = "gateway.info.json";
 	public static final String FILE_README = "readme-deployment-archive.txt";
 	public static final String FILE_GATEWAY_CONFIG_JSON = "gateway.config.json";
 
@@ -69,12 +72,13 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			FileUtils.deleteDirectory(archiveBuildDir);
 			archiveBuildDir.mkdirs();
 
-			buildFedArchive(archiveBuildDir, srcPolFile, srcEnvFile);
+			File infoFile = prepareInfoJson(archiveBuildDir);
+			buildFedArchive(archiveBuildDir, srcPolFile, srcEnvFile, infoFile);
 
 			prepareReadme(archiveBuildDir);
 			FileUtils.copyFileToDirectory(
 					new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.FILE_README), archiveBuildDir);
-
+			
 			prepareStaticFiles(new File(archiveBuildDir, DIR_STATIC_FILES));
 			prepareJars(new File(archiveBuildDir, ServerArchiveMojo.DIR_LIBS));
 
@@ -98,6 +102,29 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		str.append(" * ").append(this.serverArchive.getId()).append('\n');
 
 		FileUtils.writeStringToFile(readme, str.toString(), "UTF-8");
+	}
+
+	private File prepareInfoJson(File targetDir) throws IOException, MojoExecutionException {
+		ObjectMapper mapper = new ObjectMapper();
+		File info = new File(targetDir, FILE_GATEWAY_INFO);
+		
+		ObjectNode root = buildBasicArtifactInfo();
+		
+		ObjectNode serverJson;
+		File serverInfo = new File(getSharedArtifactDir(this.serverArchive), ServerArchiveMojo.FILE_GATEWAY_INFO);
+		if (serverInfo.canRead()) {
+			serverJson = (ObjectNode) mapper.readTree(serverInfo);
+		} else {
+			serverJson = mapper.createObjectNode();
+			serverJson.put("id", this.serverArchive.getId());
+		}
+		root.set("serverArchive", serverJson);
+		
+		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+		
+		FileUtils.writeStringToFile(info, json, "UTF-8");
+		
+		return info;
 	}
 
 	private void prepareStaticFiles(File targetDir) throws IOException, MojoExecutionException {
@@ -124,7 +151,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		}
 	}
 
-	private void buildFedArchive(File targetDir, File srcPolFile, File srcEnvFile) throws MojoExecutionException {
+	private void buildFedArchive(File targetDir, File srcPolFile, File srcEnvFile, File infoFile) throws MojoExecutionException {
 		File configFile = this.configConfigFile;
 		if (configFile == null) {
 			configFile = new File(this.sourceDirectory, FILE_GATEWAY_CONFIG_JSON);
@@ -132,7 +159,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 		File outFedFile = new File(targetDir, FILE_FED_NAME);
 
-		FedBuilder fedBuilder = new FedBuilder(this, srcPolFile, srcEnvFile, configFile);
+		FedBuilder fedBuilder = new FedBuilder(this, srcPolFile, srcEnvFile, configFile, infoFile);
 
 		fedBuilder.addPropertyFiles(getPropertyFiles());
 

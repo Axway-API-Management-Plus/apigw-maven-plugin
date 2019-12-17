@@ -16,6 +16,7 @@ public class FedBuilder {
 	private final File polFile;
 	private final File envFile;
 	private final File configFile;
+	private final File infoFile;
 
 	private final List<File> propertyFiles = new ArrayList<File>();
 	private File certsFile = null;
@@ -28,7 +29,7 @@ public class FedBuilder {
 	private boolean updateCertConfigFile = false;
 	private boolean verboseCfgTools = false;
 
-	public FedBuilder(AbstractGatewayMojo mojo, File polFile, File envFile, File configFile)
+	public FedBuilder(AbstractGatewayMojo mojo, File polFile, File envFile, File configFile, File infoFile)
 			throws MojoExecutionException {
 		if (mojo == null)
 			throw new NullPointerException("mojo is null");
@@ -49,6 +50,7 @@ public class FedBuilder {
 		this.polFile = polFile;
 		this.envFile = envFile;
 		this.configFile = configFile;
+		this.infoFile = infoFile;
 	}
 
 	public void addPropertyFile(File propertyFile) {
@@ -136,6 +138,14 @@ public class FedBuilder {
 			args.add("_system.artifact.ver:" + mojo.getProject().getArtifact().getVersion());
 			args.add("-D");
 			args.add("_system.artifact.id:" + mojo.getProject().getArtifact().getId());
+			
+			if (this.infoFile != null && this.infoFile.canRead()) {
+				args.add("-F");
+				args.add("_system.artifact.info:" + this.infoFile.getPath());
+			} else {
+				args.add("-D");
+				args.add("_system.artifact.info:{}");
+			}
 
 			if (props != null) {
 				for (Entry<String, String> entry : props.entrySet()) {

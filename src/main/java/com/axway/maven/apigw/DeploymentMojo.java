@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -15,6 +16,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.axway.maven.apigw.utils.FedBuilder;
 import com.axway.maven.apigw.utils.ProjectDeploy;
 import com.axway.maven.apigw.utils.ProjectPack;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Mojo(name = "deploy", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = false)
 @Execute(phase = LifecyclePhase.PACKAGE)
@@ -84,8 +87,14 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 			// configure fed
 			File pol = new File(getTempDir(), PROJECT_NAME + ".pol");
 			File env = new File(getTempDir(), PROJECT_NAME + ".env");
+			File info = new File(getTempDir(), PROJECT_NAME + ".info.json");
 
-			File fed = configFed(pol, env);
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode root = buildBasicArtifactInfo();
+			String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+			FileUtils.writeStringToFile(info, json, "UTF-8");
+
+			File fed = configFed(pol, env, info);
 
 			// deploy to server
 			deployFed(fed);
@@ -100,8 +109,9 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 		// configure fed
 		File pol = new File(archiveBuildDir, ServerArchiveMojo.FILE_GATEWAY_POL);
 		File env = new File(archiveBuildDir, ServerArchiveMojo.FILE_GATEWAY_ENV);
+		File info = new File(archiveBuildDir, ServerArchiveMojo.FILE_GATEWAY_INFO);
 
-		File fed = configFed(pol, env);
+		File fed = configFed(pol, env, info);
 
 		// deploy to server
 		deployFed(fed);
@@ -113,8 +123,8 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 		deployFed(fed);
 	}
 
-	private File configFed(File pol, File env) throws MojoExecutionException {
-		FedBuilder fb = new FedBuilder(this, pol, env, this.configConfigFile);
+	private File configFed(File pol, File env, File info) throws MojoExecutionException {
+		FedBuilder fb = new FedBuilder(this, pol, env, this.configConfigFile, info);
 		fb.setPassphrasePol(this.passphrasePol);
 		fb.setPassphraseFed(this.passphraseFed);
 

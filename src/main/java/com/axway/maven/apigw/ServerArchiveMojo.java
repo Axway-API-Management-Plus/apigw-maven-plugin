@@ -17,6 +17,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.axway.maven.apigw.utils.ProjectPack;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Mojo(name = "axsar", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.COMPILE, requiresDependencyCollection = ResolutionScope.COMPILE)
 public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
@@ -26,6 +28,7 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	public static final String FILE_GATEWAY = "gateway";
 	public static final String FILE_GATEWAY_POL = FILE_GATEWAY + ".pol";
 	public static final String FILE_GATEWAY_ENV = FILE_GATEWAY + ".env";
+	public static final String FILE_GATEWAY_INFO = FILE_GATEWAY + ".info.json";
 	public static final String FILE_README = "readme-server-archive.txt";
 
 	@Override
@@ -54,6 +57,7 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			FileUtils.copyFileToDirectory(envFile, archiveBuildDir);
 
 			prepareReadme(archiveBuildDir);
+			prepareInfoJson(archiveBuildDir);
 			prepareStaticFiles(new File(archiveBuildDir, DIR_STATIC_FILES));
 			prepareJars(new File(archiveBuildDir, DIR_LIBS));
 
@@ -79,6 +83,17 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		}
 
 		FileUtils.writeStringToFile(readme, str.toString(), "UTF-8");
+	}
+	
+	private void prepareInfoJson(File targetDir) throws IOException, MojoExecutionException {
+		ObjectMapper mapper = new ObjectMapper();
+		File info = new File(targetDir, FILE_GATEWAY_INFO);
+	
+		ObjectNode root = buildBasicArtifactInfo();
+		
+		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+		
+		FileUtils.writeStringToFile(info, json, "UTF-8");
 	}
 
 	private void prepareStaticFiles(File targetDir) throws IOException, MojoExecutionException {

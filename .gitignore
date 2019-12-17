@@ -1,6 +1,7 @@
 .settings
 .data
 .policystudio
+.studio
 .vscode
 .projdeps.json
 *.class

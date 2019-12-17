@@ -197,6 +197,11 @@ The plugin and the configuration tool provides a set of predefined system proper
 |Complete ID of the project artifact.
 |Plugin
 
+|_system.artifact.info
+|JSON describing the artifact and its dependencies (content of the `gateway.info.json` file).
+If the `gateway.info.json` file is not available the property contains an empty JSON document `{}`.
+|Plugin
+
 |_system.build.datetime
 |Build date and time in ISO format (YYYY-MM-DD'T'HH:MM:SS.S)
 |Config Tool
