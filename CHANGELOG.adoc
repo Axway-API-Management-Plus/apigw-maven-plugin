@@ -1,5 +1,17 @@
 = Changelog
 
+== Version 0.11.1
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/33[#33]
+|Bug
+|The configuration files are only updated if they are changed.
+
+Also a bug is fixed where the configuration will not be updated even if the `used` state is changed.
+If a field is marked as unused, the configuration wasn't updated even if the field is used now.
+|===
+
 == Version 0.11.0
 [cols="1,2,<10a", options="header"]
 |===
