@@ -59,6 +59,8 @@ class EnvConfig:
     __file_updated = False
     __migrated = False
 
+    __origin_json_str_str = None
+
     __unconfigured_fields = []
         
     def __init__(self, config_file_path, properties):
@@ -70,6 +72,7 @@ class EnvConfig:
             logging.info("Reading configuration file '%s'" % (self.__config_file_path))
             with open(self.__config_file_path) as config_file:
                 self.__config_json = json.load(config_file)
+            self.__origin_json_str = json.dumps(self.__config_json, sort_keys=True, indent=2)
             self.__reset()
         else:
             logging.info("Configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
@@ -198,9 +201,10 @@ class EnvConfig:
         return self.__unconfigured_fields
 
     def update_config_file(self, force=False):
-        if self.__missing_vars or self.has_unused_vars() or force or self.__migrated:
+        new_json_str = json.dumps(self.__config_json, sort_keys=True, indent=2)
+        if self.__origin_json_str != new_json_str:
             with open(self.__config_file_path, "w") as config_file:
-                json.dump(self.__config_json, config_file, sort_keys=True, indent=2)
+                config_file.write(new_json_str)
             self.__file_updated = True
             logging.info("Configuration file updated: %s" % (self.__config_file_path))
             if self.__migrated:
@@ -268,6 +272,7 @@ class CertConfig:
     __config_json = None
     __properties = None
     __migrated = False
+    __origin_json_str = None
 
     def __init__(self, config_file_path, properties):
         self.__properties = properties
@@ -279,6 +284,7 @@ class CertConfig:
 
                 if "certificates" not in self.__config_json:
                     raise ValueError("File '%s' is not a valid certification config file; missing 'certificates' attribute!" % (self.__config_file_path))
+            self.__origin_json_str = json.dumps(self.__config_json, sort_keys=True, indent=2)
             self.__migrate()
         else:
             logging.info("Certificate configuration file '%s' doesn't exist; empty file will be created." % (self.__config_file_path))
@@ -381,9 +387,11 @@ class CertConfig:
         return certs
 
     def update_config_file(self):
-        with open(self.__config_file_path, "w") as cert_file:
-            json.dump(self.__config_json, cert_file, sort_keys=True, indent=2)
-        logging.info("Certificate configuration file updated: %s" % (self.__config_file_path))
-        if self.__migrated:
-            logging.info("Certificate configuration file migrated to new version.")
+        new_json_str = json.dumps(self.__config_json, sort_keys=True, indent=2)
+        if new_json_str != self.__origin_json_str:
+            with open(self.__config_file_path, "w") as cert_file:
+                json.dump(self.__config_json, cert_file, sort_keys=True, indent=2)
+            logging.info("Certificate configuration file updated: %s" % (self.__config_file_path))
+            if self.__migrated:
+                logging.info("Certificate configuration file migrated to new version.")
         return
