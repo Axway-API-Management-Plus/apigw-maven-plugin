@@ -1,5 +1,34 @@
 = Changelog
 
+== Version 0.11.2
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/34[#34]
+|Bug
+|For configuration files in the old format having fields with "property" attribute set to null, the field will not be upgraded to the newer version.
+
+.Example
+[source,json]
+----
+"fields": {
+  "attributeValue#0": {
+    "property": null, 
+    "type": "string", 
+    "used": true, 
+    "value": "artifact"
+  }
+}
+----
+
+This results in the error message:
+
+`ERROR: ValueError(u"Missing 'source' property in field 'xxxxxx' of entity 'xxxxxx'",)`
+
+The bug is fixed and the configuration files will be upgraded to the new version, now.
+|===
+
+
 == Version 0.11.1
 [cols="1,2,<10a", options="header"]
 |===
