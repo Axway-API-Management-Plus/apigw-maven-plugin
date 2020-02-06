@@ -137,9 +137,11 @@ class EnvConfig:
                     # convert to newer version
                     if "property" in field:
                         if field["property"]:
-                            source = "property"
                             field["value"] = field["property"]
                             field["source"] = "property"
+                        else:
+                            field["source"] = "value"
+
                         del field["property"]
                         self.__migrated = True
                     elif "source" not in field:
@@ -300,8 +302,12 @@ class CertConfig:
                 cert = cert_cfg["update"]
 
                 if "password-property" in cert:
-                    cert["password"] = cert["password-property"]
-                    cert["source"] = "property"
+                    if cert["password-property"]:
+                        cert["password"] = cert["password-property"]
+                        cert["source"] = "property"
+                    else:
+                        cert["source"] = "password"
+
                     del cert["password-property"]
                     self.__migrated = True
                 elif "password" in cert and "source" not in cert:
