@@ -109,7 +109,7 @@ class EnvConfig:
             json_field = json_entity["fields"][fpk]
             json_field["used"] = True
         else:
-            json_field = {"type": field_key.type, "value": None, "used": True, "source": "value"}
+            json_field = {"type": field_key.type, "value": None, "used": True, "source": "property"}
             json_entity["fields"][fpk] = json_field
             self.__missing_vars = True
         return json_field
