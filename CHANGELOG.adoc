@@ -14,7 +14,7 @@ It indicates that a certificate will be updated with an empty certificate and th
 [source,json]
 ----
 {
-  "certifictates":
+  "certifictates": {
     "to-be-deleted": {
       "origin": {
         "info": {
