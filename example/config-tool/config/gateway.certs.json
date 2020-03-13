@@ -33,6 +33,28 @@
         "file": "config/certs/staged-root-ca.crt", 
         "type": "crt"
       }
+    }, 
+    "to-be-deleted": {
+      "origin": {
+        "info": {
+          "not_after": "2020-08-23T20:24:00+02:00", 
+          "subject": "CN=localhost, O=ACME Inc., C=EX"
+        }
+      },
+      "update": {
+        "type": "empty"
+      }
+    }, 
+    "to-be-removed-ca": {
+      "origin": {
+        "info": {
+          "not_after": "2029-08-23T20:19:00+02:00", 
+          "subject": "CN=acme-inc-example, O=ACME Inc., L=Example, C=EX"
+        }
+      },
+      "update": {
+        "type": "empty"
+      }
     }
   }
 }

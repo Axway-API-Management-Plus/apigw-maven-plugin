@@ -182,6 +182,14 @@ class FedConfigurator:
         es.updateEntity(cert_entity)
         return
 
+    def __remove_certificate(self, es, alias):
+        # Get certificate entity
+        cert_store = es.get('/[Certificates]name=Certificate Store')
+        cert_entity = es.getChild(cert_store, '[Certificate]dname=%s' % (es.escapeField(alias)))
+        if cert_entity:
+            es.cutEntity(cert_entity)
+        return
+    
     def __configure_certificates(self):
         if self.__cert_config is not None:
             # determine existing certificates
@@ -223,6 +231,10 @@ class FedConfigurator:
                             continue
                         else:
                             raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
+                elif cert_ref.get_type() == "empty":
+                    self.__remove_certificate(es, cert_ref.get_alias())
+                    logging.info("Certificate removed: %s" % (cert_ref.get_alias()))
+                    continue
                 else:
                     raise ValueError("Unsupported certificate type: %s" % (cert_ref.get_type()))
 

@@ -223,6 +223,12 @@ class CertRef:
         self.__file_path = cert_file_path
         self.__password = password
 
+        if cert_type not in ["crt", "p12", "empty"]:
+            raise ValueError("Invalid certificate type '%s' for alias '%s'!" % (cert_type, alias))
+        if self.__type != "empty" and not self.__file_path:
+            raise ValueError("Missing path to certificate file for alias '%s'!" % (alias))
+        return
+
     def get_alias(self):
         return self.__alias
 
@@ -234,6 +240,9 @@ class CertRef:
 
     def get_password(self):
         return self.__password
+    
+    def is_empty():
+        return self.__type == "empty"
 
 class CertInfo:
     __alias = None
@@ -362,10 +371,13 @@ class CertConfig:
 
                 cert = cert_cfg["update"]
 
+                if "type" not in cert:
+                    raise ValueError("Missing certificate type for alias '%s'!" % (alias))
                 cert_type = cert["type"]
-                if cert_type not in ["crt", "p12"]:
-                    raise ValueError("Invalid certificate type '%s' for alias '%s'!" % (cert_type, alias))
-                cert_file = cert["file"]
+
+                cert_file = None
+                if "file" in cert:
+                    cert_file = cert["file"]
 
                 password = None
                 if "password" in cert:

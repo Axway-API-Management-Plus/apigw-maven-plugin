@@ -61,7 +61,7 @@ Options:
 If environmentalized fields or certificates are not configured, the build fails.
 Missing fields or certificates are automatically added to the configuration file.
 
-[cols="2,5", options="header"]
+[cols="2,5a", options="header"]
 |===
 |Option
 |Description
@@ -134,11 +134,19 @@ If not set the output archives have the same passphrase as the source archives.
 |Enable simulation mode.
 
 In simulation mode, no output files (`.fed` or `.env`) will be written.
-Also non existing certificate files will be ignored.
 
+The simulation mode will ignore non existing certificate files and will not apply the values of environmentalized fields.
+
+[NOTE]
+====
+The simulation mode can be used to prepare packages for CI/CD pipelines.
+
+In this case configuration parameters and certificates may be stored in a configuration database.
+So during the preparation phase the certificates may not be available and the configuration files may contain placeholders.
+To avoid errors due to incompatible types (e.g. placeholder string used for an integer field) the values will not be applied to the entity store.
+====
 |===
 
-TIP: The simulation mode can be used to check the configuration and to update the configuration files.
 
 == Configuration Files
 
@@ -340,6 +348,17 @@ It specifies the alias of the certificates within the project and the source of 
                 "source": "env", <16>
                 "type": "p12"
             }
+        },
+        "test4": {
+            "origin": {
+                "info": {
+                    "not_after": "2021-09-30T16:01:15+02:00", 
+                    "subject": "CN=DST Root CA X3, O=Digital Signature Trust Co."
+                }
+            },
+            "update": {
+                "type": "empty" <17>
+            }
         }
     }
 }
@@ -364,6 +383,7 @@ This certificate will be added to the certificate store.
 <14> Declares the property "password" as the source of the password for the `.p12` file.
 <15> The password is retrieved from the `TEST3_PASSWORD` environment variable.
 <16> Specifies an environment variable as the source of the password.
+<17> Type `empty` indicates that a certificate will be updated with an _empty_ certificate and therefore will be removed.
 
 === Properties
 
