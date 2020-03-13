@@ -19,7 +19,7 @@
 
 	<groupId>com.axway.maven.plugins</groupId>
 	<artifactId>apigw-maven-plugin</artifactId>
-	<version>0.11.2</version>
+	<version>0.12.0</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>Axway API Gateway Maven Plugin</name>

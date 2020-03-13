@@ -1,5 +1,81 @@
 = Changelog
 
+== Version 0.12.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/35[#35]
+|Enhancement
+| Support removal of certificates.
+
+A new certificate type `empty` is introduced for the `update` object of the certificate configuration file.
+It indicates that a certificate will be updated with an empty certificate and therefore will be removed.
+
+[source,json]
+----
+{
+  "certifictates":
+    "to-be-deleted": {
+      "origin": {
+        "info": {
+          "not_after": "2020-08-23T20:24:00+02:00", 
+          "subject": "CN=localhost, O=ACME Inc., C=EX"
+        }
+      },
+      "update": {
+        "type": "empty" <1>
+      }
+    }
+}
+----
+<1> Type `empty` will remove the certificate.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/36[#36]
+|Enhancement
+|The default source for new environmentalized fields is `property`.
+
+.Old default source
+[source,json]
+----
+{
+  "field#0": {
+    "source": "value", <1>
+    "type": "string",
+    "used": true,
+    "value": null
+  }
+}
+----
+<1> Previously the default source for new fields is `value`.
+
+.New default source
+[source,json]
+----
+{
+  "field#0": {
+    "source": "property", <1>
+    "type": "string",
+    "used": true,
+    "value": null
+  }
+}
+----
+<1> The new default source for new fields is `property`.
+
+[NOTE]
+====
+In case of new environmentalized fields, the configuration file has to be edited to set the value for the new fields.
+
+In case of the source of the value should be a property the name of the property has to be specified in the `value` attribute.
+Unfortunately it is easy to forget to also change the `source` attribute to `property`.
+As the default source is `value` the configuration tool will just configure the name of property instead of the content of the property, without any warning or error.
+
+To prevent this pitfall the default source for new fields is `property`.
+This guarantees that the specified property exists.
+Also in case of the source has to be `value`, the configuration tool forces to switch the `source` attribute.
+====
+|===
+
 == Version 0.11.2
 [cols="1,2,<10a", options="header"]
 |===
