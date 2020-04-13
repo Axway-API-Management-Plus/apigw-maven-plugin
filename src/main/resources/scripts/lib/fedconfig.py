@@ -26,6 +26,7 @@ class FedConfigurator:
 
     __update_cert_config = False
     __expiration_days = -1
+    __base_dir = None
 
     def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, properties = None, passphrase = ""):
         self.__passphrase_in = passphrase
@@ -56,6 +57,9 @@ class FedConfigurator:
 
     def set_system_properties(self, sys_properties):
         self.__config.set_system_properties(sys_properties)
+    
+    def set_base_dir(self, base_dir):
+        self.__base_dir = base_dir
 
     def configure(self, passphrase = ""):
         succeeded = self.__configure_entities()
@@ -116,6 +120,11 @@ class FedConfigurator:
         self.__config.update_config_file()
 
         return succeeded
+
+    def __resolve_file_path(self, file):
+        if file and self.__base_dir:
+            file = os.path.join(self.__base_dir, file)
+        return file
 
     def __get_certificate_infos(self):
         infos = []
@@ -207,11 +216,12 @@ class FedConfigurator:
             cert = None
 
             for cert_ref in certs:
-                logging.info("Process alias '%s' (%s): %s" % (cert_ref.get_alias(), cert_ref.get_type(), cert_ref.get_file()))
+                file = self.__resolve_file_path(cert_ref.get_file())
+                logging.info("Process alias '%s' (%s): %s" % (cert_ref.get_alias(), cert_ref.get_type(), file))
                 if cert_ref.get_type() == "crt":
                     cf = CertificateFactory.getInstance("X.509")
-                    if os.path.isfile(cert_ref.get_file()):
-                        fis = FileInputStream (cert_ref.get_file())
+                    if os.path.isfile(file):
+                        fis = FileInputStream (file)
                         cert = cf.generateCertificate(fis)
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert)
                     else:
@@ -219,18 +229,18 @@ class FedConfigurator:
                             logging.warning("[SIMULATION_MODE] Certificate file not found, certificate (CRT) ignored: alias=%s" % (cert_ref.get_alias()))
                             continue
                         else:
-                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
+                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), file))
                 elif cert_ref.get_type() == "p12":
-                    if os.path.isfile(cert_ref.get_file()):
-                        key = self.__get_key_from_p12(cert_ref.get_file(), cert_ref.get_password())
-                        cert = self.__get_cert_from_p12(cert_ref.get_file(), cert_ref.get_password())
+                    if os.path.isfile(file):
+                        key = self.__get_key_from_p12(file, cert_ref.get_password())
+                        cert = self.__get_cert_from_p12(file, cert_ref.get_password())
                         self.__add_or_replace_certificate(es, cert_ref.get_alias(), cert, key)
                     else:
                         if self.__simulation_mode:
                             logging.warning("[SIMULATION_MODE] Certificate file not found, certificate (P12) ignored: alias=%s" % (cert_ref.get_alias()))
                             continue
                         else:
-                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), cert_ref.get_file()))
+                            raise ValueError("Certificate file not found for alias '%s': %s" % (cert_ref.get_alias(), file))
                 elif cert_ref.get_type() == "empty":
                     self.__remove_certificate(es, cert_ref.get_alias())
                     logging.info("Certificate removed: %s" % (cert_ref.get_alias()))

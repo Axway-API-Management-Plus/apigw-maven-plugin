@@ -20,6 +20,7 @@ public class FedBuilder {
 
 	private final List<File> propertyFiles = new ArrayList<File>();
 	private File certsFile = null;
+	private File certsBaseDir = null;
 
 	private int certExpirationDays = -1;
 
@@ -65,6 +66,10 @@ public class FedBuilder {
 		this.certsFile = certsFile;
 	}
 
+	public void setCertificatesBasePath(File baseDir) {
+		this.certsBaseDir = baseDir;
+	}
+
 	public void setCertificateExpirationDays(int days) {
 		this.certExpirationDays = days;
 	}
@@ -84,7 +89,7 @@ public class FedBuilder {
 	public void setPassphraseFed(String passphrase) {
 		this.passphraseFed = passphrase;
 	}
-
+	
 	public int execute(File targetFed, Map<String, String> props) throws MojoExecutionException {
 		File outFedFile = targetFed;
 
@@ -114,6 +119,10 @@ public class FedBuilder {
 
 				if (this.updateCertConfigFile) {
 					args.add("--cert-config-update");
+				}
+				if (this.certsBaseDir != null) {
+					args.add("--base-dir");
+					args.add(this.certsBaseDir.getAbsolutePath());
 				}
 			}
 			args.add("--output-fed");

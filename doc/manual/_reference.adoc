@@ -290,6 +290,11 @@ Default: ${axway.dir.source}/gateway.config.json _(only for deployment projects)
 
 Default: _none_
 
+|axway.config.certs.basedir
+|Base directory for certificate files.
+
+Default: _none_
+
 |axway.config.props
 |Path to configuration file for properties (required for deployment or deployment projects).
 
@@ -393,6 +398,8 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
       <configPropertyFile>${basedir}/prop-a.json</configPropertyFile>
       <configPropertyFile>${basedir}/prop-b.json</configPropertyFile>
     </configPropertFiles>
+
+    <configCertsBaseDir>${basedir}/src/main/axwgw/certs</configCertsBaseDir> <!--5-->
   </configuration>
 </plugin>
 <!- ... ->
@@ -401,3 +408,4 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
 <2> Location of the configuration file for certificates.
 <3> Location of a configuration file for properties.
 <4> Location of a list of configuration files for properties.
+<5> Base directory for certificate files.

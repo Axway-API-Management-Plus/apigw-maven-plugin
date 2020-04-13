@@ -56,6 +56,7 @@ Options:
   --passphrase-out=PASSPHRASE
                         Passphrase for output archive files [optional]
   -s, --simulate        Enable simulation mode [optional]
+  -b, --base-dir        Base directory for certificate files [optional]
 ....
 
 If environmentalized fields or certificates are not configured, the build fails.
@@ -145,6 +146,10 @@ In this case configuration parameters and certificates may be stored in a config
 So during the preparation phase the certificates may not be available and the configuration files may contain placeholders.
 To avoid errors due to incompatible types (e.g. placeholder string used for an integer field) the values will not be applied to the entity store.
 ====
+
+|-b, --base-dir
+|Base directory for certificate files.
+If specified relative path to certificate files is based on this directory.
 |===
 
 

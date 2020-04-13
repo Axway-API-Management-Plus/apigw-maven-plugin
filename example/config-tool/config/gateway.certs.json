@@ -2,7 +2,7 @@
   "certificates": {
     "new-server": {
       "update": {
-        "file": "config/certs/staged-server.p12", 
+        "file": "staged-server.p12", 
         "password": "NEW_SERVER_PASSWORD", 
         "source": "env", 
         "type": "p12"
@@ -16,7 +16,7 @@
         }
       }, 
       "update": {
-        "file": "config/certs/staged-server.p12", 
+        "file": "staged-server.p12", 
         "password": "cert.password.staged.server", 
         "source": "property", 
         "type": "p12"
@@ -30,7 +30,7 @@
         }
       }, 
       "update": {
-        "file": "config/certs/staged-root-ca.crt", 
+        "file": "staged-root-ca.crt", 
         "type": "crt"
       }
     }, 

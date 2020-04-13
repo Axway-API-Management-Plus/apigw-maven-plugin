@@ -94,12 +94,15 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 
 	@Parameter(property = "axway.config.props.files", required = false)
 	protected File[] configPropertyFilesAdditional;
-
+	
 	/**
 	 * Path to the certificates configuration file.
 	 */
 	@Parameter(property = "axway.config.certs", required = false)
 	protected File configCertsFile;
+
+	@Parameter(property = "axway.config.certs.basedir", required = false)
+	protected File configCertsBaseDir = null;
 
 	
 	@Parameter(defaultValue = "${project}", readonly = true)

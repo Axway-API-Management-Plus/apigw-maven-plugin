@@ -1,5 +1,16 @@
 = Changelog
 
+== Version 1.0.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/40[#40]
+|Enhancement
+|Base directory for certificate files.
+
+Use the `--base-dir` parameter of the configuration tool or the `axway.config.certs.basedir` property of the plugin to specify the base directory for certificate files.
+|===
+
 == Version 0.12.0
 [cols="1,2,<10a", options="header"]
 |===

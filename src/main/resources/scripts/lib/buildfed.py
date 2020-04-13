@@ -50,6 +50,7 @@ def main():
     parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
+    parser.add_option("-b", "--base-dir", dest="base_dir", help="Base directory for certificate files [optional]", metavar="DIRECTORY")
     (options, args) = parser.parse_args()
 
     if not options.env_file_path:
@@ -103,6 +104,9 @@ def main():
 
         # Execute configuration
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in)
+        if options.base_dir:
+            fed_config.set_base_dir(options.base_dir)
+
         if options.simulate:
             fed_config.enable_simulation_mode()
 
