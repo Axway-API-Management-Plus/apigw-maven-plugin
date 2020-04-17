@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.axway.maven.apigw.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -13,9 +14,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.axway.maven.apigw.utils.FedBuilder;
-import com.axway.maven.apigw.utils.ProjectDeploy;
-import com.axway.maven.apigw.utils.ProjectPack;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -151,22 +149,54 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 	private void deployFed(File fed) throws MojoExecutionException {
 		try {
-
-			ProjectDeploy.Source source = new ProjectDeploy.Source(fed, this.passphraseFed);
-
-			ProjectDeploy.Target target = new ProjectDeploy.Target(this.deployGroup, this.passphraseDeploy);
-
-			ProjectDeploy deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
-
 			Map<String, String> polProps = new HashMap<>();
 			polProps.put("Name", this.project.getGroupId() + ":" + this.project.getArtifactId());
 			polProps.put("Version", this.project.getVersion());
 			polProps.put("Type", "Test Deployment");
 
-			int exitCode = deploy.execute(source, target, polProps, null);
-			if (exitCode != 0) {
-				throw new MojoExecutionException("Failed to deploy project: exitCode=" + exitCode);
+			Source source = new Source(fed, this.passphraseFed);
+			Target target = new Target(this.deployGroup, this.passphraseDeploy);
+
+			AbstractCommandExecutor deploy;
+
+			if (this.containerName == null) {
+				// Deploying to a Classic Gateway, ok to use projdeploy
+				deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
+				int exitCode = deploy.execute(source, target, polProps, null);
+				if (exitCode != 0) {
+					throw new MojoExecutionException("Failed to deploy project: exitCode=" + exitCode);
+				}
+			} else {
+				// containerName is populated, so we are going to create a new container
+				AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
+				int exitCode = dockerCommands.execute("Remove Container", this.containerName, null,
+						null, null, null, null);
+				if ( exitCode != 0 ) {
+					throw new MojoExecutionException("Failed to remove existing container: exitCode: " + exitCode);
+				}
+
+				exitCode = dockerCommands.execute("Remove Image", this.containerName, this.imageName,
+						this.imageTag, null, null, null);
+				if ( exitCode != 0 ) {
+					throw new MojoExecutionException("Failed to remove existing image: exitCode: " + exitCode);
+				}
+
+				deploy = new DockerImage(this.containerScripts, this.imageName, this.imageTag, this.parentImageName,
+						this.parentImageTag, this.license, this.mergeDir, getLog());
+				exitCode = deploy.execute(source, target, polProps, null);
+				if ( exitCode != 0 ) {
+					throw new MojoExecutionException("Failed to create new Docker Image: exitCode: " + exitCode);
+				}
+
+				exitCode = dockerCommands.execute("Create Container", this.containerName, this.imageName,
+						this.imageTag, this.getContainerPorts(), this.getContainerLinks(),
+						this.getContainerEnvironmentVariables());
+				if ( exitCode != 0 ) {
+					throw new MojoExecutionException("Failed to create new container: exitCode: " + exitCode);
+				}
 			}
+
+
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error on deploying project", e);
 		}

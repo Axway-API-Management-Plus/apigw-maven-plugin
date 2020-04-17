@@ -31,29 +31,6 @@ public class ProjectDeploy extends AbstractCommandExecutor {
 		}
 	}
 
-	public static class Source {
-		public final File fed;
-		public final String passphrase;
-
-		public Source(File fed, String passphrase) {
-			this.fed = Objects.requireNonNull(fed, ".fed file is null");
-			this.passphrase = passphrase;
-		}
-	}
-
-	public static class Target {
-		public final String group;
-		public final String passphrase;
-
-		public Target(String group, String passphrase) {
-			if (group == null || group.isEmpty()) {
-				throw new IllegalArgumentException("group is null or empty");
-			}
-			this.group = group;
-			this.passphrase = passphrase;
-		}
-	}
-
 	public ProjectDeploy(File axwayGatewayHome, Domain domain, Log log) {
 		super("Project Deploy", log);
 		this.axwayGatewayHome = Objects.requireNonNull(axwayGatewayHome, "gateway home is null");

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.maven.plugin.logging.Log;
@@ -20,11 +21,20 @@ public abstract class AbstractCommandExecutor {
 		this.log = Objects.requireNonNull(log, "log is null");
 	}
 
-	protected abstract File getCommand() throws IOException;
+	protected File getCommand() throws IOException { return null; };
+
+	protected String getStringCommand() { return null; }
 
 	protected Log getLog() {
 		return this.log;
 	}
+
+	public int execute ( String task, String containerName, String imageName, String imageTag,
+						 Map<String, String> ports, Map<String, String> links,
+						 Map<String, String> environmentVariables ) throws IOException { return 0; }
+
+	public int execute(Source source, Target target, Map<String, String> polProperties,
+					   Map<String, String> envProperties) throws IOException { return 0; }
 
 	protected int execute(List<String> parameters) throws IOException {
 		File command = getCommand();

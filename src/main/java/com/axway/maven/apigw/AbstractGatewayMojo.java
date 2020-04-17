@@ -2,12 +2,7 @@ package com.axway.maven.apigw;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -113,6 +108,77 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
+
+	/**
+	 * Properties to create and deploy new docker containers.
+	 */
+	@Parameter(property = "axway.container.scripts", required = false)
+	protected File containerScripts;
+
+	@Parameter(property = "axway.container.name", required = false)
+	protected String containerName;
+
+	@Parameter(property = "axway.image.name", required = false)
+	protected String imageName;
+
+	@Parameter(property = "axway.image.tag", required = false)
+	protected String imageTag;
+
+	@Parameter(property = "axway.parent.image.name", required = false)
+	protected String parentImageName;
+
+	@Parameter(property = "axway.parent.image.tag", required = false)
+	protected String parentImageTag;
+
+	@Parameter(property = "axway.license", required = false)
+	protected String license;
+
+	@Parameter(property = "axway.merge.dir", required = false)
+	protected String mergeDir;
+
+	@Parameter(property = "axway.ports", required = false)
+	private String axwayPorts;
+
+	@Parameter(property = "axway.links", required = false)
+	private String axwayLinks;
+
+	@Parameter(property = "axway.ports", required = false)
+	private String axwayEnvironmentVariables;
+
+	private Map<String, String> containerPorts;
+	private Map<String, String> containerLinks;
+	private Map<String, String> containerEnvironmentVariables;
+
+	public Map<String, String> getContainerPorts() {
+		if ( containerPorts == null ) {
+			containerPorts = splitString(axwayPorts);
+		}
+		return containerPorts;
+	}
+
+	public Map<String, String> getContainerLinks() {
+		if ( containerLinks == null ) {
+			containerLinks = splitString(axwayLinks);
+		}
+		return containerLinks;
+	}
+
+	public Map<String, String> getContainerEnvironmentVariables() {
+		if ( containerEnvironmentVariables == null ) {
+			containerEnvironmentVariables = splitString(axwayEnvironmentVariables);
+		}
+		return containerEnvironmentVariables;
+	}
+
+	private Map<String, String> splitString(String splitMe) {
+		String[] split = splitMe.split(",");
+		Map<String, String> map = new HashMap<String, String>();
+		for ( String mapping : split ) {
+			String[] mappings = mapping.split(";");
+			map.put(mappings[0], mappings[1]);
+		}
+		return map;
+	}
 	
 	public MavenProject getProject() {
 		return this.project;
