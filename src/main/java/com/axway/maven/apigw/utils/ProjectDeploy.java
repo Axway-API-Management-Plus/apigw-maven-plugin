@@ -40,6 +40,8 @@ public class ProjectDeploy extends AbstractCommandExecutor {
 	public int execute(Source source, Target target, Map<String, String> polProperties,
 			Map<String, String> envProperties) throws IOException {
 
+		this.getLog().info("Execute Project Deploys: ");
+
 		Objects.requireNonNull(source, "source is null");
 		Objects.requireNonNull(target, "target is null");
 
