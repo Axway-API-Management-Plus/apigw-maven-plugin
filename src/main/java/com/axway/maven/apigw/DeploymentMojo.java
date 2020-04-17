@@ -159,8 +159,11 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 			AbstractCommandExecutor deploy;
 
+			this.getLog().info("Here we go::::  this.container:  " + this.containerName);
+
 			if (this.containerName == null) {
 				// Deploying to a Classic Gateway, ok to use projdeploy
+				this.getLog().info("Using projdeploy to deploy the fed file");
 				deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
 				int exitCode = deploy.execute(source, target, polProps, null);
 				if (exitCode != 0) {
@@ -168,6 +171,7 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 				}
 			} else {
 				// containerName is populated, so we are going to create a new container
+				this.getLog().info("Doing my docker work to deploy a fed");
 				AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
 				int exitCode = dockerCommands.execute("Remove Container", this.containerName, null,
 						null, null, null, null);
