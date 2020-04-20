@@ -171,7 +171,7 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 				}
 			} else {
 				// containerName is populated, so we are going to create a new container
-				System.out.println("Doing my docker work to deploy a fed");
+				this.getLog().info("Doing my docker work to deploy a fed");
 				AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
 				int exitCode = dockerCommands.execute("Remove Container", this.containerName, null,
 						null, null, null, null);
