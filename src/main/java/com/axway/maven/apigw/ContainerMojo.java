@@ -1,11 +1,8 @@
 package com.axway.maven.apigw;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.axway.maven.apigw.utils.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -14,28 +11,18 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-@Mojo(name = "deploy", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = false)
+@Mojo(name = "container", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = false)
 @Execute(phase = LifecyclePhase.PACKAGE)
-public class DeploymentMojo extends AbstractGatewayMojo {
+public class ContainerMojo extends AbstractGatewayMojo {
 
 	public static final String DEPLOY_DIR_NAME = "axway-deploy";
 
 	private static final String PROJECT_NAME = "gateway";
-
-	@Parameter(property = "axway.anm.host", required = true)
-	private String anmHost;
-
-	@Parameter(property = "axway.anm.port", required = true, defaultValue = "8090")
-	private int anmPort;
-
-	@Parameter(property = "axway.anm.user", required = true, defaultValue = "admin")
-	private String anmUser;
-
-	@Parameter(property = "axway.anm.password", required = true)
-	private String anmPassword;
 
 	@Parameter(property = "axway.deploy.group", required = true)
 	private String deployGroup;
@@ -43,7 +30,7 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.passphrase.deploy", required = false)
 	private String passphraseDeploy = null;
 
-	public DeploymentMojo() {
+	public ContainerMojo() {
 	}
 
 	private File getTempDir() {
@@ -130,12 +117,6 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 		fb.setCertificatesFile(this.configCertsFile);
 		fb.enableVerboseMode(this.verboseCfgTools);
-		
-		if (this.configSecretsFile != null) {
-			if (this.configSecretsKey == null)
-				throw new MojoExecutionException("Key file for secrets is not specified!");
-			fb.setSecrets(this.configSecretsFile, this.configSecretsKey);
-		}
 
 		File fed = new File(getTempDir(), PROJECT_NAME + ".fed");
 
@@ -159,19 +140,38 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 			AbstractCommandExecutor deploy;
 
-			// Deploying to a Classic Gateway, ok to use projdeploy
-			this.getLog().info("Using projdeploy to deploy the fed file");
-			deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
-			int exitCode = deploy.execute(source, target, polProps, null);
-			if (exitCode != 0) {
-				throw new MojoExecutionException("Failed to deploy project: exitCode=" + exitCode);
+			this.getLog().info("Here we go::::  this.container:  " + this.containerName);
+
+			// containerName is populated, so we are going to create a new container
+			this.getLog().info("Doing my docker work to deploy a fed");
+			AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
+			int exitCode = dockerCommands.execute("Remove Container", this.containerName, null,
+					null, null, null, null);
+			if ( exitCode != 0 ) {
+				throw new MojoExecutionException("Failed to remove existing container: exitCode: " + exitCode);
+			}
+
+			exitCode = dockerCommands.execute("Remove Image", this.containerName, this.imageName,
+					this.imageTag, null, null, null);
+			if ( exitCode != 0 ) {
+				throw new MojoExecutionException("Failed to remove existing image: exitCode: " + exitCode);
+			}
+
+			deploy = new DockerImage(this.containerScripts, this.imageName, this.imageTag, this.parentImageName,
+					this.parentImageTag, this.license, this.mergeDir, getLog());
+			exitCode = deploy.execute(source, target, polProps, null);
+			if ( exitCode != 0 ) {
+				throw new MojoExecutionException("Failed to create new Docker Image: exitCode: " + exitCode);
+			}
+
+			exitCode = dockerCommands.execute("Create Container", this.containerName, this.imageName,
+					this.imageTag, this.getContainerPorts(), this.getContainerLinks(),
+					this.getContainerEnvironmentVariables());
+			if ( exitCode != 0 ) {
+				throw new MojoExecutionException("Failed to create new container: exitCode: " + exitCode);
 			}
 		} catch (IOException e) {
 			throw new MojoExecutionException("Error on deploying project", e);
 		}
-	}
-
-	private ProjectDeploy.Domain getDomain() {
-		return new ProjectDeploy.Domain(this.anmHost, this.anmPort, this.anmUser, this.anmPassword);
 	}
 }
