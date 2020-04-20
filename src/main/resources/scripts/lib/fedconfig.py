@@ -28,7 +28,7 @@ class FedConfigurator:
     __expiration_days = -1
     __base_dir = None
 
-    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, properties = None, passphrase = ""):
+    def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, properties = None, passphrase = "", confidentials=None):
         self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
         self.__env_archive = EnvironmentArchive(env_archive_path)
@@ -38,10 +38,10 @@ class FedConfigurator:
         except TypeError:
             # backward compatibility for 7.5.3
             self.__fed_archive = DeploymentArchive(self.__pol_archive, self.__env_archive)
-        self.__config = EnvConfig(config_path, properties)
+        self.__config = EnvConfig(config_path, properties, confidentials)
 
         if cert_config_path is not None:
-            self.__cert_config = CertConfig(cert_config_path, properties)
+            self.__cert_config = CertConfig(cert_config_path, properties, confidentials)
 
         logging.info("Deployment archive configuration initialized")
         return
@@ -57,7 +57,7 @@ class FedConfigurator:
 
     def set_system_properties(self, sys_properties):
         self.__config.set_system_properties(sys_properties)
-    
+
     def set_base_dir(self, base_dir):
         self.__base_dir = base_dir
 

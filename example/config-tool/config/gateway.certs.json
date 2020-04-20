@@ -18,7 +18,7 @@
       "update": {
         "file": "staged-server.p12", 
         "password": "cert.password.staged.server", 
-        "source": "property", 
+        "source": "secrets", 
         "type": "p12"
       }
     }, 

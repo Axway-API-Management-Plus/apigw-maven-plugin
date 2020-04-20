@@ -9,6 +9,14 @@
 |Base directory for certificate files.
 
 Use the `--base-dir` parameter of the configuration tool or the `axway.config.certs.basedir` property of the plugin to specify the base directory for certificate files.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/39[#39]
+|Enhancement
+|Support for confidential properties.
+
+For confidential properties the configuration tools supports to pass a secrets file.
+It is a JSON file where the values of the properties are encrypted by a passphrase.
+
 |===
 
 == Version 0.12.0

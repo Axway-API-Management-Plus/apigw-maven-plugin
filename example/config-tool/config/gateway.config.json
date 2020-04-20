@@ -48,7 +48,7 @@
       "description": "", 
       "fields": {
         "address#0": {
-          "source": "property", 
+          "source": "secrets", 
           "type": "string", 
           "used": true, 
           "value": "service.address"

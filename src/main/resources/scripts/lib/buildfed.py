@@ -7,6 +7,7 @@ import logging
 from optparse import OptionParser
 from fedconfig import FedConfigurator
 from envconfig import PropConfig
+from secrets import Secrets
 from datetime import datetime
 
 def parse_cli_property(cli_prop):
@@ -30,7 +31,7 @@ def parse_cli_property(cli_prop):
 
 def main():
     prog = sys.argv[0]
-    version = "%prog 1.1.0"
+    version = "%prog 1.2.0"
     usage = "%prog OPTIONS"
     epilog = "Build configured .fed package."
  
@@ -51,6 +52,9 @@ def main():
     parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
     parser.add_option("-b", "--base-dir", dest="base_dir", help="Base directory for certificate files [optional]", metavar="DIRECTORY")
+    parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential properties [optional]", metavar="FILEPATH")
+    parser.add_option("--secrets-passphrase", dest="secrets_passphrase", help="Passphrase to decryt confidential properties [optional]", metavar="PASSPHRASE")
+
     (options, args) = parser.parse_args()
 
     if not options.env_file_path:
@@ -59,6 +63,8 @@ def main():
         parser.error("Policy archive option is missing!")
     if not options.config_file_path:
         parser.error("Configuration file option is missing!")
+    if options.secrets_file and not options.secrets_passphrase:
+        parser.error("Passphrase for secrets file is missing!")
 
     logging.basicConfig(format='%(levelname)s: %(message)s')
     if options.verbose:
@@ -102,8 +108,13 @@ def main():
         if options.passphrase_out:
             passphrase_out = options.passphrase_out
 
-        # Execute configuration
-        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in)
+        # Set secrets
+        secrets = None
+        if options.secrets_file:
+            secrets = Secrets(options.secrets_passphrase, options.secrets_file)
+
+        # Setup configuration
+        fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in, secrets)
         if options.base_dir:
             fed_config.set_base_dir(options.base_dir)
 
@@ -116,6 +127,7 @@ def main():
         if options.cert_expiration_days:
             fed_config.set_cert_expiration_days(int(options.cert_expiration_days))
 
+        # Execute configuration
         succeeded = fed_config.configure(passphrase_out)
         if succeeded:
             if options.simulate:

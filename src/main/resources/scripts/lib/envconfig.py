@@ -1,11 +1,13 @@
 import json
 import os
 import logging
+import base64
 
-from com.vordel.es.xes import PortableESPKFactory;
+from com.vordel.es.xes import PortableESPKFactory
 from java.text import SimpleDateFormat
 from java.util import Date
 from java.util.concurrent import TimeUnit
+from secrets import Secrets
 
 class FieldKey:
     def __init__(self, entity_short_hand_key, field_name, field_index, field_type):
@@ -62,12 +64,15 @@ class EnvConfig:
     __origin_json_str_str = None
 
     __unconfigured_fields = []
-        
-    def __init__(self, config_file_path, properties):
+
+    def __init__(self, config_file_path, properties, secrets):
         self.__properties = properties
         self.__pespk_factory = PortableESPKFactory.newInstance()
 
         self.__config_file_path = config_file_path
+
+        self.__secrets = secrets
+
         if os.path.isfile(self.__config_file_path):
             logging.info("Reading configuration file '%s'" % (self.__config_file_path))
             with open(self.__config_file_path) as config_file:
@@ -191,6 +196,14 @@ class EnvConfig:
             if f["value"]:
                 e = f["value"]
                 value = os.environ[e]
+        elif "secrets" == f["source"]:
+            if not self.__secrets:
+                raise ValueError("Secrets required by field '%s#%s' of entity '%s', but not specified!" % (fk.name, str(fk.index), fk.short_hand_key))
+            if f["value"]:
+                c = f["value"]
+                value = self.__secrets.get_secret(c)
+                if not value:
+                    raise ValueError("Missing configured secret '%s'" % (c))
         else:
             raise ValueError("Invalid source property '%s'" % f["source"])
 
@@ -215,6 +228,7 @@ class EnvConfig:
 
     def is_config_file_updated(self):
         return self.__file_updated
+
 
 class CertRef:
     def __init__(self, alias, cert_type, cert_file_path, password = ""):
@@ -284,9 +298,12 @@ class CertConfig:
     __properties = None
     __migrated = False
     __origin_json_str = None
+    __keystore = None
 
-    def __init__(self, config_file_path, properties):
+
+    def __init__(self, config_file_path, properties, secrets):
         self.__properties = properties
+        self.__secrets = secrets        
         self.__config_file_path = config_file_path
         if os.path.isfile(self.__config_file_path):
             with open(self.__config_file_path) as config_file:
@@ -397,6 +414,14 @@ class CertConfig:
                     elif "env" == cert["source"]:
                         e = cert["password"]
                         password = os.environ[e]
+                    elif "secrets" == cert["source"]:
+                        if not self.__secrets:
+                            raise ValueError("Secrets required for alias '%s', but not specified!" % (alias))
+
+                        c = cert["password"]
+                        password = self.__secrets.get_secret(c)
+                        if not password:
+                            raise ValueError("Missing configured secret '%s' for alias '%s'!" % (c, alias))
                     else:
                         raise ValueError("Invalid password source '%s' for alias '%s'!" % (cert["source"], alias))
 

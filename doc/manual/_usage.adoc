@@ -236,6 +236,14 @@ For deployment following properties are used:
 |`axway.config.props.files`
 |Comma separated list of paths to properties configuration files.
 |no
+
+|`axway.config.secrets.file`
+|Path to secrets file.
+|no
+
+|`axway.config.secrets.passphrase`
+|Passphrase to decrypt/encrypt values of secrets file.
+|yes, if secrets file is specified
 |===
 
 Example:
@@ -378,7 +386,34 @@ The plugin includes some Python based scripts to configure environment specific 
 The scripts can also be used as standalone tools.
 The goal `apigw:tools` extracts the included script to the `${project.build.directory}/tools` directory.
 
-  $ mvn apigw:tools
+.Command Line
+....
+$ mvn apigw:tools
+....
+
+=== Encrypt Secrets File
+To create an empty secrets file or to add properties to secrets file, the goal `apigw:encrypt` can be used.
+A passphrase is used to initially create the secrets file.
+The same passphrase as used to create the file has to be used to decrypt values.
+
+.gateway.crypt.json
+[source,json]
+----
+{
+  "secrets": { <1>
+    "__": "3QjoMSfhSelmvMlvcgCdyHf+oTyVnHlyneA3stpN0iQKJ1BUIrY9OA==", <2>
+    "my.password": "encrypt:changeme", <3>
+  }
+}
+----
+<1> The `secrets` property is requried.
+<2> Marker to check the passphrase. Don't delete or change it.
+<3> The prefix `encrypt:` indicates that the value `changeme` has to be encrypted by the `encrypt` tool.
+
+.Command Line
+....
+$ mvn apigw:encrypt -Daxway.config.secrets.file=gateway.crypt.json -Daxway.config.secrets.passphrase=changeme
+....
 
 == Maven Goals
 This section provides a short overview of the goals supported by the Maven plugin.
@@ -418,5 +453,9 @@ This section provides a short overview of the goals supported by the Maven plugi
 
 |apigw:deploy
 |Deploy project to a gateway.
+|yes|yes|yes
+
+|apigw:encrypt
+|Encrypt plain values of secrets file.
 |yes|yes|yes
 |===

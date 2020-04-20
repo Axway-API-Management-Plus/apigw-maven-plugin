@@ -30,6 +30,9 @@ public class FedBuilder {
 	private boolean updateCertConfigFile = false;
 	private boolean verboseCfgTools = false;
 
+	private File secretsFile = null;
+	private String secretsPassphrase = null;
+
 	public FedBuilder(AbstractGatewayMojo mojo, File polFile, File envFile, File configFile, File infoFile)
 			throws MojoExecutionException {
 		if (mojo == null)
@@ -89,7 +92,14 @@ public class FedBuilder {
 	public void setPassphraseFed(String passphrase) {
 		this.passphraseFed = passphrase;
 	}
-	
+
+	public void setSecrets(File secretsFile, String passphrase) throws MojoExecutionException {
+		if (secretsFile != null && passphrase == null)
+			throw new MojoExecutionException("No passphrase sepecified for secrets file.");
+		this.secretsFile = secretsFile;
+		this.secretsPassphrase = passphrase;
+	}
+
 	public int execute(File targetFed, Map<String, String> props) throws MojoExecutionException {
 		File outFedFile = targetFed;
 
@@ -125,6 +135,12 @@ public class FedBuilder {
 					args.add(this.certsBaseDir.getAbsolutePath());
 				}
 			}
+			if (this.secretsFile != null) {
+				args.add("--secrets-file");
+				args.add(this.secretsFile.getPath());
+				args.add("--secrets-passphrase");
+				args.add(this.secretsPassphrase);
+			}
 			args.add("--output-fed");
 			args.add(outFedFile.getPath());
 
@@ -147,7 +163,7 @@ public class FedBuilder {
 			args.add("_system.artifact.ver:" + mojo.getProject().getArtifact().getVersion());
 			args.add("-D");
 			args.add("_system.artifact.id:" + mojo.getProject().getArtifact().getId());
-			
+
 			if (this.infoFile != null && this.infoFile.canRead()) {
 				args.add("-F");
 				args.add("_system.artifact.info:" + this.infoFile.getPath());

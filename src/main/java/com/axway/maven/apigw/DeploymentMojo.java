@@ -132,6 +132,12 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 		fb.setCertificatesFile(this.configCertsFile);
 		fb.enableVerboseMode(this.verboseCfgTools);
+		
+		if (this.configSecretsFile != null) {
+			if (this.configSecretsPassphrase == null)
+				throw new MojoExecutionException("Passphrase for secrets file not specified!");
+			fb.setSecrets(this.configSecretsFile, this.configSecretsPassphrase);
+		}
 
 		File fed = new File(getTempDir(), PROJECT_NAME + ".fed");
 
