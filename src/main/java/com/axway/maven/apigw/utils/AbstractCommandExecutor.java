@@ -50,6 +50,8 @@ public abstract class AbstractCommandExecutor {
 		} else if (!command.canExecute()) {
 			throw new IOException("command not found or is not an executable: " + command.getAbsolutePath());
 		} else {
+			inputParam.add("cmd.exe");
+			inputParam.add("/c");
 			inputParam.add(command.getAbsolutePath());
 		}
 
