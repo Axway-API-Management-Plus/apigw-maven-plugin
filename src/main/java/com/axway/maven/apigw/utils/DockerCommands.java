@@ -17,6 +17,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     public int execute ( String task, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
                          Map<String, String> environmentVariables ) throws IOException {
+        this.getLog().info("What are we doing:  " + task);
         switch ( task ) {
              case "Remove Container":
                  return execute(this.executeRemoveContainer(containerName));
@@ -31,7 +32,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     public List<String> executeRemoveContainer(String containerName ) {
-
+        this.getLog().info("RemoveContainer");
         List<String> inputParam = new ArrayList<String>();
         inputParam.add("rm");
         inputParam.add("-f");
@@ -41,6 +42,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     public List<String> executeRemoveImage ( String imageName, String tag ) {
+        this.getLog().info("RemoveImage");
         tag = tag != null ? tag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
@@ -53,6 +55,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     public List<String> executeCreateContainer (String containerName, String imageName, String imageTag,
                                                 Map<String, String> ports, Map<String, String> links,
                                                 Map<String, String> environmentVariables) {
+        this.getLog().info("CreateContainer");
         imageTag = imageTag != null ? imageTag : "latest";
 
         List<String> inputParam = new ArrayList<String>();

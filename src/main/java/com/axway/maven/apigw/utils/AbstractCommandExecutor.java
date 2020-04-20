@@ -37,16 +37,21 @@ public abstract class AbstractCommandExecutor {
 					   Map<String, String> envProperties) throws IOException { return 0; }
 
 	protected int execute(List<String> parameters) throws IOException {
+		List<String> inputParam = new ArrayList<String>();
+
 		File command = getCommand();
 		if (command == null) {
-			throw new NullPointerException("command is null");
-		}
-		if (!command.canExecute()) {
+			String stringCommand = getStringCommand();
+			if ( stringCommand == null ) {
+				throw new NullPointerException("command is null");
+			} else {
+				inputParam.add(stringCommand);
+			}
+		} else if (!command.canExecute()) {
 			throw new IOException("command not found or is not an executable: " + command.getAbsolutePath());
+		} else {
+			inputParam.add(command.getAbsolutePath());
 		}
-
-		List<String> inputParam = new ArrayList<String>();
-		inputParam.add(command.getAbsolutePath());
 
 		if (parameters != null) {
 			inputParam.addAll(parameters);
