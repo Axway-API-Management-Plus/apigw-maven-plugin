@@ -23,13 +23,13 @@ public abstract class AbstractCommandExecutor {
 
 	protected File getCommand() throws IOException { return null; };
 
-	protected String getStringCommand() { return null; }
+	protected String getStringCommand( List<String> parameters ) { return null; }
 
 	protected Log getLog() {
 		return this.log;
 	}
 
-	public int execute ( String task, String containerName, String imageName, String imageTag,
+	public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
 						 Map<String, String> ports, Map<String, String> links,
 						 Map<String, String> environmentVariables ) throws IOException { return 0; }
 
@@ -41,7 +41,7 @@ public abstract class AbstractCommandExecutor {
 
 		File command = getCommand();
 		if (command == null) {
-			String stringCommand = getStringCommand();
+			String stringCommand = getStringCommand(parameters);
 			if ( stringCommand == null ) {
 				throw new NullPointerException("command is null");
 			} else {
@@ -50,8 +50,6 @@ public abstract class AbstractCommandExecutor {
 		} else if (!command.canExecute()) {
 			throw new IOException("command not found or is not an executable: " + command.getAbsolutePath());
 		} else {
-			inputParam.add("cmd.exe");
-			inputParam.add("/c");
 			inputParam.add(command.getAbsolutePath());
 		}
 

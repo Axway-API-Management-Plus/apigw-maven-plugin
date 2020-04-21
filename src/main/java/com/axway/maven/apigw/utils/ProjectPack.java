@@ -64,10 +64,10 @@ public class ProjectPack extends AbstractCommandExecutor {
 		File projpackMac = new File(this.axwayGatewayHome, "win32/bin/projpack.bat");
 		File projpackUnix = new File(this.axwayGatewayHome, "posix/bin/projpack");
 
-		if (projpackWin.exists()) {
-			return projpackWin;
-		} else if (projpackUnix.exists()) {
+		if (projpackUnix.exists()) {
 			return projpackUnix;
+		} else if (projpackWin.exists()) {
+			return projpackWin;
 		} else if ( projpackMac.exists() ) {
 			return projpackMac;
 		} else {

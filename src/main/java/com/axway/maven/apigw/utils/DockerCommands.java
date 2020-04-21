@@ -14,15 +14,15 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     @Override
-    public int execute ( String task, String containerName, String imageName, String imageTag,
+    public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
                          Map<String, String> environmentVariables ) throws IOException {
         this.getLog().info("What are we doing:  " + task);
         switch ( task ) {
              case "Remove Container":
-                 return execute(this.executeRemoveContainer(containerName));
+                 return execute(this.executeRemoveContainer(remove, containerName));
              case "Remove Image":
-                 return execute(this.executeRemoveImage(imageName, imageTag));
+                 return execute(this.executeRemoveImage(remove, imageName, imageTag));
              case "Create Container":
                  return execute(this.executeCreateContainer(containerName, imageName, imageTag, ports, links,
                          environmentVariables));
@@ -31,23 +31,29 @@ public class DockerCommands extends AbstractCommandExecutor {
         }
     }
 
-    public List<String> executeRemoveContainer(String containerName ) {
+    public List<String> executeRemoveContainer( boolean remove, String containerName ) {
         this.getLog().info("RemoveContainer");
         List<String> inputParam = new ArrayList<String>();
-        inputParam.add("rm");
-        inputParam.add("-f");
-        inputParam.add(containerName);
+
+        if ( remove ) {
+            inputParam.add("rm");
+            inputParam.add("-f");
+            inputParam.add(containerName);
+        }
 
         return inputParam;
     }
 
-    public List<String> executeRemoveImage ( String imageName, String tag ) {
+    public List<String> executeRemoveImage ( boolean remove, String imageName, String tag ) {
         this.getLog().info("RemoveImage");
         tag = tag != null ? tag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
-        inputParam.add("rmi");
-        inputParam.add(imageName + ":" + tag);
+
+        if ( remove ) {
+            inputParam.add("rmi");
+            inputParam.add(imageName + ":" + tag);
+        }
 
         return inputParam;
     }
@@ -91,8 +97,11 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     @Override
-    protected String getStringCommand() {
-        return "docker";
+    protected String getStringCommand( List<String> parameters ) {
+        if ( parameters.size() <= 0 ) {
+            return "docker";
+        }
+        return null;
     }
 
     @Override
