@@ -50,10 +50,10 @@ public class DockerImage extends AbstractCommandExecutor {
         }
 
         inputParam.add("--fed");
-        File workingDir = source.fed.getParentFile();
-        inputParam.add(workingDir.getAbsolutePath());
+        File fedFile = source.fed.getAbsoluteFile();
+        inputParam.add(fedFile.getAbsolutePath());
 
-        this.getLog().info("fed file: " + workingDir.getAbsoluteFile().getCanonicalPath());
+        this.getLog().info("fed file: " + fedFile.getAbsoluteFile().getCanonicalPath());
 
         if ( mergeDir != null ) {
             inputParam.add("--merge-dir");
