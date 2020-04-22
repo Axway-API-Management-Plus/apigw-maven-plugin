@@ -60,6 +60,8 @@ public class DockerImage extends AbstractCommandExecutor {
             inputParam.add(mergeDir);
         }
 
+        inputParam.add("--default-cert");
+
         return execute(inputParam);
     }
 
