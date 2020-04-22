@@ -71,7 +71,7 @@ public class DockerCommands extends AbstractCommandExecutor {
         inputParam.add(containerName);
 
         if ( ports != null ) {
-            for ( Map.Entry<String, String> entry : links.entrySet() ) {
+            for ( Map.Entry<String, String> entry : ports.entrySet() ) {
                 inputParam.add("-p");
                 inputParam.add(entry.getKey() + ":" + entry.getValue());
             }
