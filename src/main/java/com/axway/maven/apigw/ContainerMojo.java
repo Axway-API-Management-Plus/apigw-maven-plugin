@@ -70,7 +70,7 @@ public class ContainerMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.links", required = false)
 	private String axwayLinks;
 
-	@Parameter(property = "axway.ports", required = false)
+	@Parameter(property = "axway.environment.variables", required = false)
 	private String axwayEnvironmentVariables;
 
 	@Parameter(property = "axway.domain.cert", required = false)
