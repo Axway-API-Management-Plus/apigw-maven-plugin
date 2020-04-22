@@ -66,6 +66,7 @@ public abstract class AbstractCommandExecutor {
 
 		ProcessBuilder pb = new ProcessBuilder(inputParam);
 		pb.redirectErrorStream(true);
+		this.getLog().info("My command: " + pb.command());
 		Process process = pb.start();
 		BufferedReader br = null;
 		try {
