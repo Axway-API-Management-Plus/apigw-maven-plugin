@@ -74,11 +74,11 @@ public class DockerImage extends AbstractCommandExecutor {
             }
 
             inputParam.add("--domain-cert");
-            inputParam.add(this.axwayContainerScriptHome + "certs/DefaultDomain/mydomain-cert.pem");
+            inputParam.add(this.axwayContainerScriptHome + "/certs/DefaultDomain/mydomain-cert.pem");
             inputParam.add("--domain-key");
-            inputParam.add(this.axwayContainerScriptHome + "certs/DefaultDomain/mydomain-key.pem");
+            inputParam.add(this.axwayContainerScriptHome + "/certs/DefaultDomain/mydomain-key.pem");
             inputParam.add("--domain-key-pass-file");
-            inputParam.add(this.axwayContainerScriptHome + "certs/DefaultDomain/pass.txt");
+            inputParam.add(this.axwayContainerScriptHome + "/certs/tmp/pass.txt");
         }
 
         return execute(inputParam);
