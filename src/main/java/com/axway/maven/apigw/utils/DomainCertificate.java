@@ -29,13 +29,13 @@ public class DomainCertificate extends AbstractCommandExecutor {
     @Override
     protected File getCommand() throws IOException {
 
-        File domainCertificateCreation = new File(this.axwayContainerScriptHome, "gen_domain_cert.py.py");
+        File domainCertificateCreation = new File(this.axwayContainerScriptHome, "gen_domain_cert.py");
 
         if (domainCertificateCreation.exists()) {
             return domainCertificateCreation;
         } else {
             throw new IOException(
-                    "build_gw_image.py not found! Checked: " + domainCertificateCreation.getPath());
+                    "gen_domain_cert.py not found! Checked: " + domainCertificateCreation.getPath());
         }
     }
 }
