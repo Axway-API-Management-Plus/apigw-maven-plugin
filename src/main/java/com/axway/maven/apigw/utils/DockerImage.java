@@ -1,5 +1,6 @@
 package com.axway.maven.apigw.utils;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
@@ -18,9 +19,11 @@ public class DockerImage extends AbstractCommandExecutor {
     private final String parentImageTag;
     private final String license;
     private final String mergeDir;
+    private final String domainCert;
 
     public DockerImage(File axwayContainerScriptHome, String axwayImageName, String axwayImageTag,
-                       String parentImageName, String parentImageTag, String license, String mergeDir, Log log) {
+                       String parentImageName, String parentImageTag, String license, String mergeDir,
+                       String domainCert, Log log) {
         super("Docker Image", log);
         this.axwayContainerScriptHome = Objects.requireNonNull(axwayContainerScriptHome,
                 "scripts home is null");
@@ -30,7 +33,7 @@ public class DockerImage extends AbstractCommandExecutor {
         this.parentImageTag = parentImageTag != null ? parentImageTag : "latest";
         this.license = Objects.requireNonNull(license, "license is null");
         this.mergeDir = mergeDir;
-
+        this.domainCert = domainCert;
     }
 
     @Override
@@ -60,7 +63,18 @@ public class DockerImage extends AbstractCommandExecutor {
             inputParam.add(mergeDir);
         }
 
-        inputParam.add("--default-cert");
+        if ( domainCert == null ) {
+            this.getLog().info("Creating Default Domain Cert");
+            DomainCertificate certificate = new DomainCertificate("Domain Certificate", axwayContainerScriptHome,
+                    this.getLog());
+
+            int exitCode = certificate.execute();
+            if ( exitCode != 0 ) {
+                return 1;
+            }
+
+            inputParam.add("--default-cert");
+        }
 
         return execute(inputParam);
     }

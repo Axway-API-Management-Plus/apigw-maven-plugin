@@ -29,6 +29,8 @@ public abstract class AbstractCommandExecutor {
 		return this.log;
 	}
 
+	protected int execute () throws IOException { return 0; }
+
 	public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
 						 Map<String, String> ports, Map<String, String> links,
 						 Map<String, String> environmentVariables ) throws IOException { return 0; }

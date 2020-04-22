@@ -73,6 +73,9 @@ public class ContainerMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.ports", required = false)
 	private String axwayEnvironmentVariables;
 
+	@Parameter(property = "axway.domain.cert", required = false)
+	private String axwayDomainCert;
+
 	private boolean removeContainer = false;
 	private boolean removeImage = false;
 
@@ -240,8 +243,8 @@ public class ContainerMojo extends AbstractGatewayMojo {
 			// containerName is populated, so we are going to create a new container
 			this.getLog().info("Doing my docker work to deploy a fed");
 			AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
-			int exitCode = dockerCommands.execute("Remove Container", this.isRemoveContainer(), this.containerName, null,
-					null, null, null, null);
+			int exitCode = dockerCommands.execute("Remove Container", this.isRemoveContainer(), this.containerName,
+					null, null, null, null, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to remove existing container: exitCode: " + exitCode);
 			}
@@ -253,14 +256,14 @@ public class ContainerMojo extends AbstractGatewayMojo {
 			}
 
 			deploy = new DockerImage(this.containerScripts, this.imageName, this.imageTag, this.parentImageName,
-					this.parentImageTag, this.license, this.mergeDir, getLog());
+					this.parentImageTag, this.license, this.mergeDir, this.axwayDomainCert, getLog());
 			exitCode = deploy.execute(source, target, polProps, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to create new Docker Image: exitCode: " + exitCode);
 			}
 
-			exitCode = dockerCommands.execute("Create Container", false, this.containerName, this.imageName,
-					this.imageTag, this.getContainerPorts(), this.getContainerLinks(),
+			exitCode = dockerCommands.execute("Create Container", false, this.containerName,
+					this.imageName, this.imageTag, this.getContainerPorts(), this.getContainerLinks(),
 					this.getContainerEnvironmentVariables());
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to create new container: exitCode: " + exitCode);

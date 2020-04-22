@@ -104,9 +104,4 @@ public class DockerCommands extends AbstractCommandExecutor {
         }
         return null;
     }
-
-    @Override
-    public int execute(Source source, Target target, Map<String, String> polProperties, Map<String, String> envProperties) throws IOException {
-        return 0;
-    }
 }
