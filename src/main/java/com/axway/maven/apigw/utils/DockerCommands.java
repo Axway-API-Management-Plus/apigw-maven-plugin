@@ -99,7 +99,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     @Override
     protected String getStringCommand( List<String> parameters ) {
         this.getLog().info("parameters size: " + parameters.size());
-        if ( parameters.size() < 0 ) {
+        if ( parameters.size() > 0 ) {
             return "docker";
         }
         return null;
