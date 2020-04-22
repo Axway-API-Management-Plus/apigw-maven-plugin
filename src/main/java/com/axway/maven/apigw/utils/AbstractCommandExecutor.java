@@ -43,7 +43,8 @@ public abstract class AbstractCommandExecutor {
 		if (command == null) {
 			String stringCommand = getStringCommand(parameters);
 			if ( stringCommand == null ) {
-				throw new NullPointerException("command is null");
+				this.getLog().info("No command to run");
+				return 0;
 			} else {
 				inputParam.add(stringCommand);
 			}
