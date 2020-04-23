@@ -376,6 +376,8 @@ For manual checks via ConfigurationStudio the content of the archive is located 
 
 == Deployment
 
+=== Using projdeploy
+
 The project can be deployed to a gateway via the plugin.
 
 Just invoke the `apigw:deploy` goal within the deployment project and specify the target domain and group.
@@ -388,4 +390,45 @@ The project shall be deployed to the group `test`.
     -Daxway.anm.user=admin -Daxway.anm.password=changeme \
     -Daxway.deploy.group=test \
     clean apigw:deploy
+
+=== Creating and Deploying new Docker Images and Containers
+
+This project will create new Docker images and containers.  The Docker image will be created with the fed file that was
+created when the package command was invoked.
+
+Run this mvn plugin by invoking `apigw:container`.  You must specify the following properties:
+- axway.deploy.group
+- axway.container.scripts
+- axway.remove.container
+- axway.container.name
+- axway.remove.image
+- axway.image.name
+- axway.image.tag
+- axway.parent.image.name
+- axway.parent.image.tag
+- axway.license
+- axway.merge.dir
+- axway.environment.variables
+- axway.links
+- axway.ports
+
+In the following example, we will delete the existing container and image, then we will recreate everything.
+
+```
+    mvn clean apigw:container \
+    --define axway.deploy.group=emt-group \
+    --define axway.container.scripts=/mnt/c/Axway_7.6.2/Software/dockerscripts/emt-containers-1.0.0-9 \
+    --define axway.remove.container=true \
+    --define axway.container.name=apimgr \
+    --define axway.remove.image=true \
+    --define axway.image.name=apimgt \
+    --define axway.image.tag=7.6.2_3 \
+    --define axway.parent.image.name=apigw-base \
+    --define axway.parent.image.tag=7.6.2_3 \
+    --define axway.license=/mnt/c/Axway_7.6.2/Software/API_7.6_Docker_Temp.lic \
+    --define axway.merge.dir=/mnt/c/Axway_7.6.2/tmp/apigateway \
+    --define axway.environment.variables="METRICS_DB_URL;jdbc:mysql://mysql:3306/metrics\?useSSL=false,METRICS_DB_USERNAME;metrics,METRICS_DB_PASS;metrics,EMT_DEPLOYMENT_ENABLED;true,EMT_ANM_HOSTS;anm:8090,CASS_HOST;cassandra" \
+    --define axway.links="anm;anm,cassandra_2.2.12;cassandra,mysql_5.7;mysql" \
+    --define axway.ports="8075;8075,8065;8065,8080;8080"
+```
 
