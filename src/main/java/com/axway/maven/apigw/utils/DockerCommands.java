@@ -17,7 +17,6 @@ public class DockerCommands extends AbstractCommandExecutor {
     public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
                          Map<String, String> environmentVariables ) throws IOException {
-        this.getLog().info("What are we doing:  " + task);
         switch ( task ) {
              case "Remove Container":
                  return execute(this.executeRemoveContainer(remove, containerName));
@@ -32,7 +31,6 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     public List<String> executeRemoveContainer( boolean remove, String containerName ) {
-        this.getLog().info("RemoveContainer");
         List<String> inputParam = new ArrayList<String>();
 
         if ( remove ) {
@@ -45,7 +43,6 @@ public class DockerCommands extends AbstractCommandExecutor {
     }
 
     public List<String> executeRemoveImage ( boolean remove, String imageName, String tag ) {
-        this.getLog().info("RemoveImage");
         tag = tag != null ? tag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
@@ -61,7 +58,6 @@ public class DockerCommands extends AbstractCommandExecutor {
     public List<String> executeCreateContainer (String containerName, String imageName, String imageTag,
                                                 Map<String, String> ports, Map<String, String> links,
                                                 Map<String, String> environmentVariables) {
-        this.getLog().info("CreateContainer");
         imageTag = imageTag != null ? imageTag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
@@ -98,7 +94,6 @@ public class DockerCommands extends AbstractCommandExecutor {
 
     @Override
     protected String getStringCommand( List<String> parameters ) {
-        this.getLog().info("parameters size: " + parameters.size());
         if ( parameters.size() > 0 ) {
             return "docker";
         }

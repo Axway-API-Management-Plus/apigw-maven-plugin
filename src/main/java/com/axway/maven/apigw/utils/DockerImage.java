@@ -56,15 +56,12 @@ public class DockerImage extends AbstractCommandExecutor {
         File fedFile = source.fed.getAbsoluteFile();
         inputParam.add(fedFile.getAbsolutePath());
 
-        this.getLog().info("fed file: " + fedFile.getAbsoluteFile().getCanonicalPath());
-
         if ( mergeDir != null ) {
             inputParam.add("--merge-dir");
             inputParam.add(mergeDir);
         }
 
         if ( domainCert == null ) {
-            this.getLog().info("Creating Default Domain Cert");
             DomainCertificate certificate = new DomainCertificate("Domain Certificate", axwayContainerScriptHome,
                     this.getLog());
 
@@ -86,16 +83,6 @@ public class DockerImage extends AbstractCommandExecutor {
 
     @Override
     protected File getCommand() throws IOException {
-//        ./build_gw_image.py
-//                --license=/tmp/api_gw.lic
-//                --domain-cert=certs/mydomain/mydomain-cert.pem
-//                --domain-key=certs/mydomain/mydomain-key.pem
-//                --domain-key-pass-file=/tmp/pass.txt
-//                --parent-image=my-gw-base:1.0
-//                --fed=my-group-fed.fed
-//                --fed-pass-file=/tmp/my-group-fedpass.txt
-//                --group-id=my-group
-//                --merge-dir=/tmp/apigateway
         File gatewayImageCreation = new File(this.axwayContainerScriptHome, "build_gw_image.py");
 
         if (gatewayImageCreation.exists()) {

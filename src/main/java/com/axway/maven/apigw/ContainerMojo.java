@@ -92,11 +92,8 @@ public class ContainerMojo extends AbstractGatewayMojo {
 
 	public boolean isRemoveImage() {
 		if ( !this.removeImage ) {
-			this.getLog().info("Checking to remove image: " + Boolean.parseBoolean(axwayRemoveImage));
 			this.removeImage = Boolean.parseBoolean(axwayRemoveImage);
-			this.getLog().info("removeImage: " + String.valueOf(this.removeImage));
 		}
-		this.getLog().info("removeImage: " + String.valueOf(this.removeImage));
 		return this.removeImage;
 	}
 
@@ -241,10 +238,7 @@ public class ContainerMojo extends AbstractGatewayMojo {
 
 			AbstractCommandExecutor deploy;
 
-			this.getLog().info("Here we go::::  this.container:  " + this.containerName);
-
 			// containerName is populated, so we are going to create a new container
-			this.getLog().info("Doing my docker work to deploy a fed");
 			AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
 			int exitCode = dockerCommands.execute("Remove Container", this.isRemoveContainer(), this.containerName,
 					null, null, null, null, null);
