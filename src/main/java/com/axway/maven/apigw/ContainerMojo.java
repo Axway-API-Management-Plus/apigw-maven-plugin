@@ -85,15 +85,15 @@ public class ContainerMojo extends AbstractGatewayMojo {
 
 	public boolean isRemoveContainer() {
 		if ( !this.removeContainer ) {
-			this.removeContainer = Boolean.getBoolean(axwayRemoveContainer);
+			this.removeContainer = Boolean.parseBoolean(axwayRemoveContainer);
 		}
 		return this.removeContainer;
 	}
 
 	public boolean isRemoveImage() {
 		if ( !this.removeImage ) {
-			this.getLog().info("Checking to remove image: " + Boolean.getBoolean(axwayRemoveImage));
-			this.removeImage = Boolean.getBoolean(axwayRemoveImage);
+			this.getLog().info("Checking to remove image: " + Boolean.parseBoolean(axwayRemoveImage));
+			this.removeImage = Boolean.parseBoolean(axwayRemoveImage);
 			this.getLog().info("removeImage: " + String.valueOf(this.removeImage));
 		}
 		this.getLog().info("removeImage: " + String.valueOf(this.removeImage));
