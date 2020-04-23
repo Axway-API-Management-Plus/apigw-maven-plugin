@@ -397,20 +397,21 @@ This project will create new Docker images and containers.  The Docker image wil
 created when the package command was invoked.
 
 Run this mvn plugin by invoking `apigw:container`.  You must specify the following properties:
-- axway.deploy.group
-- axway.container.scripts
-- axway.remove.container
-- axway.container.name
-- axway.remove.image
-- axway.image.name
-- axway.image.tag
-- axway.parent.image.name
-- axway.parent.image.tag
-- axway.license
-- axway.merge.dir
-- axway.environment.variables
-- axway.links
-- axway.ports
+
+* axway.deploy.group
+* axway.container.scripts
+* axway.remove.container
+* axway.container.name
+* axway.remove.image
+* axway.image.name
+* axway.image.tag
+* axway.parent.image.name
+* axway.parent.image.tag
+* axway.license
+* axway.merge.dir
+* axway.environment.variables
+* axway.links
+* axway.ports
 
 In the following example, we will delete the existing container and image, then we will recreate everything.
 
