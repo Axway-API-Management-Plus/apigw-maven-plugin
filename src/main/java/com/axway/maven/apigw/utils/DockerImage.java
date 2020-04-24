@@ -19,10 +19,12 @@ public class DockerImage extends AbstractCommandExecutor {
     private final String license;
     private final String mergeDir;
     private final String domainCert;
+    private final String domainKey;
+    private final String domainKeyPassFile;
 
     public DockerImage(File axwayContainerScriptHome, String axwayImageName, String axwayImageTag,
                        String parentImageName, String parentImageTag, String license, String mergeDir,
-                       String domainCert, Log log) {
+                       String domainCert, String domainKey, String domainKeyPassFile, Log log) {
         super("Docker Image", log);
         this.axwayContainerScriptHome = Objects.requireNonNull(axwayContainerScriptHome,
                 "scripts home is null");
@@ -33,6 +35,8 @@ public class DockerImage extends AbstractCommandExecutor {
         this.license = Objects.requireNonNull(license, "license is null");
         this.mergeDir = mergeDir;
         this.domainCert = domainCert;
+        this.domainKey = domainKey;
+        this.domainKeyPassFile = domainKeyPassFile;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class DockerImage extends AbstractCommandExecutor {
             inputParam.add(mergeDir);
         }
 
-        if ( domainCert == null ) {
+        if ( domainCert == null || domainKey == null || domainKeyPassFile == null ) {
             DomainCertificate certificate = new DomainCertificate("Domain Certificate", axwayContainerScriptHome,
                     this.getLog());
 
@@ -75,6 +79,13 @@ public class DockerImage extends AbstractCommandExecutor {
             inputParam.add(this.axwayContainerScriptHome + "/certs/DefaultDomain/DefaultDomain-key.pem");
             inputParam.add("--domain-key-pass-file");
             inputParam.add(this.axwayContainerScriptHome + "/certs/tmp/pass.txt");
+        } else {
+            inputParam.add("--domain-cert");
+            inputParam.add(this.domainCert);
+            inputParam.add("--domain-key");
+            inputParam.add(this.domainKey);
+            inputParam.add("--domain-key-pass-file");
+            inputParam.add(this.domainKeyPassFile);
         }
 
         return execute(inputParam);

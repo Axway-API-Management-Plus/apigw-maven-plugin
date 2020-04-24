@@ -75,6 +75,12 @@ public class ContainerMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.domain.cert", required = false)
 	private String axwayDomainCert;
 
+	@Parameter(property = "axway.domain.key", required = false)
+	private String axwayDomainKey;
+
+	@Parameter(property = "axway.domain.key.pass.file", required = false)
+	private String axwayDomainKeyPassFile;
+
 	private boolean removeContainer = false;
 	private boolean removeImage = false;
 
@@ -245,14 +251,15 @@ public class ContainerMojo extends AbstractGatewayMojo {
 				throw new MojoExecutionException("Failed to remove existing container: exitCode: " + exitCode);
 			}
 
-			exitCode = dockerCommands.execute("Remove Image", this.isRemoveImage(), this.containerName, this.imageName,
-					this.imageTag, null, null, null);
+			exitCode = dockerCommands.execute("Remove Image", this.isRemoveImage(), this.containerName,
+					this.imageName, this.imageTag, null, null, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to remove existing image: exitCode: " + exitCode);
 			}
 
 			deploy = new DockerImage(this.containerScripts, this.imageName, this.imageTag, this.parentImageName,
-					this.parentImageTag, this.license, this.mergeDir, this.axwayDomainCert, getLog());
+					this.parentImageTag, this.license, this.mergeDir, this.axwayDomainCert, this.axwayDomainKey,
+					this.axwayDomainKeyPassFile, getLog());
 			exitCode = deploy.execute(source, target, polProps, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to create new Docker Image: exitCode: " + exitCode);

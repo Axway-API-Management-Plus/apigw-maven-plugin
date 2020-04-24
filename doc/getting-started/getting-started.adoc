@@ -396,24 +396,38 @@ The project shall be deployed to the group `test`.
 This project will create new Docker images and containers.  The Docker image will be created with the fed file that was
 created when the package command was invoked.
 
+
+
 Run this mvn plugin by invoking `apigw:container`.  You must specify the following properties:
 
-* axway.deploy.group
-* axway.container.scripts
-* axway.remove.container
-* axway.container.name
-* axway.remove.image
-* axway.image.name
-* axway.image.tag
-* axway.parent.image.name
-* axway.parent.image.tag
-* axway.license
-* axway.merge.dir
+* axway.deploy.group (mandatory)
+* axway.passphrase.deploy (optional)
+* axway.container.scripts (mandatory)
+* axway.remove.container (mandatory)
+* axway.container.name (optional)
+* axway.remove.image (optional)
+* axway.image.name (mandatory)
+* axway.image.tag (optional)
+* axway.parent.image.name (optional)
+* axway.parent.image.tag (optional)
+* axway.license (mandatory)
+* axway.merge.dir (optional)
 * axway.environment.variables
-* axway.links
-* axway.ports
+* axway.links (optional)
+* axway.ports (optional)
+* axway.domain.cert (optional)
+* axway.domain.key (optional)
+* axway.domain.key.pass.file (optional)
 
-In the following example, we will delete the existing container and image, then we will recreate everything.
+When dealing with a domain cert and key there are 2 ways to handle this.  First would be to generate your own cert, key
+and password file.  These would then be needed to be passed in during the mvn call.
+
+If no domain, key or password file is passed in maven will assume that it needs to use default cert and key.  You will
+need to create a `cert\tmp\pass.txt` file.  In this file you just add `changeme` and save this file.  Maven will assume
+that is the location of the file.
+
+In the following example, we will delete the existing container and image, then we will recreate everything using a
+default domain cert and key.
 
 ```
     mvn clean apigw:container \
