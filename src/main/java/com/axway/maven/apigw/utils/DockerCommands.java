@@ -16,7 +16,7 @@ public class DockerCommands extends AbstractCommandExecutor {
     @Override
     public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
-                         Map<String, String> environmentVariables ) throws IOException {
+                         Map<String, String> environmentVariables, String adminNodeManagerHost ) throws IOException {
         switch ( task ) {
              case "Remove Container":
                  return execute(this.executeRemoveContainer(remove, containerName));
@@ -24,7 +24,7 @@ public class DockerCommands extends AbstractCommandExecutor {
                  return execute(this.executeRemoveImage(remove, imageName, imageTag));
              case "Create Container":
                  return execute(this.executeCreateContainer(containerName, imageName, imageTag, ports, links,
-                         environmentVariables));
+                         environmentVariables, adminNodeManagerHost));
              default:
                  return 100;
         }
@@ -57,7 +57,8 @@ public class DockerCommands extends AbstractCommandExecutor {
 
     public List<String> executeCreateContainer (String containerName, String imageName, String imageTag,
                                                 Map<String, String> ports, Map<String, String> links,
-                                                Map<String, String> environmentVariables) {
+                                                Map<String, String> environmentVariables,
+                                                String adminNodeManagerHost) {
         imageTag = imageTag != null ? imageTag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
@@ -86,6 +87,9 @@ public class DockerCommands extends AbstractCommandExecutor {
                 inputParam.add(entry.getKey() + ":" + entry.getValue());
             }
         }
+
+        inputParam.add("-e");
+        inputParam.add(adminNodeManagerHost);
 
         inputParam.add(imageName + ":" + imageTag);
 
