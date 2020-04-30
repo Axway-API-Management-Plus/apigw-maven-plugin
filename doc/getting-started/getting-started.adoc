@@ -419,6 +419,9 @@ Run this mvn plugin by invoking `apigw:container`.  You must specify the followi
 * axway.domain.key (optional)
 * axway.domain.key.pass.file (optional)
 * axway.admin.node.manager.host (mandatory)
+* axway.metrics.db.url (optional)
+* axway.metrics.db.username (optional)
+* axway.metrics.db.password (optional)
 
 When dealing with a domain cert and key there are 2 ways to handle this.  First would be to generate your own cert, key
 and password file.  These would then be needed to be passed in during the mvn call.
@@ -446,6 +449,9 @@ default domain cert and key.
     --define axway.environment.variables="METRICS_DB_URL;jdbc:mysql://mysql:3306/metrics\?useSSL=false,METRICS_DB_USERNAME;metrics,METRICS_DB_PASS;metrics,EMT_DEPLOYMENT_ENABLED;true,EMT_ANM_HOSTS;anm:8090,CASS_HOST;cassandra" \
     --define axway.links="anm;anm,cassandra_2.2.12;cassandra,mysql_5.7;mysql" \
     --define axway.ports="8075;8075,8065;8065,8080;8080" \
-    --define axway.admin.node.manager.host=anm:8090
+    --define axway.admin.node.manager.host=anm:8090 \
+    --define axway.metrics.db.url=jdbc:mysql://mysql:3306/metrics\?useSSL=false \
+    --define axway.metrics.db.username=metrics \
+    --define axway.metrics.db.password=metrics
 ```
 

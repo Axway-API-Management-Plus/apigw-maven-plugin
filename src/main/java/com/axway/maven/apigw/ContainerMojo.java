@@ -84,6 +84,15 @@ public class ContainerMojo extends AbstractGatewayMojo {
 	@Parameter(property = "axway.admin.node.manager.host", required = true)
 	private String adminNodeManagerHost;
 
+	@Parameter(property = "axway.metrics.db.url", required = false)
+	private String metricsDbUrl;
+
+	@Parameter(property = "axway.metrics.db.username", required = false)
+	private String metricsDbUsername;
+
+	@Parameter(property = "axway.metrics.db.password", required = false)
+	private String metricsDbPassword;
+
 	private boolean removeContainer = false;
 	private boolean removeImage = false;
 
@@ -250,14 +259,14 @@ public class ContainerMojo extends AbstractGatewayMojo {
 			AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
 			int exitCode = dockerCommands.execute("Remove Container", this.isRemoveContainer(), this.containerName,
 					null, null, null, null, null,
-					null);
+					null, null, null, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to remove existing container: exitCode: " + exitCode);
 			}
 
 			exitCode = dockerCommands.execute("Remove Image", this.isRemoveImage(), this.containerName,
 					this.imageName, this.imageTag, null, null, null,
-					null);
+					null, null, null, null);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to remove existing image: exitCode: " + exitCode);
 			}
@@ -272,7 +281,8 @@ public class ContainerMojo extends AbstractGatewayMojo {
 
 			exitCode = dockerCommands.execute("Create Container", false, this.containerName,
 					this.imageName, this.imageTag, this.getContainerPorts(), this.getContainerLinks(),
-					this.getContainerEnvironmentVariables(), this.adminNodeManagerHost);
+					this.getContainerEnvironmentVariables(), this.adminNodeManagerHost, this.metricsDbUrl,
+					this.metricsDbUsername, this.metricsDbPassword);
 			if ( exitCode != 0 ) {
 				throw new MojoExecutionException("Failed to create new container: exitCode: " + exitCode);
 			}

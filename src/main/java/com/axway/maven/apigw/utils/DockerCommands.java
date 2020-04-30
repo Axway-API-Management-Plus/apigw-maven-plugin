@@ -16,7 +16,8 @@ public class DockerCommands extends AbstractCommandExecutor {
     @Override
     public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
-                         Map<String, String> environmentVariables, String adminNodeManagerHost ) throws IOException {
+                         Map<String, String> environmentVariables, String adminNodeManagerHost, String metricsDbUrl,
+                         String metricsDbUsername, String metricsDbPassword ) throws IOException {
         switch ( task ) {
              case "Remove Container":
                  return execute(this.executeRemoveContainer(remove, containerName));
@@ -24,7 +25,8 @@ public class DockerCommands extends AbstractCommandExecutor {
                  return execute(this.executeRemoveImage(remove, imageName, imageTag));
              case "Create Container":
                  return execute(this.executeCreateContainer(containerName, imageName, imageTag, ports, links,
-                         environmentVariables, adminNodeManagerHost));
+                         environmentVariables, adminNodeManagerHost, metricsDbUrl, metricsDbUsername,
+                         metricsDbPassword));
              default:
                  return 100;
         }
@@ -58,7 +60,8 @@ public class DockerCommands extends AbstractCommandExecutor {
     public List<String> executeCreateContainer (String containerName, String imageName, String imageTag,
                                                 Map<String, String> ports, Map<String, String> links,
                                                 Map<String, String> environmentVariables,
-                                                String adminNodeManagerHost) {
+                                                String adminNodeManagerHost, String metricsDbUrl,
+                                                String metricsDbUsername, String metricsDbPassword) {
         imageTag = imageTag != null ? imageTag : "latest";
 
         List<String> inputParam = new ArrayList<String>();
@@ -88,8 +91,20 @@ public class DockerCommands extends AbstractCommandExecutor {
             }
         }
 
+        if ( metricsDbUrl != null && metricsDbUsername != null && metricsDbPassword != null ) {
+            inputParam.add("-e");
+            inputParam.add("METRICS_DB_URL=" + metricsDbUrl);
+            inputParam.add("-e");
+            inputParam.add("METRICS_DB_USERNAME=" + metricsDbUsername);
+            inputParam.add("-e");
+            inputParam.add("METRICS_DB_PASS=" + metricsDbPassword);
+        }
+
         inputParam.add("-e");
-        inputParam.add(adminNodeManagerHost);
+        inputParam.add("EMT_DEPLOYMENT_ENABLED=true");
+
+        inputParam.add("-e");
+        inputParam.add("EMT_ANM_HOSTS=" + adminNodeManagerHost);
 
         inputParam.add(imageName + ":" + imageTag);
 

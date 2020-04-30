@@ -33,7 +33,8 @@ public abstract class AbstractCommandExecutor {
 
 	public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
 						 Map<String, String> ports, Map<String, String> links,
-						 Map<String, String> environmentVariables, String adminNodeManagerHost )
+						 Map<String, String> environmentVariables, String adminNodeManagerHost, String metricsDbUrl,
+						 String metricsDbUsername, String metricsDbPassword )
 			throws IOException { return 0; }
 
 	public int execute(Source source, Target target, Map<String, String> polProperties,
