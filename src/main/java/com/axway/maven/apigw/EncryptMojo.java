@@ -17,11 +17,11 @@ public class EncryptMojo extends AbstractGatewayMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if (this.configSecretsFile == null)
 			throw new MojoExecutionException("Secrets file not specified, nothing to encrypt!");
-		if (this.configSecretsPassphrase == null)
-			throw new MojoExecutionException("Passphrase for secrets file not specified!");
+		if (this.configSecretsKey == null)
+			throw new MojoExecutionException("Key file for secrets not specified!");
 
 		Encryptor e = new Encryptor(this,  this.configSecretsFile);
-		int exitCode = e.execute(this.configSecretsPassphrase);
+		int exitCode = e.execute(this.configSecretsKey);
 		if (exitCode != 0) {
 			throw new MojoExecutionException("failed to encrypt secrets file: exitCode=" + exitCode);
 		}

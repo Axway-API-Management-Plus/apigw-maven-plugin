@@ -53,8 +53,8 @@ def main():
     parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
     parser.add_option("-b", "--base-dir", dest="base_dir", help="Base directory for certificate files [optional]", metavar="DIRECTORY")
     parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential properties [optional]", metavar="FILEPATH")
-    parser.add_option("--secrets-passphrase", dest="secrets_passphrase", help="Passphrase to decryt confidential properties [optional]", metavar="PASSPHRASE")
-
+    parser.add_option("--secrets-key", dest="secrets_key_file", help="Path to key file to decrypt confidential properties [optional]", metavar="FILEPATH")
+    
     (options, args) = parser.parse_args()
 
     if not options.env_file_path:
@@ -63,8 +63,8 @@ def main():
         parser.error("Policy archive option is missing!")
     if not options.config_file_path:
         parser.error("Configuration file option is missing!")
-    if options.secrets_file and not options.secrets_passphrase:
-        parser.error("Passphrase for secrets file is missing!")
+    if options.secrets_file and not options.secrets_key_file:
+        parser.error("Key file for secrets is missing!")
 
     logging.basicConfig(format='%(levelname)s: %(message)s')
     if options.verbose:
@@ -111,7 +111,7 @@ def main():
         # Set secrets
         secrets = None
         if options.secrets_file:
-            secrets = Secrets(options.secrets_passphrase, options.secrets_file)
+            secrets = Secrets(options.secrets_key_file, options.secrets_file)
 
         # Setup configuration
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in, secrets)

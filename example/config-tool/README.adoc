@@ -91,21 +91,29 @@ Remember to use the passphrase `changeme` for the `.pol`and `.env` archive and t
 
 == How does it work?
 
-We have three configuration files in the `config` folder:
+We have a set of configuration files in the `config` folder:
 
  * `gateway.config.json`: used to configure the environmentalized fields.
  * `gateway.certs.json`: used to replace certificates identified by their alias.
  * `gateway.props.json`: used for properties not applicable in the configuration or certs file.
  This file may be generated during the build process with values from external resources (e.g. configuration DB or secured vault).
+ * `gateway.crypt.json`: used for confidential properties.
+ All values in this file are encrypted.
 
 NOTE: For a description of the configuration files please check the link:../../doc/manual/user-guide.adoc[User Guide]
+
+To decrypt the confidential values there is a `key.binary` file.
+This a file containing any arbitrary bytes.
+If you edit this file with a text editor be aware of the encoding and the end of line sequence.
+
+CAUTION: Never store the key file in the source code repository. Here it's only for demonstration.
 
 In this example some environment variables (`INFO_NAME` and `NEW_SERVER_PASSWORD`) are set.
 Then the `buildfed` tool will be invoked with the following parameters:
 
-* `-e src\gateway.env`: specifies the path to the input `.env` archive
-* `-p src\gateway.pol`: specifies the path to the input `.pol` archive
-* `-c config\gateway.config.json`: specifies the path to the environmentalized fields configuration file
+* `-e src/gateway.env`: specifies the path to the input `.env` archive
+* `-p src/gateway.pol`: specifies the path to the input `.pol` archive
+* `-c config/gateway.config.json`: specifies the path to the environmentalized fields configuration file
 * `--cert=config/gateway.certs.json`: specifies the path to the certificates configuration file
 * `--prop=config/gateway.props.json`: specifies the path to a properties file
 * `--prop=config/passwords.props.json`: specifies the path to a second properties file
@@ -114,6 +122,8 @@ Then the `buildfed` tool will be invoked with the following parameters:
 * `--passphrase-out=changed`: passphrase for the generated `.fed` file
 * `-D artifact:demo-1.0.0`: specifies the value of property `artifact` via the command line instead of from the configuration files
 * `-F info.descr:config/description.txt`: specifies to set the value of property `info.descr` from the content of the `config/description.txt` file
+* `--secrets-file=config/gateway.crypt.json`: specifies the path to a properties file containing confidential values
+* `--secrets-key=key.binary`: specifies the path to the key file for decrypting the confidential values
 
 The tool reads the source archives, configures the environmentalized fields, replaces the certificates and write the configured `.fed` file.
 

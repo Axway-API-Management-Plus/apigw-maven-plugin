@@ -31,7 +31,7 @@ public class FedBuilder {
 	private boolean verboseCfgTools = false;
 
 	private File secretsFile = null;
-	private String secretsPassphrase = null;
+	private File secretsKey = null;
 
 	public FedBuilder(AbstractGatewayMojo mojo, File polFile, File envFile, File configFile, File infoFile)
 			throws MojoExecutionException {
@@ -93,11 +93,11 @@ public class FedBuilder {
 		this.passphraseFed = passphrase;
 	}
 
-	public void setSecrets(File secretsFile, String passphrase) throws MojoExecutionException {
-		if (secretsFile != null && passphrase == null)
-			throw new MojoExecutionException("No passphrase sepecified for secrets file.");
+	public void setSecrets(File secretsFile, File key) throws MojoExecutionException {
+		if (secretsFile != null && key == null)
+			throw new MojoExecutionException("No key file for secrets is specified!");
 		this.secretsFile = secretsFile;
-		this.secretsPassphrase = passphrase;
+		this.secretsKey = key;
 	}
 
 	public int execute(File targetFed, Map<String, String> props) throws MojoExecutionException {
@@ -138,8 +138,8 @@ public class FedBuilder {
 			if (this.secretsFile != null) {
 				args.add("--secrets-file");
 				args.add(this.secretsFile.getPath());
-				args.add("--secrets-passphrase");
-				args.add(this.secretsPassphrase);
+				args.add("--secrets-key");
+				args.add(this.secretsKey.getPath());
 			}
 			args.add("--output-fed");
 			args.add(outFedFile.getPath());

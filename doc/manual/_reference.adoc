@@ -376,8 +376,8 @@ NOTE: It is not checked if the source files are newer than the target artifact.
 |axway.config.secrets.file
 |Path to file storing secrets.
 
-|axway.config.secrets.passphrase
-|Passphrase to decrypt/encrypt values of secrets file.
+|axway.config.secrets.key
+|Path to key file to decrypt/encrypt values of secrets file.
 |===
 
 == Plugin Configuration
@@ -408,7 +408,7 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
     <configCertsBaseDir>${basedir}/src/main/axwgw/certs</configCertsBaseDir> <!--5-->
 
     <configSecretsFile>${basedir}/src/main/axwgw/gateway.crypt.json</configSecretsFile> <!--6-->
-    <configSecretsPassphrase>changeme</configSecretsPassphrase> <!--7-->
+    <configSecretsKey>${user.home}/secrets.key</configSecretsKey> <!--7-->
   </configuration>
 </plugin>
 <!- ... ->
@@ -419,4 +419,4 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
 <4> Location of a list of configuration files for properties.
 <5> Base directory for certificate files.
 <6> Path to secrets file.
-<7> Passphrase to decrypt/encrypt values of secrets file.
+<7> Key file to decrypt/encrypt values of secrets file.

@@ -107,8 +107,8 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	@Parameter(property = "axway.config.secrets.file", required = false)
 	protected File configSecretsFile = null;
 	
-	@Parameter(property = "axway.config.secrets.passphrase", required = false)
-	protected String configSecretsPassphrase = null;
+	@Parameter(property = "axway.config.secrets.key", required = false)
+	protected File configSecretsKey = null;
 
 	
 	@Parameter(defaultValue = "${project}", readonly = true)

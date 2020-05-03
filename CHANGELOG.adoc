@@ -15,8 +15,7 @@ Use the `--base-dir` parameter of the configuration tool or the `axway.config.ce
 |Support for confidential properties.
 
 For confidential properties the configuration tools supports to pass a secrets file.
-It is a JSON file where the values of the properties are encrypted by a passphrase.
-
+It is a JSON file where the values of the properties are encrypted by a key.
 |===
 
 == Version 0.12.0

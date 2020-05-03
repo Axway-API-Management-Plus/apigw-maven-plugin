@@ -13,23 +13,31 @@ from java.lang import String
 
 class Secrets:
     """Configuration store for secrets.
-    The values of the properties are encrypted with a given passphrase.
+    The values of the properties are encrypted with a given key.
     """
-    __passphrase_check = "axway-maven-plugin"
+    __key_check = "axway-maven-plugin"
     __prefix_encrypt = "encrypt:"
     __file_path = None
     __secrets_json = {}
     __cipher = None
 
-    def __init__(self, passphrase, secrets_file_path, create_if_not_exists=False):
-        if not passphrase:
-            raise ValueError("No passphrase specified to encrypt/decrypt secrets!")
+    def __init__(self, secrets_key_file, secrets_file_path, create_if_not_exists=False):
+        if not secrets_key_file:
+            raise ValueError("No key file specified to encrypt/decrypt secrets!")
         if not secrets_file_path:
             raise ValueError("Path to secrets file not specified!")
 
+        # read key
+        if not os.path.isfile(secrets_key_file):
+            raise ValueError("Key file not found: %s" % (secrets_key_file))
+        
+        key = None
+        with open(secrets_key_file, mode='rb') as pf:
+            key = pf.read()
+
         self.__file_path = secrets_file_path
 
-        self.__cipher = PasswordCipher(String(passphrase).toCharArray())
+        self.__cipher = PasswordCipher(key)
 
         if os.path.isfile(self.__file_path):
             logging.info("Reading secrets file '%s'" % (self.__file_path))
@@ -39,15 +47,15 @@ class Secrets:
             if "secrets" not in self.__secrets_json:
                 raise ValueError("File '%s' is not a valid secrets file; missing 'secrets' attribute!" % (self.__file_path))
 
-            passphrase_check = self.get_secret("__")
-            if not passphrase_check:
-                raise ValueError("Invalid secrets file; passphrase check is missing!")
+            key_check = self.get_secret("__")
+            if not key_check:
+                raise ValueError("Invalid secrets file; key check is missing!")
 
-            if passphrase_check != self.__passphrase_check:
-                raise ValueError("Invalid passphrase!")
+            if key_check != self.__key_check:
+                raise ValueError("Invalid key!")
 
         elif create_if_not_exists:
-            self.__secrets_json["secrets"] = {"__" : self.__encrypt_value(self.__passphrase_check)}
+            self.__secrets_json["secrets"] = {"__" : self.__encrypt_value(self.__key_check)}
             logging.info("Generating empty secrets.")
         else:
             raise ValueError("Secrets file '%s' doesn't exist!" % (self.__file_path))
@@ -96,7 +104,7 @@ class Secrets:
             try:
                 salted = bytearray(decoded_bytes).decode('utf-8')
             except:
-                raise ValueError("Invalid passphrase!")
+                raise ValueError("Invalid key!")
 
             # remove salt
             if not re.match(r"#\d{6}:", salted):
@@ -123,15 +131,15 @@ def main_encrypt():
     parser = OptionParser(usage=usage, version=version, epilog=epilog)
     parser.add_option("-v", "--verbose", dest="verbose", help="Enable verbose messages [optional]", action="store_true")
     parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential propertiers", metavar="FILEPATH")
-    parser.add_option("--secrets-passphrase", dest="secrets_passphrase", help="Passphrase to decrypt confidential values", metavar="PASSPHRASE")
+    parser.add_option("--secrets-key", dest="secrets_key_file", help="Path to key file to decrypt confidential properties", metavar="FILEPATH")
 
     (options, args) = parser.parse_args()
 
     if not options.secrets_file:
         parser.error("Secrets file is missing!")
 
-    if not options.secrets_passphrase:
-        parser.error("Passphrase for secrets file is missing!")
+    if not options.secrets_key_file:
+        parser.error("Key file is missing!")
 
     logging.basicConfig(format='%(levelname)s: %(message)s')
     if options.verbose:
@@ -140,7 +148,7 @@ def main_encrypt():
         logging.getLogger().setLevel(logging.INFO)
 
     try:
-        secrets = Secrets(options.secrets_passphrase, options.secrets_file, create_if_not_exists=True)
+        secrets = Secrets(options.secrets_key_file, options.secrets_file, create_if_not_exists=True)
         secrets.encrypt()
         secrets.write()
 

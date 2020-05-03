@@ -61,8 +61,8 @@ Options:
   --secrets-file=FILEPATH
                         Path of JSON file containing confidential propertiers
                         [optional]
-  --secrets-passphrase=PASSPHRASE
-                        Passphrase to decrypt confidential properties [optional]
+  --secrets-key=FILEPATH
+                        Path to key file to decrypt confidential properties [optional]
 ....
 
 If environmentalized fields or certificates are not configured, the build fails.
@@ -160,10 +160,15 @@ If specified relative path to certificate files is based on this directory.
 |Path of JSON file containing confidential properties.
 The file has to be created by the `encrypt` tool.
 
-|--secrets-passphrase
-|Passphrase to decryt confidential properties.
-This parameter is requried if a secrets file is specified.
-The passphrase has to be the same as on creating the secrets file.
+|--secrets-key
+|Path to key file to decrypt confidential properties.
+
+This a file containing any arbitrary bytes.
+If you edit this file with a text editor be aware of the encoding and the end of line sequence.
+
+The key file has to be the same as on creating the secrets file.
+
+This parameter is required if a secrets file is specified.
 |===
 
 
@@ -172,7 +177,7 @@ The passphrase has to be the same as on creating the secrets file.
 The `encrypt` tools is used to generate an initial secrets file and to encrypt the values of the properties.
 The script is invoked with the `jython` interpreter provided with the package and deployment tools of the API Gateway.
 
-The tool requries a path to the secrets file and a passphrase to encryt the values.
+The tool requires a path to the secrets file and a passphrase to encrypt the values.
 If the secrets file doesn't exist a new file will be created.
 For existing files the given passphrase is checked against the passphrase used on file creation.
 
@@ -186,8 +191,8 @@ Options:
   -v, --verbose         Enable verbose messages [optional]
   --secrets-file=FILEPATH
                         Path of JSON file containing confidential properties
-  --secrets-passphrase=PASSPHRASE
-                        Passphrase to decrypt confidential values
+  --secrets-key=FILEPATH
+                        Path to key file to decrypt confidential properties
 
 Encrypt credentials.
 ....
@@ -200,9 +205,15 @@ Encrypt credentials.
 |--secrets-file
 |Path of JSON file containing confidential properties.
 
-|--secrets-passphrase
-|Passphrase to decrypt confidential properties.
-This parameter is requried if a secrets file is specified.
+|--secrets-key
+|Path to key file to decrypt confidential properties.
+
+This a file containing any arbitrary bytes.
+
+If you edit this file with a text editor be aware of the encoding and the end of line sequence.
+In this case use ASCII characters in a single line (no line feed at the end).
+
+This parameter is required if a secrets file is specified.
 |===
 
 To add new properties tag the values with the `encrypt:` prefix.
@@ -218,11 +229,11 @@ Values having this prefix will be encrypted on running the tool.
   }
 }
 ----
-<1> Marker to check the passphrase. Don't delete or change it.
+<1> Marker to check the key. Don't delete or change it.
 <2> The prefix `encrypt:` indicates that the value `changeme` has to be encrypted.
 <3> Values without the prefix are already encrypted and will not be changed.
 
-NOTE: The `encrypt` tool use the cipher of the entity store.
+NOTE: The `encrypt` tool use the same cipher as the entity store.
 
 == Configuration Files
 
@@ -507,8 +518,8 @@ For the build process the property file may be temporarily generated from the co
 === Secrets
 
 A secrets file is used to store confidential configurations (e.g. passwords).
-The values of the properties are encrypted and can be access with a passphrase only.
-All values are encrypted with the same passphrase.
+The values of the properties are encrypted and can be access with a key only.
+All values are encrypted with the same key.
 
 .gateway.crypt.json
 [source,json]
@@ -522,6 +533,6 @@ All values are encrypted with the same passphrase.
 }
 ----
 <1> The `secrets` property is requried.
-<2> Marker to check the passphrase. Don't delete or change it.
+<2> Marker to check the key. Don't delete or change it.
 <3> The prefix `encrypt:` indicates that the value `changeme` has to be encrypted by the `encrypt` tool.
 <4> Values without the prefix are already encrypted.

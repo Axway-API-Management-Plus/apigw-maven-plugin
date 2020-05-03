@@ -170,9 +170,9 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			fedBuilder.setCertificatesBasePath(this.configCertsBaseDir);
 		}
 		if (this.configSecretsFile != null) {
-			if (this.configSecretsPassphrase == null)
+			if (this.configSecretsKey == null)
 				throw new MojoExecutionException("Passphrase for secrets file not specified!");
-			fedBuilder.setSecrets(this.configSecretsFile, this.configSecretsPassphrase);
+			fedBuilder.setSecrets(this.configSecretsFile, this.configSecretsKey);
 		}
 
 		fedBuilder.setPassphrasePol(this.passphrasePol);

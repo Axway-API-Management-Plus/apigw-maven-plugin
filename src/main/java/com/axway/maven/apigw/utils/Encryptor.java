@@ -23,7 +23,7 @@ public class Encryptor {
 		this.verboseCfgTools = enabled;
 	}
 
-	public int execute(String passphrase) throws MojoExecutionException {
+	public int execute(File key) throws MojoExecutionException {
 
 		try {
 			JythonExecutor jython = new JythonExecutor(mojo.getHomeAxwayGateway(), mojo.getLog(),
@@ -36,8 +36,8 @@ public class Encryptor {
 			if (this.secretsFile != null) {
 				args.add("--secrets-file");
 				args.add(this.secretsFile.getPath());
-				args.add("--secrets-passphrase");
-				args.add(passphrase);
+				args.add("--secrets-key");
+				args.add(key.getPath());
 			}
 			return jython.execute("secrets.py", args.toArray(new String[0]));
 		} catch (JythonExecutorException e) {
