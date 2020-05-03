@@ -393,8 +393,17 @@ $ mvn apigw:tools
 
 === Encrypt Secrets File
 To create an empty secrets file or to add properties to secrets file, the goal `apigw:encrypt` can be used.
-A passphrase is used to initially create the secrets file.
-The same passphrase as used to create the file has to be used to decrypt values.
+A file containing a key is used to initially create the secrets file.
+The same key file as used to create the file has to be used to decrypt values.
+
+.Key File
+****
+The key file contains any arbitrary sequence of bytes.
+It is treated as a binary file.
+
+If you edit this file with a text editor be aware of the encoding and the end of line sequence.
+In this case use ASCII characters in a single line (no line feed at the end) to prevent any incompatibility with other line end formats or editor encodings.
+****
 
 .gateway.crypt.json
 [source,json]
@@ -412,8 +421,9 @@ The same passphrase as used to create the file has to be used to decrypt values.
 
 .Command Line
 ....
-$ mvn apigw:encrypt -Daxway.config.secrets.file=gateway.crypt.json -Daxway.config.secrets.passphrase=changeme
+$ mvn apigw:encrypt -Daxway.config.secrets.file=gateway.crypt.json -Daxway.config.secrets.key=secrets.key
 ....
+
 
 == Maven Goals
 This section provides a short overview of the goals supported by the Maven plugin.

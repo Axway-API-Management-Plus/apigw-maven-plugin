@@ -61,13 +61,16 @@ class Secrets:
             raise ValueError("Secrets file '%s' doesn't exist!" % (self.__file_path))
         return
 
-    def __encrypt_value(self, value):
+    def __encrypt_value(self, value, cipher=None):
+        if not cipher:
+            cipher = self.__cipher
+    
         # add salt
         salt = "#{:06d}:".format(random.randint(0,999999))
         value = salt + value
 
         # encrypt salted value
-        value_bytes = self.__cipher.encrypt(value.encode('utf-8'))
+        value_bytes = cipher.encrypt(value.encode('utf-8'))
         value_b64 = base64.b64encode(value_bytes)
 
         return value_b64
@@ -114,6 +117,28 @@ class Secrets:
 
         return value
 
+    def change_key(self, secrets_key_file_new):
+        # create new cipher using new key file
+        if not os.path.isfile(secrets_key_file_new):
+            raise ValueError("Key file not found: %s" % (secrets_key_file_new))
+        
+        key = None
+        with open(secrets_key_file_new, mode='rb') as skf:
+            key = skf.read()
+
+        new_cipher = PasswordCipher(key)
+
+        # re-encrypt values
+        for s in self.__secrets_json["secrets"]:
+            v = self.get_secret(s)
+            v = self.__encrypt_value(v, new_cipher)
+
+            self.__secrets_json["secrets"][s] = v
+
+            logging.info("Key changed for property '%s'." % (s))
+
+        self.__cipher = new_cipher
+        return
 
     def write(self):
         json_str = json.dumps(self.__secrets_json, sort_keys=True, indent=2)
@@ -123,15 +148,17 @@ class Secrets:
         return
 
 def main_encrypt():
-    prog = sys.argv[0]
+    prog = "encrypt"
+    description="Encrypt secrets."
     version = "%prog 1.0.0"
     usage = "%prog OPTIONS"
-    epilog = "Encrypt secrets."
+    epilog = ""
  
-    parser = OptionParser(usage=usage, version=version, epilog=epilog)
+    parser = OptionParser(usage=usage, version=version, epilog=epilog, prog=prog, description=description)
     parser.add_option("-v", "--verbose", dest="verbose", help="Enable verbose messages [optional]", action="store_true")
-    parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential propertiers", metavar="FILEPATH")
-    parser.add_option("--secrets-key", dest="secrets_key_file", help="Path to key file to decrypt confidential properties", metavar="FILEPATH")
+    parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential properties", metavar="FILEPATH")
+    parser.add_option("--secrets-key", dest="secrets_key_file", help="Path to key file to encrypt confidential properties", metavar="FILEPATH")
+    parser.add_option("--secrets-key-new", dest="secrets_key_file_new", help="Path to new key file to change key [optional]", metavar="FILEPATH")
 
     (options, args) = parser.parse_args()
 
@@ -150,6 +177,9 @@ def main_encrypt():
     try:
         secrets = Secrets(options.secrets_key_file, options.secrets_file, create_if_not_exists=True)
         secrets.encrypt()
+        if options.secrets_key_file_new:
+            logging.info("Re-encrypt values to change key.")
+            secrets.change_key(options.secrets_key_file_new)
         secrets.write()
 
     except Exception as e:

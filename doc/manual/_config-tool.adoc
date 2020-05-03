@@ -163,9 +163,6 @@ The file has to be created by the `encrypt` tool.
 |--secrets-key
 |Path to key file to decrypt confidential properties.
 
-This a file containing any arbitrary bytes.
-If you edit this file with a text editor be aware of the encoding and the end of line sequence.
-
 The key file has to be the same as on creating the secrets file.
 
 This parameter is required if a secrets file is specified.
@@ -177,13 +174,15 @@ This parameter is required if a secrets file is specified.
 The `encrypt` tools is used to generate an initial secrets file and to encrypt the values of the properties.
 The script is invoked with the `jython` interpreter provided with the package and deployment tools of the API Gateway.
 
-The tool requires a path to the secrets file and a passphrase to encrypt the values.
+The tool requires a path to the secrets file and a key file to encrypt the values.
 If the secrets file doesn't exist a new file will be created.
-For existing files the given passphrase is checked against the passphrase used on file creation.
+For existing files the given key is checked against the key used on file creation.
 
 ....
 $ encrypt.sh -h
-Usage: secrets.py OPTIONS
+Usage: encrypt OPTIONS
+
+Encrypt secrets.
 
 Options:
   --version             show program's version number and exit
@@ -192,9 +191,9 @@ Options:
   --secrets-file=FILEPATH
                         Path of JSON file containing confidential properties
   --secrets-key=FILEPATH
-                        Path to key file to decrypt confidential properties
-
-Encrypt credentials.
+                        Path to key file to encrypt confidential properties
+  --secrets-key-new=FILEPATH
+                        Path to new key file to change key [optional]
 ....
 
 [cols="2,5a", options="header"]
@@ -206,14 +205,22 @@ Encrypt credentials.
 |Path of JSON file containing confidential properties.
 
 |--secrets-key
-|Path to key file to decrypt confidential properties.
+|Path to key file to encrypt confidential properties.
 
-This a file containing any arbitrary bytes.
+.Key File
+****
+The key file contains any arbitrary sequence of bytes.
+It is treated as a binary file.
 
 If you edit this file with a text editor be aware of the encoding and the end of line sequence.
-In this case use ASCII characters in a single line (no line feed at the end).
+In this case use ASCII characters in a single line (no line feed at the end) to prevent any incompatibility with other line end formats or editor encodings.
+****
 
-This parameter is required if a secrets file is specified.
+|--secrets-key-new
+|Path to new key file.
+
+Use this option to change the key.
+All values will be re-encrypted with the new key.
 |===
 
 To add new properties tag the values with the `encrypt:` prefix.
@@ -234,6 +241,22 @@ Values having this prefix will be encrypted on running the tool.
 <3> Values without the prefix are already encrypted and will not be changed.
 
 NOTE: The `encrypt` tool use the same cipher as the entity store.
+
+*Examples*
+
+Encrypt values with the given key:
+
+.Command Line
+....
+$ encrypt.sh --secrets-file=gateway.crypt.json --secrets-key=secrets.key
+....
+
+Change the key of a secrets file:
+
+.Command Line
+....
+$ encrypt.sh --secrets-file=gateway.crypt.json --secrets-key=secrets.key --secrets-key-new=new_secrets.key
+....
 
 == Configuration Files
 
@@ -532,7 +555,7 @@ All values are encrypted with the same key.
   }
 }
 ----
-<1> The `secrets` property is requried.
+<1> The `secrets` property is required.
 <2> Marker to check the key. Don't delete or change it.
 <3> The prefix `encrypt:` indicates that the value `changeme` has to be encrypted by the `encrypt` tool.
 <4> Values without the prefix are already encrypted.
