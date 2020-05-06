@@ -149,7 +149,10 @@ class FedConfigurator:
         io = FileInputStream(file)
         pkcs12 = PKCS12(io)
         if password is not None:
-            pkcs12.decrypt(String(password).toCharArray())
+            try:
+                pkcs12.decrypt(String(password).toCharArray())
+            except:
+                raise ValueError("Invalid passphrase for .p12 certificate!")
         return pkcs12.getKey()
 
     def __get_cert_from_p12(self, file, password=None):
