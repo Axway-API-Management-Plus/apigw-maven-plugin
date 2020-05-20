@@ -272,9 +272,31 @@ This makes diff & merge easy.
 
 Following kind of configuration files are supported:
 
-  * Environmentalized fields: Mandatory configuration file for environmentalized fields.
-  * Certificates: Optional configuration file for certificates.
-  * Properties: Optional configuration files for properties.
+.Configuration Files
+[cols="2,<4a,^1,^1", options="header"]
+|===
+|File|Description|Mandatory|Updated footnote:[Files will be updated by plugin or config tool automatically]
+
+|Environmentalized fields
+|Configuration file for environmentalized fields.
+|yes
+|yes
+
+|Certificates
+|Configuration file for certificates stored in the project.
+|no
+|yes
+
+|Properties
+|Configuration file for properties references by the environmentalized fields and certificate configuration.
+|no
+|no
+
+|Secrets
+|Configuration file confidential properties.
+|no
+|no
+|===
 
 === Environmentalized Fields
 
@@ -415,7 +437,9 @@ NOTE: If `value` is _null_ the field is treated as undefined and the build will 
 
 === Certificates
 The configuration for certificates is stored in a separate JSON file.
-It specifies the alias of the certificates within the project and the source of the replacement certificate. 
+It specifies the alias of the certificates within the project and the source of the replacement certificate.
+
+When the file is specified it will be automatically generated/updated according to the certificates stored in your project.
 
 .src/main/axwgw/gateway.certs.json
 [source,json]
