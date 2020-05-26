@@ -241,8 +241,8 @@ For deployment following properties are used:
 |Path to secrets file.
 |no
 
-|`axway.config.secrets.passphrase`
-|Passphrase to decrypt/encrypt values of secrets file.
+|`axway.config.secrets.key`
+|Path to key file to decrypt/encrypt values of secrets file.
 |yes, if secrets file is specified
 |===
 
