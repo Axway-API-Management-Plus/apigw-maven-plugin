@@ -1,5 +1,16 @@
 = Changelog
 
+== Version 1.1.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/pull/45[#45]
+|Enhancement
+|Docker capabilities.
+
+|===
+
+
 == Version 1.0.1
 [cols="1,2,<10a", options="header"]
 |===
