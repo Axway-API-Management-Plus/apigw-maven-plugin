@@ -5,7 +5,7 @@
 :sectnums:
 :source-highlighter: prettify
 
-:mvn-plugin-ver: 1.0.0
+:mvn-plugin-ver: 1.0.1
 
 Here you get a simple introduction on how to use the _Maven Plugin for Axway API Gateway_.
 It assumes that you are familiar with https://maven.apache.org[Apache Maven] and that you are familiar with PolicyStudio and the API Gateway.
