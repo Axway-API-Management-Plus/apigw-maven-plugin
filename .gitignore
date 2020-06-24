@@ -3,6 +3,8 @@
 .policystudio
 .studio
 .vscode
+.classpath
+.factorypath
 .projdeps.json
 *.class
 target
