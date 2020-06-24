@@ -12,7 +12,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.axway.maven.apigw.utils.FedBuilder;
@@ -28,12 +27,6 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	public static final String FILE_GATEWAY_CONFIG_JSON = "gateway.config.json";
 
 	private Artifact serverArchive;
-
-	@Parameter(property = "axway.tools.cfg.cert.expirationDays", required = false)
-	private int certExpirationDays = 10;
-
-	@Parameter(property = "axway.tools.cfg.cert.updateConfigured", required = false)
-	private boolean updateCertConfigFile = false;
 
 	@Override
 	protected String getArchiveExtension() {
@@ -171,7 +164,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		}
 		if (this.configSecretsFile != null) {
 			if (this.configSecretsKey == null)
-				throw new MojoExecutionException("Passphrase for secrets file not specified!");
+				throw new MojoExecutionException("Key file for secrets is not specified!");
 			fedBuilder.setSecrets(this.configSecretsFile, this.configSecretsKey);
 		}
 

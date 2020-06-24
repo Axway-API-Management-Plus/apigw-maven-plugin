@@ -130,9 +130,14 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 		fb.addPropertyFiles(getPropertyFiles());
 
-		fb.setCertificatesFile(this.configCertsFile);
 		fb.enableVerboseMode(this.verboseCfgTools);
 		
+		if (this.configCertsFile != null) {
+			fb.setCertificatesFile(this.configCertsFile);
+			fb.setCertificateExpirationDays(this.certExpirationDays);
+			fb.enableCertificateConfigFileUpdate(this.updateCertConfigFile);
+			fb.setCertificatesBasePath(this.configCertsBaseDir);
+		}
 		if (this.configSecretsFile != null) {
 			if (this.configSecretsKey == null)
 				throw new MojoExecutionException("Key file for secrets is not specified!");
