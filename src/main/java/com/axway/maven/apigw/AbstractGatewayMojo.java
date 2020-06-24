@@ -2,12 +2,7 @@ package com.axway.maven.apigw;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -119,6 +114,7 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	
 	@Parameter(defaultValue = "${project}", readonly = true)
 	protected MavenProject project;
+
 	
 	public MavenProject getProject() {
 		return this.project;

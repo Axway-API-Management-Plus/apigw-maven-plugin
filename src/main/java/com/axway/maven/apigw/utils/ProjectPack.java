@@ -61,12 +61,15 @@ public class ProjectPack extends AbstractCommandExecutor {
 	@Override
 	protected File getCommand() throws IOException {
 		File projpackWin = new File(this.axwayGatewayHome, "Win32/bin/projpack.bat");
+		File projpackMac = new File(this.axwayGatewayHome, "win32/bin/projpack.bat");
 		File projpackUnix = new File(this.axwayGatewayHome, "posix/bin/projpack");
 
-		if (projpackWin.exists()) {
-			return projpackWin;
-		} else if (projpackUnix.exists()) {
+		if (projpackUnix.exists()) {
 			return projpackUnix;
+		} else if (projpackWin.exists()) {
+			return projpackWin;
+		} else if ( projpackMac.exists() ) {
+			return projpackMac;
 		} else {
 			throw new IOException(
 					"projpack not found! Checked: " + projpackWin.getPath() + " and " + projpackUnix.getPath());

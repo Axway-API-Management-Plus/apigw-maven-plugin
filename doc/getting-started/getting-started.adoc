@@ -376,6 +376,8 @@ For manual checks via ConfigurationStudio the content of the archive is located 
 
 == Deployment
 
+=== Using projdeploy
+
 The project can be deployed to a gateway via the plugin.
 
 Just invoke the `apigw:deploy` goal within the deployment project and specify the target domain and group.
@@ -388,4 +390,68 @@ The project shall be deployed to the group `test`.
     -Daxway.anm.user=admin -Daxway.anm.password=changeme \
     -Daxway.deploy.group=test \
     clean apigw:deploy
+
+=== Creating and Deploying new Docker Images and Containers
+
+This project will create new Docker images and containers.  The Docker image will be created with the fed file that was
+created when the package command was invoked.
+
+
+
+Run this mvn plugin by invoking `apigw:container`.  You must specify the following properties:
+
+* axway.deploy.group (mandatory)
+* axway.passphrase.deploy (optional)
+* axway.container.scripts (mandatory)
+* axway.remove.container (mandatory)
+* axway.container.name (optional)
+* axway.remove.image (optional)
+* axway.image.name (mandatory)
+* axway.image.tag (optional)
+* axway.parent.image.name (optional)
+* axway.parent.image.tag (optional)
+* axway.license (mandatory)
+* axway.merge.dir (optional)
+* axway.environment.variables
+* axway.links (optional)
+* axway.ports (optional)
+* axway.domain.cert (optional)
+* axway.domain.key (optional)
+* axway.domain.key.pass.file (optional)
+* axway.admin.node.manager.host (mandatory)
+* axway.metrics.db.url (optional)
+* axway.metrics.db.username (optional)
+* axway.metrics.db.password (optional)
+
+When dealing with a domain cert and key there are 2 ways to handle this.  First would be to generate your own cert, key
+and password file.  These would then be needed to be passed in during the mvn call.
+
+If no domain, key or password file is passed in maven will assume that it needs to use default cert and key.  You will
+need to create a `cert\tmp\pass.txt` file.  In this file you just add `changeme` and save this file.  Maven will assume
+that is the location of the file.
+
+In the following example, we will delete the existing container and image, then we will recreate everything using a
+default domain cert and key.
+
+```
+    mvn clean apigw:container \
+    --define axway.deploy.group=emt-group \
+    --define axway.container.scripts=/mnt/c/Axway_7.6.2/Software/dockerscripts/emt-containers-1.0.0-9 \
+    --define axway.remove.container=true \
+    --define axway.container.name=apimgr \
+    --define axway.remove.image=true \
+    --define axway.image.name=apimgt \
+    --define axway.image.tag=7.6.2_3 \
+    --define axway.parent.image.name=apigw-base \
+    --define axway.parent.image.tag=7.6.2_3 \
+    --define axway.license=/mnt/c/Axway_7.6.2/Software/API_7.6_Docker_Temp.lic \
+    --define axway.merge.dir=/mnt/c/Axway_7.6.2/tmp/apigateway \
+    --define axway.environment.variables="METRICS_DB_URL;jdbc:mysql://mysql:3306/metrics\?useSSL=false,METRICS_DB_USERNAME;metrics,METRICS_DB_PASS;metrics,EMT_DEPLOYMENT_ENABLED;true,EMT_ANM_HOSTS;anm:8090,CASS_HOST;cassandra" \
+    --define axway.links="anm;anm,cassandra_2.2.12;cassandra,mysql_5.7;mysql" \
+    --define axway.ports="8075;8075,8065;8065,8080;8080" \
+    --define axway.admin.node.manager.host=anm:8090 \
+    --define axway.metrics.db.url=jdbc:mysql://mysql:3306/metrics\?useSSL=false \
+    --define axway.metrics.db.username=metrics \
+    --define axway.metrics.db.password=metrics
+```
 

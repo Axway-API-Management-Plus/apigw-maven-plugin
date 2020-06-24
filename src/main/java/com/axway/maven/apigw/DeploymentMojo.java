@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.axway.maven.apigw.utils.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -13,9 +14,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.axway.maven.apigw.utils.FedBuilder;
-import com.axway.maven.apigw.utils.ProjectDeploy;
-import com.axway.maven.apigw.utils.ProjectPack;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -156,18 +154,19 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 
 	private void deployFed(File fed) throws MojoExecutionException {
 		try {
-
-			ProjectDeploy.Source source = new ProjectDeploy.Source(fed, this.passphraseFed);
-
-			ProjectDeploy.Target target = new ProjectDeploy.Target(this.deployGroup, this.passphraseDeploy);
-
-			ProjectDeploy deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
-
 			Map<String, String> polProps = new HashMap<>();
 			polProps.put("Name", this.project.getGroupId() + ":" + this.project.getArtifactId());
 			polProps.put("Version", this.project.getVersion());
 			polProps.put("Type", "Test Deployment");
 
+			Source source = new Source(fed, this.passphraseFed);
+			Target target = new Target(this.deployGroup, this.passphraseDeploy);
+
+			AbstractCommandExecutor deploy;
+
+			// Deploying to a Classic Gateway, ok to use projdeploy
+			this.getLog().info("Using projdeploy to deploy the fed file");
+			deploy = new ProjectDeploy(this.homeAxwayGW, getDomain(), getLog());
 			int exitCode = deploy.execute(source, target, polProps, null);
 			if (exitCode != 0) {
 				throw new MojoExecutionException("Failed to deploy project: exitCode=" + exitCode);

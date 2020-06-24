@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.maven.plugin.logging.Log;
@@ -20,23 +21,42 @@ public abstract class AbstractCommandExecutor {
 		this.log = Objects.requireNonNull(log, "log is null");
 	}
 
-	protected abstract File getCommand() throws IOException;
+	protected File getCommand() throws IOException { return null; };
+
+	protected String getStringCommand( List<String> parameters ) { return null; }
 
 	protected Log getLog() {
 		return this.log;
 	}
 
+	protected int execute () throws IOException { return 0; }
+
+	public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
+						 Map<String, String> ports, Map<String, String> links,
+						 Map<String, String> environmentVariables, String adminNodeManagerHost, String metricsDbUrl,
+						 String metricsDbUsername, String metricsDbPassword )
+			throws IOException { return 0; }
+
+	public int execute(Source source, Target target, Map<String, String> polProperties,
+					   Map<String, String> envProperties) throws IOException { return 0; }
+
 	protected int execute(List<String> parameters) throws IOException {
+		List<String> inputParam = new ArrayList<String>();
+
 		File command = getCommand();
 		if (command == null) {
-			throw new NullPointerException("command is null");
-		}
-		if (!command.canExecute()) {
+			String stringCommand = getStringCommand(parameters);
+			if ( stringCommand == null ) {
+				this.getLog().info("No command to run");
+				return 0;
+			} else {
+				inputParam.add(stringCommand);
+			}
+		} else if (!command.canExecute()) {
 			throw new IOException("command not found or is not an executable: " + command.getAbsolutePath());
+		} else {
+			inputParam.add(command.getAbsolutePath());
 		}
-
-		List<String> inputParam = new ArrayList<String>();
-		inputParam.add(command.getAbsolutePath());
 
 		if (parameters != null) {
 			inputParam.addAll(parameters);
@@ -48,6 +68,7 @@ public abstract class AbstractCommandExecutor {
 
 		ProcessBuilder pb = new ProcessBuilder(inputParam);
 		pb.redirectErrorStream(true);
+		this.getLog().debug("My command: " + pb.command());
 		Process process = pb.start();
 		BufferedReader br = null;
 		try {
