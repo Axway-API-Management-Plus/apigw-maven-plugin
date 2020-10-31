@@ -4,6 +4,15 @@
 [cols="1,2,<10a", options="header"]
 |===
 |ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/52[#52]
+|Bug
+|In case the entity field configuration file doesn't exist the following error occurs:
+
+`AttributeError: EnvConfig instance has no attribute '_EnvConfig__origin_json_str'`
+
+This is fixed. If the configuration file doesn't exists the file will be created automatically.
+
+|ID|Type|Description
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/51[#51]
 |Enhancement
 |Customized version name for `.pol` and `.fed` packages.

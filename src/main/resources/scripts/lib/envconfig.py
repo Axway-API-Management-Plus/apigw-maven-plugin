@@ -61,7 +61,7 @@ class EnvConfig:
     __file_updated = False
     __migrated = False
 
-    __origin_json_str_str = None
+    __origin_json_str = None
 
     __unconfigured_fields = []
 
