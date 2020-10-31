@@ -236,6 +236,13 @@ Default: ${axway.home}/apigateway
 
 Default: ${axway.home}/policystudio
 
+|axway.project.version
+|Version name of the project.
+
+The version name is used for setting the version attribute of the policy properties within `.pol` or `.fed` packages.
+
+Default: ${project.version}
+
 |axway.dir.source
 |Directory of gateway or configuration file source code used by the plugin.
 ${basedir}/src/main/axwgw

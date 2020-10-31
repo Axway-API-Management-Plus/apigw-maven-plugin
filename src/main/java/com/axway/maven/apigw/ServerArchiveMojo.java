@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 		File outDir = executeProjPack();
 		File polFile = new File(outDir, FILE_GATEWAY_POL);
 		File envFile = new File(outDir, FILE_GATEWAY_ENV);
-		
+
 		File archiveBuildDir = getArchiveBuildDir();
 
 		try {
@@ -84,15 +83,15 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 
 		FileUtils.writeStringToFile(readme, str.toString(), "UTF-8");
 	}
-	
+
 	private void prepareInfoJson(File targetDir) throws IOException, MojoExecutionException {
 		ObjectMapper mapper = new ObjectMapper();
 		File info = new File(targetDir, FILE_GATEWAY_INFO);
-	
+
 		ObjectNode root = buildBasicArtifactInfo();
-		
+
 		String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
-		
+
 		FileUtils.writeStringToFile(info, json, "UTF-8");
 	}
 
@@ -126,20 +125,17 @@ public class ServerArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 	private File executeProjPack() throws MojoExecutionException {
 		try {
 			File outDir = new File(getTargetDir(), DIR_ARCHIVE_ROOT);
-			
+
 			ProjectPack packer = new ProjectPack(this.homeAxwayGW, getLog());
 			packer.setPassphrasePol(this.passphrasePol);
-			Map<String, String> polProps = new HashMap<>();
-			polProps.put("Name", this.project.getGroupId() + ":" + this.project.getArtifactId());
-			polProps.put("Version", this.project.getVersion());			
-			polProps.put("Type", getType());
-			
+			Map<String, String> polProps = buildPolicyProperties();
+
 			int index = 0;
 			for (Artifact a : getDependentPolicyArchives()) {
 				polProps.put("Dependency_" + index, a.getId());
 				index++;
 			}
-			
+
 			packer.execute(outDir, FILE_GATEWAY, getPoliciesDirectory(), polProps);
 
 			return outDir;

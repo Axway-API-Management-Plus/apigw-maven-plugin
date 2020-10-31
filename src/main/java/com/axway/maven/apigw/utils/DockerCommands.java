@@ -13,7 +13,6 @@ public class DockerCommands extends AbstractCommandExecutor {
         super(name, log);
     }
 
-    @Override
     public int execute ( String task, boolean remove, String containerName, String imageName, String imageTag,
                          Map<String, String> ports, Map<String, String> links,
                          Map<String, String> environmentVariables, String adminNodeManagerHost, String metricsDbUrl,

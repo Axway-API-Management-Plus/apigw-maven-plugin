@@ -4,6 +4,26 @@
 [cols="1,2,<10a", options="header"]
 |===
 |ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/51[#51]
+|Enhancement
+|Customized version name for `.pol` and `.fed` packages.
+
+A new property `axway.project.version` is introduced to customize the version of `.pol` and `.fed` packages. As default the value will be set to ${project.version} . The version can be overwritten by a command line property of by a defined property within the pom.xml.
+
+*Example*
+
+Command line
+
+`$ mvn clean package -Daxway.project.version="${project.version}-BN20201031"`
+
+.pom.xml
+[source,xml]
+----
+<properties>
+  <axway.project.version>${project.version}-BN20201031</axway.project.version>
+</properties>
+----
+
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/pull/45[#45]
 |Enhancement
 |Docker capabilities.

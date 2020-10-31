@@ -110,6 +110,9 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 	
 	@Parameter(property = "axway.config.secrets.key", required = false)
 	protected File configSecretsKey = null;
+	
+	@Parameter(property = "axway.project.version", required = false, defaultValue="${project.version}")
+	protected String projectVersion;
 
 	
 	@Parameter(defaultValue = "${project}", readonly = true)
@@ -295,5 +298,14 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 		root.set("dependencies", deps);
 
 		return root;
+	}
+	
+	protected Map<String, String> buildPolicyProperties() throws MojoExecutionException  {
+		Map<String, String> polProps = new HashMap<>();
+		polProps.put("Name", this.project.getGroupId() + ":" + this.project.getArtifactId());
+		polProps.put("Version", this.projectVersion);			
+		polProps.put("Type", getPackageType().getType());
+		
+		return polProps;
 	}
 }

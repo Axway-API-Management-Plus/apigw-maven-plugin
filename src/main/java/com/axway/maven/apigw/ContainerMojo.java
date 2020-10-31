@@ -253,10 +253,10 @@ public class ContainerMojo extends AbstractGatewayMojo {
 			Source source = new Source(fed, this.passphraseFed);
 			Target target = new Target(this.deployGroup, this.passphraseDeploy);
 
-			AbstractCommandExecutor deploy;
+			DockerImage deploy;
 
 			// containerName is populated, so we are going to create a new container
-			AbstractCommandExecutor dockerCommands = new DockerCommands("Docker Commands", getLog());
+			DockerCommands dockerCommands = new DockerCommands("Docker Commands", getLog());
 			int exitCode = dockerCommands.execute("Remove Container", this.isRemoveContainer(), this.containerName,
 					null, null, null, null, null,
 					null, null, null, null);

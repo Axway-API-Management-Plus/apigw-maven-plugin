@@ -39,7 +39,6 @@ public class DockerImage extends AbstractCommandExecutor {
         this.domainKeyPassFile = domainKeyPassFile;
     }
 
-    @Override
     public int execute(Source source, Target target, Map<String, String> polProperties, Map<String,
             String> envProperties) throws IOException {
         List<String> inputParam = new ArrayList<String>();
