@@ -4,6 +4,20 @@
 [cols="1,2,<10a", options="header"]
 |===
 |ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/pull/53[#53]
+|Enhancement
+|The property configuration now supports JSON boolean values.
+
+[source,json]
+----
+{
+  "properties": {
+    "enables": false <1>
+  }
+}
+----
+<1> Boolean values are now supported
+
 |https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/52[#52]
 |Bug
 |In case the entity field configuration file doesn't exist the following error occurs:

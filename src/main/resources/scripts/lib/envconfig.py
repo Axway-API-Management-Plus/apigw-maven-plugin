@@ -121,9 +121,13 @@ class EnvConfig:
         if self.__properties:
             v = self.__properties.get_property(p)
 
-        if not v:
+        if v is None:
             if "properties" in self.__config_json and p in self.__config_json["properties"]:
                 v = self.__config_json["properties"][p]
+
+        if v is not None and type(v) is bool:
+            v = "true" if v else "false"
+
         return v
 
     def __reset(self):
@@ -184,7 +188,7 @@ class EnvConfig:
             if f["value"]:
                 p = f["value"]
                 value = self.__get_property(p)
-                if not value:
+                if value is None:
                     raise ValueError("Missing configured property '%s'" % (p))
         elif "value" == f["source"]:
             value = f["value"]
@@ -198,7 +202,7 @@ class EnvConfig:
             if f["value"]:
                 c = f["value"]
                 value = self.__secrets.get_secret(c)
-                if not value:
+                if value is None:
                     raise ValueError("Missing configured secret '%s'" % (c))
         else:
             raise ValueError("Invalid source property '%s'" % f["source"])
@@ -336,9 +340,13 @@ class CertConfig:
         if self.__properties:
             v = self.__properties.get_property(p)
 
-        if not v:
+        if v is None:
             if "properties" in self.__config_json and p in self.__config_json["properties"]:
                 v = self.__config_json["properties"][p]
+        
+        if v is not None and type(v) is bool:
+            v = "true" if v else "false"
+
         return v
 
     def set_cert_infos(self, cert_infos):
@@ -397,7 +405,7 @@ class CertConfig:
                     if "property" == cert["source"]:
                         p = cert["password"]
                         password = self.__get_property(p)
-                        if not password:
+                        if password is None:
                             raise ValueError("Missing configured property '%s' for alias '%s'!" % (p, alias))
                     elif "password" == cert["source"]:
                         password = cert["password"]
@@ -410,7 +418,7 @@ class CertConfig:
 
                         c = cert["password"]
                         password = self.__secrets.get_secret(c)
-                        if not password:
+                        if password is None:
                             raise ValueError("Missing configured secret '%s' for alias '%s'!" % (c, alias))
                     else:
                         raise ValueError("Invalid password source '%s' for alias '%s'!" % (cert["source"], alias))
