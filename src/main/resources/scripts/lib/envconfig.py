@@ -23,9 +23,8 @@ class FieldValue:
 
 
 class PropConfig:
-    __properties = {}
-
     def __init__(self, property_file_path_list):
+        self.__properties = {}
         if not property_file_path_list:
             return
 
@@ -53,19 +52,16 @@ class PropConfig:
         self.__properties[key] = value
 
 class EnvConfig:
-    __config_file_path = None
-    __config_json = None
-    __properties = None
-
-    __missing_vars = False
-    __file_updated = False
-    __migrated = False
-
-    __origin_json_str = None
-
-    __unconfigured_fields = []
-
     def __init__(self, config_file_path, properties, secrets):
+        self.__config_file_path = None
+        self.__config_json = None
+        self.__properties = None
+        self.__missing_vars = False
+        self.__file_updated = False
+        self.__migrated = False
+        self.__origin_json_str = None
+        self.__unconfigured_fields = []
+
         self.__properties = properties
         self.__pespk_factory = PortableESPKFactory.newInstance()
 
@@ -259,9 +255,6 @@ class CertRef:
         return self.__type == "empty"
 
 class CertInfo:
-    __alias = None
-    __subject = None
-    __not_after = None
     def __init__(self, alias, subject, not_after):
         self.__alias = alias
         self.__subject = subject
@@ -293,15 +286,12 @@ class CertInfo:
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
 
 class CertConfig:
-    __config_file_path = None
-    __config_json = None
-    __properties = None
-    __migrated = False
-    __origin_json_str = None
-    __keystore = None
-
-
     def __init__(self, config_file_path, properties, secrets):
+        self.__config_json = None
+        self.__migrated = False
+        self.__origin_json_str = None
+        self.__keystore = None
+
         self.__properties = properties
         self.__secrets = secrets        
         self.__config_file_path = config_file_path

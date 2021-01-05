@@ -21,14 +21,13 @@ from java.io import File, FileInputStream, FileReader, ByteArrayInputStream
 from java.security.cert import CertificateFactory
 
 class FedConfigurator:
-    __cert_config = None
-    __simulation_mode = False
-
-    __update_cert_config = False
-    __expiration_days = -1
-    __base_dir = None
-
     def __init__(self, pol_archive_path, env_archive_path, config_path, cert_config_path = None, properties = None, passphrase = "", confidentials=None):
+        self.__cert_config = None
+        self.__simulation_mode = False
+        self.__update_cert_config = False
+        self.__expiration_days = -1
+        self.__base_dir = None
+
         self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
         self.__env_archive = EnvironmentArchive(env_archive_path)

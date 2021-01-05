@@ -17,11 +17,12 @@ class Secrets:
     """
     __key_check = "axway-maven-plugin"
     __prefix_encrypt = "encrypt:"
-    __file_path = None
-    __secrets_json = {}
-    __cipher = None
 
     def __init__(self, secrets_key_file, secrets_file_path, create_if_not_exists=False):
+        self.__file_path = None
+        self.__secrets_json = {}
+        self.__cipher = None
+
         if not secrets_key_file:
             raise ValueError("No key file specified to encrypt/decrypt secrets!")
         if not secrets_file_path:
