@@ -40,7 +40,7 @@ Everything else is handled by the plugin.
 ====
 The plugin focuses on policy development and API Gateway configuration.
 Promotion of APIs, as in the context of API Management, is not in scope of this project.
-If you are looking for automatic API promotion, please checkout https://github.com/Axway-API-Management-Plus/apimanager-swagger-promote[Swagger Promote].
+If you are looking for automatic API promotion, please checkout https://github.com/Axway-API-Management-Plus/apim-cli[APIM CLI].
 ====
 
 == Principles and Goals
