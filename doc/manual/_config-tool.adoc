@@ -57,7 +57,7 @@ Options:
                         Passphrase for output archive files [optional]
   -s, --simulate        Enable simulation mode [optional]
   -b DIRECTORY, --base-dir=DIRECTORY
-                        Base directory for certificate files [optional]
+                        Base directory for certificate files [multiple]
   --secrets-file=FILEPATH
                         Path of JSON file containing confidential propertiers
                         [optional]
@@ -154,7 +154,11 @@ To avoid errors due to incompatible types (e.g. placeholder string used for an i
 
 |-b, --base-dir
 |Base directory for certificate files.
-If specified relative path to certificate files is based on this directory.
+
+Multiple directories can be specified by adding the parameter multiple times.
+
+If specified, the given directories are scanned for certificate files.
+If multiple certificate files exists the first one will be used.
 
 |--secrets-file
 |Path of JSON file containing confidential properties.

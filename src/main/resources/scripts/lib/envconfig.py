@@ -255,7 +255,7 @@ class CertRef:
     def get_password(self):
         return self.__password
     
-    def is_empty():
+    def is_empty(self):
         return self.__type == "empty"
 
 class CertInfo:

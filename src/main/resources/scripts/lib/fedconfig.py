@@ -26,7 +26,7 @@ class FedConfigurator:
         self.__simulation_mode = False
         self.__update_cert_config = False
         self.__expiration_days = -1
-        self.__base_dir = None
+        self.__base_dirs = None
 
         self.__passphrase_in = passphrase
         self.__pol_archive = PolicyArchive(pol_archive_path)
@@ -57,8 +57,8 @@ class FedConfigurator:
     def set_system_properties(self, sys_properties):
         self.__config.set_system_properties(sys_properties)
 
-    def set_base_dir(self, base_dir):
-        self.__base_dir = base_dir
+    def set_base_dirs(self, base_dirs):
+        self.__base_dirs = base_dirs
 
     def configure(self, passphrase = ""):
         succeeded = self.__configure_entities()
@@ -121,8 +121,15 @@ class FedConfigurator:
         return succeeded
 
     def __resolve_file_path(self, file):
-        if file and self.__base_dir:
-            file = os.path.join(self.__base_dir, file)
+        """Searches the certificate file within all specified base directories.
+
+        The first existing file wil be returned.
+        """
+        if file and self.__base_dirs:
+            for base_dir in self.__base_dirs:
+                f = os.path.join(base_dir, file)
+                if os.path.isfile(f):
+                    return f
         return file
 
     def __get_certificate_infos(self):

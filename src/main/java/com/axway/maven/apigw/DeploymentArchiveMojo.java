@@ -160,7 +160,7 @@ public class DeploymentArchiveMojo extends AbstractFlattendProjectArchiveMojo {
 			fedBuilder.setCertificatesFile(this.configCertsFile);
 			fedBuilder.setCertificateExpirationDays(this.certExpirationDays);
 			fedBuilder.enableCertificateConfigFileUpdate(this.updateCertConfigFile);
-			fedBuilder.setCertificatesBasePath(this.configCertsBaseDir);
+			fedBuilder.setCertificatesBasePath(getCertificateBaseDirs());
 		}
 		if (this.configSecretsFile != null) {
 			if (this.configSecretsKey == null)
