@@ -88,7 +88,7 @@ def main():
             if not os.path.isfile(prop_file):
                 raise ValueError("File for command line property '%s' doesn't exist: %s" % (name, prop_file))
             
-            logging.debug("Reading command line property '%s' from file '%s'" % (name, prop_file))
+            logging.info("Reading command line property '%s' from file '%s'" % (name, prop_file))
             with codecs.open(prop_file, encoding='utf-8', mode='r') as pf:
                 cli_properties[name] = pf.read()
 

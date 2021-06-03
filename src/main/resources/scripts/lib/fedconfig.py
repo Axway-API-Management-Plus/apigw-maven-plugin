@@ -123,7 +123,7 @@ class FedConfigurator:
     def __resolve_file_path(self, file):
         """Searches the certificate file within all specified base directories.
 
-        The first existing file wil be returned.
+        The first existing file will be returned.
         """
         if file and self.__base_dirs:
             for base_dir in self.__base_dirs:
