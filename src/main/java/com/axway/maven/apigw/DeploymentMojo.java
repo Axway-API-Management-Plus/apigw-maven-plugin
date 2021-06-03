@@ -137,7 +137,7 @@ public class DeploymentMojo extends AbstractGatewayMojo {
 			fb.setCertificatesFile(this.configCertsFile);
 			fb.setCertificateExpirationDays(this.certExpirationDays);
 			fb.enableCertificateConfigFileUpdate(this.updateCertConfigFile);
-			fb.setCertificatesBasePath(this.configCertsBaseDir);
+			fb.setCertificatesBasePath(getCertificateBaseDirs());
 		}
 		if (this.configSecretsFile != null) {
 			if (this.configSecretsKey == null)

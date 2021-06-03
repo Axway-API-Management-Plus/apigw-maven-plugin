@@ -31,7 +31,7 @@ def parse_cli_property(cli_prop):
 
 def main():
     prog = sys.argv[0]
-    version = "%prog 1.2.0"
+    version = "%prog 1.3.0"
     usage = "%prog OPTIONS"
     epilog = "Build configured .fed package."
  
@@ -51,7 +51,7 @@ def main():
     parser.add_option("--passphrase-in", dest="passphrase_in", help="Passphrase of input archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("--passphrase-out", dest="passphrase_out", help="Passphrase for output archive files [optional]", metavar="PASSPHRASE")
     parser.add_option("-s", "--simulate", dest="simulate", help="Enable simulation mode [optional]", action="store_true")
-    parser.add_option("-b", "--base-dir", dest="base_dir", help="Base directory for certificate files [optional]", metavar="DIRECTORY")
+    parser.add_option("-b", "--base-dir", dest="base_dirs", help="Base directory for certificate files [multiple]", metavar="DIRECTORY", action="append")
     parser.add_option("--secrets-file", dest="secrets_file", help="Path of JSON file containing confidential properties [optional]", metavar="FILEPATH")
     parser.add_option("--secrets-key", dest="secrets_key_file", help="Path to key file to decrypt confidential properties [optional]", metavar="FILEPATH")
     
@@ -88,7 +88,7 @@ def main():
             if not os.path.isfile(prop_file):
                 raise ValueError("File for command line property '%s' doesn't exist: %s" % (name, prop_file))
             
-            logging.debug("Reading command line property '%s' from file '%s'" % (name, prop_file))
+            logging.info("Reading command line property '%s' from file '%s'" % (name, prop_file))
             with codecs.open(prop_file, encoding='utf-8', mode='r') as pf:
                 cli_properties[name] = pf.read()
 
@@ -115,8 +115,8 @@ def main():
 
         # Setup configuration
         fed_config = FedConfigurator(options.pol_file_path, options.env_file_path, options.config_file_path, options.cert_file_path, properties, passphrase_in, secrets)
-        if options.base_dir:
-            fed_config.set_base_dir(options.base_dir)
+        if options.base_dirs:
+            fed_config.set_base_dirs(options.base_dirs)
 
         if options.simulate:
             fed_config.enable_simulation_mode()

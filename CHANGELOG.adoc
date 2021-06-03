@@ -1,10 +1,46 @@
 = Changelog
 
+== Version 1.2.0
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/55[#55]
+|Enhancement
+|Add support for multiple base directories for certificates.
+
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/56[#56]
+|Enhancement
+|Read properties from stdin.
+
+If the filename of the  `--prop` parameter is a single dash `-`, stdin will be used to read properties from a flat key/value JSON document.
+
+.Example of flat key/value JSON
+[source, json]
+----
+{
+  "prop1": "value1",
+  "prop2": "value2"
+}
+----
+
+[NOTE]
+====
+This feature can be used to read properties from external sources (e.g. AWS Secrets Manager or Hashicorp Vault).
+
+[source, shell]
+----
+# Get properties from Vault key/value engine
+vault kv get -format=json kv/apim \| jq .data.data \| buildfed --prop - -p src/gw.pol -e src/gw.env -c config/gw.config.json
+----
+====
+
+|===
+
 == Version 1.1.0
 [cols="1,2,<10a", options="header"]
 |===
 |ID|Type|Description
-|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/pull/53[#53]
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/53[#53]
 |Enhancement
 |The property configuration now supports JSON boolean values.
 

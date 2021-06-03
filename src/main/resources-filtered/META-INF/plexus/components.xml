@@ -66,19 +66,5 @@
 				<packaging>axway-server-archive</packaging>
 			</configuration>
 		</component>
-		<component>
-			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
-			<role-hint>axway-deployment-archive</role-hint>
-			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
-			<configuration>
-				<!--the extension used by Maven in the repository -->
-				<extension>axdar</extension>
-				<!--the type used when specifying dependencies etc. -->
-				<type>axway-deployment-archive</type>
-				<!--the packaging used when declaring an implementation of the packaging -->
-				<packaging>axway-deployment-archive</packaging>
-			</configuration>
-		</component>
-
 	</components>
 </component-set>

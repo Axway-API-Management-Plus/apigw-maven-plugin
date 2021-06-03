@@ -413,9 +413,12 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
     </configPropertFiles>
 
     <configCertsBaseDir>${basedir}/src/main/axwgw/certs</configCertsBaseDir> <!--5-->
-
-    <configSecretsFile>${basedir}/src/main/axwgw/gateway.crypt.json</configSecretsFile> <!--6-->
-    <configSecretsKey>${user.home}/secrets.key</configSecretsKey> <!--7-->
+    <configCertsBaseDirs>
+      <configCertsBaseDir>${basedir}/src/main/axwgw/certs/common</configCertsBaseDir> <!--6-->
+      <configCertsBaseDir>${basedir}/src/main/axwgw/certs/ca</configCertsBaseDir>
+    </configCertsBaseDirs>
+    <configSecretsFile>${basedir}/src/main/axwgw/gateway.crypt.json</configSecretsFile> <!--7-->
+    <configSecretsKey>${user.home}/secrets.key</configSecretsKey> <!--8-->
   </configuration>
 </plugin>
 <!- ... ->
@@ -425,5 +428,6 @@ The plugin can also be configured in the `pom.xml` via the <configuration> eleme
 <3> Location of a configuration file for properties.
 <4> Location of a list of configuration files for properties.
 <5> Base directory for certificate files.
-<6> Path to secrets file.
-<7> Key file to decrypt/encrypt values of secrets file.
+<6> Additional base directories for certificate files supported.
+<7> Path to secrets file.
+<8> Key file to decrypt/encrypt values of secrets file.

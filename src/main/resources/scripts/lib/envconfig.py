@@ -2,6 +2,7 @@ import json
 import os
 import logging
 import base64
+import sys
 
 from com.vordel.es.xes import PortableESPKFactory
 from java.text import SimpleDateFormat
@@ -24,23 +25,40 @@ class FieldValue:
 
 class PropConfig:
     def __init__(self, property_file_path_list):
+        stdin_loaded = False
         self.__properties = {}
         if not property_file_path_list:
             return
 
         for property_file_path in property_file_path_list:
-            if not os.path.exists(property_file_path):
-                raise ValueError("Property file '%s' doesn't exist!" % (property_file_path))
+            properties = None
+            if "-" == property_file_path:
+                if stdin_loaded:
+                    # properties already loaded from stdin
+                    continue
+                stdin_loaded = True
+                logging.info("Reading properties from stdin")
+                properties = json.load(sys.stdin)
+            else:
+                if not os.path.exists(property_file_path):
+                    raise ValueError("Property file '%s' doesn't exist!" % (property_file_path))
 
-            logging.info("Reading property file '%s'" % (property_file_path))
-            with open(property_file_path) as property_file:
-                properties_json = json.load(property_file)
+                logging.info("Reading property file '%s'" % (property_file_path))
+                with open(property_file_path) as property_file:
+                    properties_json = json.load(property_file)
 
-                if "properties" not in properties_json:
-                    raise ValueError("File '%s' is not a valid property file; missing 'properties' attribute!" % (property_file_path))
-                
-                for p in properties_json["properties"]:
-                    self.__properties[p] = properties_json["properties"][p]
+                    if "properties" not in properties_json:
+                        raise ValueError("File '%s' is not a valid property file; missing 'properties' attribute!" % (property_file_path))
+
+                    properties = properties_json["properties"]
+
+            # Add or overwrite properties
+            for p in properties:
+                if p not in self.__properties:
+                    logging.debug("set property '%s' from '%s'" % (p, property_file_path))
+                else:
+                    logging.debug("override property '%s' from '%s'" % (p, property_file_path))
+                self.__properties[p] = properties[p]
         return
 
     def get_property(self, key):
@@ -255,7 +273,7 @@ class CertRef:
     def get_password(self):
         return self.__password
     
-    def is_empty():
+    def is_empty(self):
         return self.__type == "empty"
 
 class CertInfo:

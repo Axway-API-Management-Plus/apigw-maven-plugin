@@ -98,7 +98,10 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 
 	@Parameter(property = "axway.config.certs.basedir", required = false)
 	protected File configCertsBaseDir = null;
-	
+
+	@Parameter(property = "axway.config.certs.basedirs", required = false)
+	protected File[] configCertsBaseDirs = null;
+
 	@Parameter(property = "axway.tools.cfg.cert.expirationDays", required = false)
 	protected int certExpirationDays = 10;
 
@@ -307,5 +310,18 @@ public abstract class AbstractGatewayMojo extends AbstractMojo {
 		polProps.put("Type", getPackageType().getType());
 		
 		return polProps;
+	}
+	
+	protected List<File> getCertificateBaseDirs() {
+		ArrayList<File> baseDirs = new ArrayList<>();
+		if (this.configCertsBaseDir != null) {
+			baseDirs.add(this.configCertsBaseDir);
+		}
+		if (this.configCertsBaseDirs != null) {
+			for (File f : this.configCertsBaseDirs) {
+				baseDirs.add(f);
+			}
+		}
+		return baseDirs;
 	}
 }

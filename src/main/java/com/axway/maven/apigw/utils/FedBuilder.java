@@ -20,7 +20,7 @@ public class FedBuilder {
 
 	private final List<File> propertyFiles = new ArrayList<File>();
 	private File certsFile = null;
-	private File certsBaseDir = null;
+	private List<File> certsBaseDirs = null;
 
 	private int certExpirationDays = -1;
 
@@ -69,8 +69,8 @@ public class FedBuilder {
 		this.certsFile = certsFile;
 	}
 
-	public void setCertificatesBasePath(File baseDir) {
-		this.certsBaseDir = baseDir;
+	public void setCertificatesBasePath(List<File> baseDirs) {
+		this.certsBaseDirs = baseDirs;
 	}
 
 	public void setCertificateExpirationDays(int days) {
@@ -130,9 +130,11 @@ public class FedBuilder {
 				if (this.updateCertConfigFile) {
 					args.add("--cert-config-update");
 				}
-				if (this.certsBaseDir != null) {
-					args.add("--base-dir");
-					args.add(this.certsBaseDir.getAbsolutePath());
+				if (this.certsBaseDirs != null) {
+					for (File bd : this.certsBaseDirs) {
+						args.add("--base-dir");
+						args.add(bd.getAbsolutePath());
+					}
 				}
 			}
 			if (this.secretsFile != null) {
