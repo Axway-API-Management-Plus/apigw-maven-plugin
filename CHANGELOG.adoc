@@ -30,7 +30,10 @@ This feature can be used to read properties from external sources (e.g. AWS Secr
 [source, shell]
 ----
 # Get properties from Vault key/value engine
-vault kv get -format=json kv/apim \| jq .data.data \| buildfed --prop - -p src/gw.pol -e src/gw.env -c config/gw.config.json
+vault kv get -format=json kv/apim/dev \| jq -r .data.data \| buildfed --prop=- -p src/gw.pol -e src/gw.env -c config/gw.config.json
+
+# Get properties from AWS Secrets Manager
+aws secretsmanager get-secret-value --secret-id apim/dev \| jq -r .SecretString \| buildfed --prop=- -p src/gw.pol -e src/gw.env -c config/gw.config.json
 ----
 ====
 
