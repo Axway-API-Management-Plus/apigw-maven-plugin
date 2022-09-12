@@ -12,6 +12,7 @@ ifdef::env-github[]
 :tip-caption: :bulb:
 :warning-caption: :warning:
 endif::[]
+:mvn-plugin-ver: 1.2.0.1
 
 image:https://img.shields.io/github/license/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
 image:https://img.shields.io/github/v/release/Axway-API-Management-Plus/apigw-maven-plugin?style=plastic[]
@@ -105,6 +106,42 @@ The plugin supports three kind of API Gateway projects:
  * Check of certificate expiration.
  * Deploy projects to gateway via plugin.
 
+== Installation
+
+=== Build & Install
+
+[source,shell]
+----
+git clone https://github.com/Axway-API-Management-Plus/apigw-maven-plugin.git
+cd apigw-maven-plugin
+mvn clean install
+----
+
+=== Download & Install
+
+To download and install the plugin you could use the following script:
+
+.install-apigw-maven-plugin.sh
+[source,shell,subs="verbatim,attributes"]
+----
+#!/bin/bash
+set -euo pipefail
+
+APIGW_MVN_PLUGIN_VER={mvn-plugin-ver}
+
+APIGW_MVN_PLUGIN="apigw-maven-plugin-$\{APIGW_MVN_PLUGIN_VER}"
+APIGW_MVN_PLUGIN_JAR="$\{APIGW_MVN_PLUGIN}.jar"
+APIGW_MVN_PLUGIN_POM="$\{APIGW_MVN_PLUGIN}.pom"
+
+GITHUB_RELEASES="https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/releases/download/v${APIGW_MVN_PLUGIN_VER}"
+
+# Download artifacts
+wget -nv "$\{GITHUB_RELEASES}/$\{APIGW_MVN_PLUGIN_JAR}" -O "${APIGW_MVN_PLUGIN_JAR}"
+wget -nv "$\{GITHUB_RELEASES}/$\{APIGW_MVN_PLUGIN_POM}" -O "${APIGW_MVN_PLUGIN_POM}"
+
+# Install plugin
+mvn install:install-file -Dfile="$\{APIGW_MVN_PLUGIN_JAR}" -DpomFile="$\{APIGW_MVN_PLUGIN_POM}"
+----
 
 == More to Read
 
