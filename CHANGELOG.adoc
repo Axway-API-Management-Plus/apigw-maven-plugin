@@ -1,5 +1,14 @@
 = Changelog
 
+== Version 1.2.1
+[cols="1,2,<10a", options="header"]
+|===
+|ID|Type|Description
+|https://github.com/Axway-API-Management-Plus/apigw-maven-plugin/issues/64[#64]
+|Bug Fix
+|Update versions of dependencies.
+|===
+
 == Version 1.2.0
 [cols="1,2,<10a", options="header"]
 |===

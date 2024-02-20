@@ -1,7 +1,7 @@
 = Maven Plugin for API Gateway Policy Development: User Guide
 :Author: Martin Look
 :Email: mlook@axway.com
-:revnumber: 1.2.0.1
+:revnumber: 1.2.1
 :toc:
 :sectnums:
 :source-highlighter: prettify
