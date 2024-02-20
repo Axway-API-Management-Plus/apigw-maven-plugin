@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -91,12 +91,12 @@ public class PolicyStudioMojo extends AbstractGatewayMojo {
 			xml.append("<root>");
 			xml.append("<files>");
 			xml.append("<file location=\"")
-					.append(StringEscapeUtils.escapeXml(getPoliciesDirectory().getAbsolutePath())).append("\" url=\"")
-					.append(StringEscapeUtils.escapeXml(buildProjectName())).append("\"/>");
+					.append(StringEscapeUtils.escapeXml11(getPoliciesDirectory().getAbsolutePath())).append("\" url=\"")
+					.append(StringEscapeUtils.escapeXml11(buildProjectName())).append("\"/>");
 			if (getPackageType() == PackageType.POLICY && this.testServerDirectory.exists()) {
 				xml.append("<file location=\"")
-						.append(StringEscapeUtils.escapeXml(this.testServerDirectory.getAbsolutePath()))
-						.append("\" url=\"").append(StringEscapeUtils.escapeXml(TEST_SERVER_PROJECT_NAME))
+						.append(StringEscapeUtils.escapeXml11(this.testServerDirectory.getAbsolutePath()))
+						.append("\" url=\"").append(StringEscapeUtils.escapeXml11(TEST_SERVER_PROJECT_NAME))
 						.append("\"/>");
 			}
 			xml.append("</files>");

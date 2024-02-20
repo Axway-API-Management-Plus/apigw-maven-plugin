@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -106,7 +106,7 @@ public class InitMojo extends AbstractGatewayMojo {
 			StringBuilder xml = new StringBuilder();
 			xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			xml.append("<projectDescription>\n");
-			xml.append("  <name>").append(StringEscapeUtils.escapeXml(projectName)).append("</name>\n");
+			xml.append("  <name>").append(StringEscapeUtils.escapeXml11(projectName)).append("</name>\n");
 			xml.append("  <comment/>\n");
 			xml.append("  <projects/>\n");
 			xml.append("  <buildSpec/>\n");
